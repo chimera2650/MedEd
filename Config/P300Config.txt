@@ -1,0 +1,7 @@
+"C:\Users\Jordan\Documents\Experiments\Cog Assess\Export\P300\Cognitive_Assessment_" % File prefix (should be full path)
+"002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,031,033,035,037,041,043,044,047,048,049,051,055" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
+"-200,0" % Baseline correction (use [] for no baseline)
+"15,150" % Artifact parameters (gradient, amplitude)
+"C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\P300\CogAssess_flynn_" % Output file prefix (same suffixes as input), may include directory
+"ERP,S202,-200,596,Oddball" % ERP analysis, marker, start time, end time, condition name
+"ERP,S203,-200,596,Control"

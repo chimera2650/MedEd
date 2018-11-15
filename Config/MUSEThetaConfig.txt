@@ -1,0 +1,8 @@
+"C:\Users\Jordan\Documents\Experiments\MedEd MUSE\Export\Theta\CardsSystems_Muse_"
+"001,002,003,004,005,006,007,008,009,010,011,012,013,014,015,016,017,018,019,020,021,022,023,024,025,026,027,028,029,030" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
+"[]" % Baseline correction (use [] for no baseline)
+"15,150" % Artifact parameters (gradient, amplitude)
+"C:\Users\Jordan\Documents\MATLAB\MedEd\Data\MUSE\Theta\MUSETheta_flynn_"
+"FFT,Template (No Conflict),0,1996,0CT" % FFT Template analysis, marker, start time, end time, condition name
+"FFT,Template (One Conflict),0,1996,1CT"
+"FFT,Template (Two Conflict),0,1996,2CT"
