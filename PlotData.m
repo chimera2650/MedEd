@@ -28,10 +28,12 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    working_dir3 = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'Scratchy') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    working_dir3 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 
 clear comp
@@ -95,8 +97,10 @@ colors1 = cbrewer('qual','Dark2',8);
 colors1 = flipud(colors1);
 time = final_summary.ERP.time;
 ci_data = final_summary.ERP.ci_data(:,6);
+x_lim = [-200 600];
+y_lim = [-10 15];
 
-figure(1);
+f1 = figure(1);
 hold on;
 bl = boundedline(time,summary_mean1,ci_data,...
     time,summary_mean2,ci_data,...
@@ -105,23 +109,27 @@ bl = boundedline(time,summary_mean1,ci_data,...
 
 ax = gca;
 
-s = plot(final_summary.ERP.time,sig*(max(ax.YLim)*0.9),'sk');
-l1 = line([0 0],[min(ax.YLim) max(ax.YLim)],...
+s = plot(final_summary.ERP.time,sig*(max(y_lim)*0.9),'sk');
+l1 = line([0 0],[min(y_lim) max(y_lim)],...
     'Color','k',...
     'LineStyle',':',...
     'LineWidth',1);
-l2 = line([min(ax.XLim) max(ax.XLim)],[0 0],...
+l2 = line([min(x_lim) max(x_lim)],[0 0],...
     'Color','k',...
     'LineStyle',':',...
     'LineWidth',1);
 
 legend({'Win','Loss','Difference'});
-text(150,(max(ax.YLim)*0.9),sig_label,'FontWeight','bold','FontAngle','italic');
+text(150,(max(ax.YLim)*0.9),sig_label,...
+    'FontWeight','bold',...
+    'FontAngle','italic',...
+    'FontSize',10);
 
 ax = gca;
 ax.FontSize = 12;
-ax.XLim = ([-200 600]);
+ax.XLim = x_lim;
 ax.XLabel.String = 'Time (ms)';
+ax.YLim = y_lim;
 ax.YLabel.String = 'Voltage';
 ax.Legend.Location = 'southwest';
 ax.Legend.Box = 'off';
@@ -141,12 +149,19 @@ s.MarkerFaceColor = 'k';
 s.MarkerSize = 8;
 hold off
 
+set(f1,...
+    'Units','inches',...
+    'Position',[0 0 12 8]);
+cd(working_dir3);
+export_fig(f1,'RewP','-png');
+
 %% Clean Workspace
 clear ax;
 clear bl;
 clear ci_data;
 clear colors1;
 clear cond1;
+clear f1;
 clear i;
 clear l1;
 clear l2;
@@ -160,13 +175,16 @@ clear summary_mean1;
 clear summary_mean2;
 clear time;
 clear x;
+clear x_lim;
+clear y_lim;
 
 %% Plot FFT
 disp('Plotting FFT');
+cd(working_dir2);
 colors2 = cbrewer('qual','Dark2',8);
 colors2 = flipud(colors2);
 
-figure(2);
+f2 = figure(2);
 for x = 1:2
     if x == 1
         c_index = c_index2;
@@ -260,6 +278,12 @@ for x = 1:2
     hold off
 end
 
+set(f2,...
+    'Units','inches',...
+    'Position',[0 0 12 8]);
+cd(working_dir3);
+export_fig(f2,'FFT','-png');
+
 %% Clean Workspace
 clear a;
 clear ar;
@@ -272,6 +296,7 @@ clear chan_name;
 clear ci_data;
 clear colors2;
 clear cond1;
+clear f2;
 clear freq;
 clear i;
 clear order;
@@ -291,10 +316,11 @@ clear y_lim;
 
 %% Plot Wavelets
 disp('Plotting wavelets');
+cd(working_dir2);
 colors3 = cbrewer('div','RdBu',64,'PCHIP');
 colors3 = flipud(colors3);
 
-figure(3);
+f3 = figure(3);
 for i = 1:2
     if i == 1
         c_index = c_index2;
@@ -363,6 +389,12 @@ for i = 1:2
     colormap(colors3);
 end
 
+set(f3,...
+    'Units','inches',...
+    'Position',[0 0 12 8]);
+cd(working_dir3);
+export_fig(f3,'Wavelet','-png');
+
 %% Clean Workspace
 clear ax;
 clear axpos;
@@ -370,6 +402,7 @@ clear c;
 clear c_index;
 clear colors3;
 clear cpos;
+clear f3;
 clear i;
 clear plot_0C;
 clear plot_1C;
@@ -391,10 +424,11 @@ clear wavelet_a4;
 
 %% Plot Behavioural Data
 disp('Plotting behavioral data');
+cd(working_dir2);
 colors4 = cbrewer('qual', 'Dark2', 8);
 colors4 = flipud(colors4);
 
-figure(4);
+f4 = figure(4);
 for i = 1:3
     if i == 1
         analysis = 'accuracy';
@@ -582,6 +616,13 @@ for i = 1:3
     hold off
 end
 
+set(f4,...
+    'Units','inches',...
+    'Position',[0 0 12 8]);
+cd(working_dir3);
+export_fig(f4,'Behavior','-png');
+
+%% Clean Workspace
 clear analysis;
 clear ax;
 clear c;

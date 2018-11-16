@@ -10,14 +10,14 @@ sub_keep = '001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral';
-    working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw';
+    working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\';
+    working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
+    working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';
     save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
 elseif strcmp(comp,'Scratchy') == 1
-    working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral';
-    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw';
+    working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Dat';
+    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
+    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';
     save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\final_summary.mat';
 end
 
