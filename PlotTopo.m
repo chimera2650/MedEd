@@ -6,28 +6,28 @@ close all;
 
 %% Define Variables
 t_wind1 = [-1000 -500];
-t_wind2 = [-1000 -500];
+t_wind2 = [-800 -500];
 f_wind1 = [5 7];
-f_wind2 = [10 13];
-limits = [-1.1 1.1];
+f_wind2 = [10 14];
+limits = [-1.25 1.25];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-elseif strcmp(comp,'Scratchy') == 1
+elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
 end
 
 %% Load Variables
 cd(working_dir);
 load('final_summary.mat');
-colors = cbrewer('div','RdBu',64,'PCHIP');
-colors = flipud(colors);
+colors5 = cbrewer('div','RdBu',64,'PCHIP');
+colors5 = flipud(colors);
 
 %% Plot Topography
-figure(1);
+f5 = figure(5);
 for i = 1:2
     if i == 1
         t_wind = t_wind1;
@@ -96,8 +96,6 @@ clear t_data;
 clear t_data;
 clear t_index;
 clear t_lab;
-clear t_max;
-clear t_min;
 clear t_vector;
 clear t_wind;
 clear t_wind1;

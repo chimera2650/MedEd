@@ -12,7 +12,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
     save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
-elseif strcmp(comp,'Scratchy') == 1
+elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
@@ -143,6 +143,7 @@ final_summary.ERP.anova = ERPanova;
 
 clear c_index;
 clear cond1;
+clear ERPanova;
 clear i;
 clear p;
 clear stats;
@@ -260,8 +261,8 @@ for x = 1:3
 end
 final_summary.FFT.std = grand_summary;
 
-for x = 1:249
-    freq_point(1,x) = (0.5*x);
+for x = 1:59
+    freq_point(1,x) = 0.5+(0.5*x);
 end
 final_summary.FFT.freq = freq_point;
 
@@ -319,7 +320,7 @@ end
     final_summary.wavelet.data = grand_summary;
 
 for x = 1:59
-    freq_point(1,x) = (0.5*x);
+    freq_point(1,x) = 0.5+(0.5*x);
 end
 final_summary.wavelet.freq = freq_point;
 

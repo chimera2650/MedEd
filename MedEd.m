@@ -10,5 +10,5 @@ for i = 1:2
         analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\DecisionConfig.txt';
     end
     
-    FLYNN(analysis);
+    FLYNN(analysis,'C:\Users\Jordan\Documents\MATLAB\flynn\Standard-10-20-NEL-62.locs');
 end

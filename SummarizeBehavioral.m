@@ -14,7 +14,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';
     save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
-elseif strcmp(comp,'Scratchy') == 1
+elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Dat';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';

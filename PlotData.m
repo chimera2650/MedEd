@@ -10,26 +10,22 @@ chan_name1 = 'FCz';
 chan_name2 = 'Fz';
 chan_name3 = 'Pz';
 significance = 0.05;
+t_wind1 = [-1000 -500];
+f_wind1 = [5 7];
+t_wind2 = [-800 -500];
+f_wind2 = [10 14];
+wav_limits = [-2 2];
+topo_limits = [-1.25 1.25];
+cond1 = 1;
+cond2 = 3;
 comp = getenv('computername');
-
-% Theta highlight
-wavelet_t = [-825 5 2;...
-    -525 5 2;...
-    -525 7 2;...
-    -825 7 2];
-
-% Alpha highlight
-wavelet_a = [-775 10.5 2;...
-    -525 10.5 2;...
-    -525 12.5 2;...
-    -775 12.5 2];
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
     working_dir3 = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
-elseif strcmp(comp,'Scratchy') == 1
+elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
@@ -58,6 +54,18 @@ c_index1 = find(chan_loc == 1);
 c_index2 = find(chan_loc == 2);
 c_index3 = find(chan_loc == 3);
 sig_label = strcat('p > ',num2str(significance));
+
+% Theta highlight
+wav_wind1 = [min(t_wind1) min(f_wind1) 2;...
+    max(t_wind1) min(f_wind1) 2;...
+    max(t_wind1) max(f_wind1) 2;...
+    min(t_wind1) max(f_wind1) 2];
+
+% Alpha highlight
+wav_wind2 = [min(t_wind2) min(f_wind2) 2;...
+    max(t_wind2) min(f_wind2) 2;...
+    max(t_wind2) max(f_wind2) 2;...
+    min(t_wind2) max(f_wind2) 2];
 
 clear i;
 clear chan_loc
@@ -324,15 +332,15 @@ f3 = figure(3);
 for i = 1:2
     if i == 1
         c_index = c_index2;
-        shade_x = [wavelet_t(1,1) wavelet_t(2,1) wavelet_t(3,1) wavelet_t(4,1)];
-        shade_y = [wavelet_t(1,2) wavelet_t(2,2) wavelet_t(3,2) wavelet_t(4,2)];
-        shade_z = [wavelet_t(1,3) wavelet_t(2,3) wavelet_t(3,3) wavelet_t(4,3)];
+        shade_x = [wav_wind1(1,1) wav_wind1(2,1) wav_wind1(3,1) wav_wind1(4,1)];
+        shade_y = [wav_wind1(1,2) wav_wind1(2,2) wav_wind1(3,2) wav_wind1(4,2)];
+        shade_z = [wav_wind1(1,3) wav_wind1(2,3) wav_wind1(3,3) wav_wind1(4,3)];
         chan_name = chan_name2;
     elseif i == 2
         c_index = c_index3;
-        shade_x = [wavelet_a(1,1) wavelet_a(2,1) wavelet_a(3,1) wavelet_a(4,1)];
-        shade_y = [wavelet_a(1,2) wavelet_a(2,2) wavelet_a(3,2) wavelet_a(4,2)];
-        shade_z = [wavelet_a(1,3) wavelet_a(2,3) wavelet_a(3,3) wavelet_a(4,3)];
+        shade_x = [wav_wind2(1,1) wav_wind2(2,1) wav_wind2(3,1) wav_wind2(4,1)];
+        shade_y = [wav_wind2(1,2) wav_wind2(2,2) wav_wind2(3,2) wav_wind2(4,2)];
+        shade_z = [wav_wind2(1,3) wav_wind2(2,3) wav_wind2(3,3) wav_wind2(4,3)];
         chan_name = chan_name3;
     end
 
@@ -345,9 +353,9 @@ for i = 1:2
     hold off
     
     if i == 1
-        title(sprintf('Wavelet plot at %s for the 2000ms preceeding decision',chan_name));
+        title(sprintf('Difference wavelet plot at %s for the 2000ms preceeding decision',chan_name));
     elseif i == 2
-        title(sprintf('Wavelet plot at %s for the 2000ms preceeding decision',chan_name));
+        title(sprintf('Difference wavelet plot at %s for the 2000ms preceeding decision',chan_name));
     end
     
     set(gca,'ydir','normal');
@@ -356,7 +364,7 @@ for i = 1:2
     c.TickDirection = 'out';
     c.Box = 'off';
     c.Label.String = 'Power (dB)';
-    c.Limits = [-2 2];
+    c.Limits = wav_limits;
     drawnow;
     
     axpos = get(gca,'Position');
@@ -376,6 +384,7 @@ for i = 1:2
     ax.YTick = [0 5 10 15 20 25 30];
     ax.XLabel.String = 'Time (ms)';
     ax.XTick = [-2000 -1500 -1000 -500 0];
+    ax.TickDir = 'out';
     ax.FontWeight = 'bold';
     ax.Box = 'off';
     
@@ -413,22 +422,102 @@ clear shade;
 clear shade_x;
 clear shade_y;
 clear shade_z;
-clear wavelet_t1;
-clear wavelet_t2;
-clear wavelet_t3;
-clear wavelet_t4;
-clear wavelet_a1;
-clear wavelet_a2;
-clear wavelet_a3;
-clear wavelet_a4;
+clear wav_limits;
+clear wav_wind1;
+clear wav_wind2;
+
+%% Plot Topography
+disp('Plotting topographies');
+cd(working_dir2);
+colors4 = cbrewer('div','RdBu',64,'PCHIP');
+colors4 = flipud(colors4);
+
+f4 = figure(4);
+for i = 1:2
+    if i == 1
+        t_wind = t_wind1;
+        f_wind = f_wind1;
+        t_lab = 'Theta burst preceding decision';
+    elseif i == 2
+        t_wind = t_wind2;
+        f_wind = f_wind2;
+        t_lab = 'Alpha burst preceding decision';
+    end
+    
+    t_index = dsearchn(final_summary.wavelet.time',t_wind');
+    f_index = dsearchn(final_summary.wavelet.freq',f_wind');
+    
+    for ii = 1:3
+        t_data{ii} = squeeze(mean(final_summary.wavelet.data{ii}(:,f_index(1):f_index(2),t_index(1):t_index(2)),3));
+    end
+    
+    topodata = t_data{cond1}-t_data{cond2};
+    t_vector = squeeze(mean(topodata,2));
+    t_min = min(t_vector);
+    t_max = max(t_vector);
+    
+    subplot(1,2,i);
+    topo = topoplot(t_vector,final_summary.chanlocs,...
+        'maplimits',topo_limits,...
+        'style','map',...
+        'electrodes','on',...
+        'nosedir','+X',...
+        'headrad','rim',...
+        'shading','interp',...
+        'conv','on',...
+        'emarker',{'o','k',[],1},...
+        'numcontour',32,...
+        'whitebk','on',...
+        'colormap',colors4);
+    
+    title(t_lab)
+    colormap(colors4);
+    
+    ax = gca;
+    ax.FontSize = 12;
+    
+    c = colorbar();
+    c.TickDirection = 'out';
+    c.Box = 'off';
+    c.Label.String = 'Power (dB)';
+    c.FontSize = 12;
+    c.Limits = topo_limits;
+    drawnow;
+end
+
+set(f4,...
+    'Units','inches',...
+    'Position',[0 0 12 8]);
+cd(working_dir3);
+export_fig(f4,'Topo','-png');
+
+%% Clean Up Workspace
+clear ax;
+clear c;
+clear colors4;
+clear f4;
+clear f_index;
+clear f_wind;
+clear i;
+clear ii;
+clear t_data;
+clear t_index;
+clear t_lab;
+clear t_max;
+clear t_min;
+clear t_vector;
+clear t_wind;
+clear topo;
+clear topo_limits;
+clear topodata;
 
 %% Plot Behavioural Data
 disp('Plotting behavioral data');
 cd(working_dir2);
-colors4 = cbrewer('qual', 'Dark2', 8);
-colors4 = flipud(colors4);
+colors5 = cbrewer('qual', 'Dark2', 8);
+colors5 = flipud(colors5);
 
-f4 = figure(4);
+f5 = figure(5);
 for i = 1:3
     if i == 1
         analysis = 'accuracy';
@@ -503,7 +592,7 @@ for i = 1:3
     hold on;
     
     for c = 1:3
-        c = bar(c,plot_data(:,c),'FaceColor', colors4(c,:));
+        c = bar(c,plot_data(:,c),'FaceColor', colors5(c,:));
     end
     
     set(gca,'xtick',[1 2 3],...
@@ -612,15 +701,15 @@ for i = 1:3
         'fontweight','normal', ...
         'color','k');
     
-    colormap(colors4)
+    colormap(colors5)
     hold off
 end
 
-set(f4,...
+set(f5,...
     'Units','inches',...
     'Position',[0 0 12 8]);
 cd(working_dir3);
-export_fig(f4,'Behavior','-png');
+export_fig(f5,'Behavior','-png');
 
 %% Clean Workspace
 clear analysis;
@@ -629,7 +718,7 @@ clear c;
 clear cat;
 clear ci;
 clear ci_data;
-clear colors4;
+clear colors5;
 clear e;
 clear h;
 clear i;
@@ -668,6 +757,12 @@ clear ans;
 clear c_index1;
 clear c_index2;
 clear c_index3;
+clear cond1;
+clear cond2;
+clear f_wind1;
+clear f_wind2;
+clear t_wind1;
+clear t_wind2;
 
 %% Old Plot Code
 % plot_win = plot(final_summary.ERP.time,final_summary.ERP.data{1}(c_index1,:),...
