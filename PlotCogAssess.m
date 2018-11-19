@@ -5,10 +5,12 @@ clear;
 close all;
 
 %% Set Variables
-prefix = 'CogAssessFlynn_';
+prefix = 'CogAssess_flynn_';
 chan_name1 = 'FCz';
-chan_name2 = 'Fz';
+chan_name2 = 'Pz';
 significance = 0.05;
+x_lim = [-200 600];
+y_lim = [-10 15];
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -30,9 +32,9 @@ cd(working_dir);
 load('cog_assess.mat');
 
 for i = 1:62
-    if strcmp(final_summary.chanlocs(i).labels,chan_name1) == 1
+    if strcmp(cog_assess.chanlocs(i).labels,chan_name1) == 1
         chan_loc(i) = 1;
-    elseif strcmp(final_summary.chanlocs(i).labels,chan_name2) == 1
+    elseif strcmp(cog_assess.chanlocs(i).labels,chan_name2) == 1
         chan_loc(i) = 2;
     else
         chan_loc(i) = 0;
@@ -42,6 +44,9 @@ end
 c_index1 = find(chan_loc == 1);
 c_index2 = find(chan_loc == 2);
 sig_label = strcat('p > ',num2str(significance));
+colors1 = cbrewer('qual','Dark2',8);
+colors1 = flipud(colors1);
+time = cog_assess.time;
 
 clear i;
 clear chan_loc
@@ -78,22 +83,13 @@ for y = 1:2
         summary_data2(end+1,:) = subject_data.ERP.data{2}(c_index1,:);
     end
     
-    cond1 = isnan(summary_data1(:,1));
-    summary_data1(cond1,:) = [];
     summary_mean1 = mean(summary_data1(:,:));
-    cond1 = isnan(summary_data2(:,1));
-    summary_data2(cond1,:) = [];
     summary_mean2 = mean(summary_data2(:,:));
     summary_diff = summary_mean1 - summary_mean2;
     
-    colors1 = cbrewer('qual','Dark2',8);
-    colors1 = flipud(colors1);
-    time = cog_assess.time;
-    ci_data = cog_assess.(analysis).ci_data(:,6);
-    x_lim = [-200 600];
-    y_lim = [-10 15];
-    
-    f1 = figure(x);
+    ci_data = transpose(cog_assess.(analysis).ci_data(:,6));
+        
+    f1 = figure(y);
     hold on;
     bl = boundedline(time,summary_mean1,ci_data,...
         time,summary_mean2,ci_data,...
@@ -113,7 +109,7 @@ for y = 1:2
         'LineWidth',1);
     
     legend(leg_lab);
-    text(150,(max(ax.YLim)*0.9),sig_label,...
+    text(450,(max(ax.YLim)*0.9),sig_label,...
         'FontWeight','bold',...
         'FontAngle','italic',...
         'FontSize',10);
@@ -123,7 +119,7 @@ for y = 1:2
     ax.XLim = x_lim;
     ax.XLabel.String = 'Time (ms)';
     ax.YLim = y_lim;
-    ax.YLabel.String = 'Voltage';
+    ax.YLabel.String = 'Voltage (\muV^2)';
     ax.Legend.Location = 'southwest';
     ax.Legend.Box = 'off';
     ax.Legend.FontSize = 12;

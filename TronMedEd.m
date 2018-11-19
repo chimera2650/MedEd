@@ -11,12 +11,12 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\cog_assess.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\cog_assess.mat';
 end
 
 clear comp
@@ -348,4 +348,4 @@ clear time_point;
 clear x;
 
 %% Save Data
-save(save_path,'final_summary');
+save(save_path,'cog_assess');

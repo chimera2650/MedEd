@@ -4,26 +4,26 @@ clear;
 clc;
 
 %% Define Variables
-prefix = 'CogAssessFlynn_';
+prefix = 'CogAssess_flynn_';
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Cog Assess\RewP';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
-    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\cog_assess.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\RewP';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
-    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\cog_assess.mat';
 end
 
 clear comp
 
 %% Load Data
 cd(working_dir);
-% load('cog_assess.mat');
+load('cog_assess.mat');
 
 %% ERP Analysis
 for y = 1:2
@@ -41,7 +41,7 @@ for y = 1:2
         for i = 1:2
             for ii = 1:62
                 for iii = 1:62
-                    if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels) == 1
+                    if strcmpi(subject_data.chanlocs(iii).labels,cog_assess.chanlocs(ii).labels) == 1
                         chan_loc(iii) = 1;
                     else
                         chan_loc(iii) = 0;
@@ -62,7 +62,6 @@ for y = 1:2
             for ii = 1:file_num
                 temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
             end
-            temp_sub_sum(13,:) = [];
             temp_chan_sum(i,:) = mean(temp_sub_sum(:,:)); % Create a row for each channel
         end
         grand_summary{x} = temp_chan_sum; % Create a cell for each condition
@@ -93,7 +92,7 @@ for y = 1:2
         for i = 1:2
             for ii = 1:62
                 for iii = 1:62
-                    if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels) == 1
+                    if strcmpi(subject_data.chanlocs(iii).labels,cog_assess.chanlocs(ii).labels) == 1
                         chan_loc(iii) = 1;
                     else
                         chan_loc(iii) = 0;
@@ -114,7 +113,6 @@ for y = 1:2
             for ii = 1:file_num
                 temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
             end
-            temp_sub_sum(13,:) = [];
             temp_chan_sum(i,:) = std(temp_sub_sum(:,:)); % Create a row for each channel
         end
         grand_summary{x} = temp_chan_sum; % Create a cell for each condition
@@ -169,7 +167,9 @@ for y = 1:2
     clear subject_data;
     clear summary_data1;
     clear summary_data2;
+    clear summary_table;
     clear tbl;
+    clear temp_data;
     clear temp_data1;
     clear temp_data2;
     clear x;
@@ -197,3 +197,6 @@ clear temp_sub_sum;
 clear time_point;
 clear x;
 clear y;
+
+%% Save Data
+save(save_path,'cog_assess');
