@@ -53,14 +53,14 @@ filenames = dir(strcat(prefix,'*'));   % Get a count of file number
 file_num = length(filenames);
 
 for i = 1:200
-    subject = num2str((i*4)-200);
+    num = num2str((i*4)-200);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.ERP.data{1}(c_index1,i);
         summary_data(x,2) = subject_data.ERP.data{2}(c_index1,i);
     end
     
-    disp(['Calculating ERP confidence intervals at ' subject ' ms']);
+    disp(['Calculating ERP confidence intervals at ' num ' ms']);
     
     cond1 = isnan(summary_data(:,2));
     summary_data(cond1,:) = [];
@@ -94,14 +94,14 @@ clear x;
 cond_ttest = [];
 
 for i = 1:200
-    subject = num2str((i*4)-200);
+    num = num2str((i*4)-200);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.ERP.data{1}(c_index1,i);
         summary_data(x,2) = subject_data.ERP.data{2}(c_index1,i);
     end
     
-    disp(['Calculating ERP t-tests at ' subject ' ms']);
+    disp(['Calculating ERP t-tests at ' num ' ms']);
     
     cond1 = isnan(summary_data(:,2));
     summary_data(cond1,:) = [];
@@ -131,14 +131,14 @@ filenames = dir(strcat(prefix,'*'));   % Get a count of file number
 file_num = length(filenames);
 
 for i = 1:59
-    subject = num2str(i/2);
+    num = num2str(i/2);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.FFT.data{1}(c_index2,i);
         summary_data(x,2) = subject_data.FFT.data{3}(c_index2,i);
     end
     
-    disp(['Calculating frontal FFT confidence intervals at ' subject ' Hz']);
+    disp(['Calculating frontal FFT confidence intervals at ' num ' Hz']);
     
     cond1 = isnan(summary_data(:,1));
     summary_data(cond1,:) = [];
@@ -158,14 +158,14 @@ end
 final_summary.FFT.ci_data.frontal = ci_data;
 
 for i = 1:59
-    subject = num2str(i/2);
+    num = num2str(i/2);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.FFT.data{1}(c_index3,i);
         summary_data(x,2) = subject_data.FFT.data{3}(c_index3,i);
     end
     
-    disp(['Calculating parietal FFT confidence intervals at ' subject ' Hz']);
+    disp(['Calculating parietal FFT confidence intervals at ' num ' Hz']);
     
     cond1 = isnan(summary_data(:,1));
     summary_data(cond1,:) = [];
@@ -198,14 +198,14 @@ clear x;
 cond_ttest = [];
 
 for i = 1:59
-    subject = num2str(i/2);
+    num = num2str(i/2);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.FFT.data{1}(c_index2,i);
         summary_data(x,2) = subject_data.FFT.data{3}(c_index2,i);
     end
     
-    disp(['Calculating frontal FFT t-tests at ' subject ' Hz']);
+    disp(['Calculating frontal FFT t-tests at ' num ' Hz']);
     
     cond1 = isnan(summary_data(:,2));
     summary_data(cond1,:) = [];
@@ -220,14 +220,14 @@ final_summary.FFT.ttest.frontal = cond_ttest;
 cond_ttest = [];
 
 for i = 1:59
-    subject = num2str(i/2);
+    num = num2str(i/2);
     for x = 1:file_num
         subject_data = importdata(filenames(x).name); % Import subject data
         summary_data(x,1) = subject_data.FFT.data{1}(c_index3,i);
         summary_data(x,2) = subject_data.FFT.data{3}(c_index3,i);
     end
     
-    disp(['Calculating frontal FFT t-tests at ' subject ' Hz']);
+    disp(['Calculating frontal FFT t-tests at ' num ' Hz']);
     
     cond1 = isnan(summary_data(:,2));
     summary_data(cond1,:) = [];
@@ -261,4 +261,5 @@ clear c_index2;
 clear c_index3;
 clear file_num;
 clear filenames;
+clear num;
 clear subject_data;

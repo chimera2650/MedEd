@@ -27,12 +27,12 @@ load('final_summary.mat');
 
 %% ERP Analysis
 cd(working_dir1);
-filenames = dir(strcat(prefix,'*'));   % Get a count of file number
+filenames = dir(strcat(prefix,'*'));
 file_num = length(filenames);
+disp('Summarizing ERP by subject');
 
 for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Summarizing ERP for subject ' x]);    % Display current subject
+    subject_data = importdata(filenames(x).name);
     for i = 1:2
         for ii = 1:62
             for iii = 1:62
@@ -78,9 +78,10 @@ clear temp_data;
 clear temp_sub_sum;
 clear x;
 
+disp('Summarizing ERP descriptive stats by subject');
+
 for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Running ERP descriptive stats for subject ' x]);    % Display current subject
+    subject_data = importdata(filenames(x).name);
     for i = 1:2
         for ii = 1:62
             for iii = 1:62
@@ -103,22 +104,20 @@ disp('Combining descriptive stats for ERP');
 for x = 1:2
     for i = 1:62
         for ii = 1:file_num
-            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
+            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:);
         end
         temp_sub_sum(13,:) = [];
-        temp_chan_sum(i,:) = std(temp_sub_sum(:,:)); % Create a row for each channel
+        temp_chan_sum(i,:) = std(temp_sub_sum(:,:));
     end
-    grand_summary{x} = temp_chan_sum; % Create a cell for each condition
+    grand_summary{x} = temp_chan_sum;
 end
 final_summary.ERP.std = grand_summary;
 
 summary_table = [];
-
-disp('Running ERP ANOVAs');
+disp('Running ERP ANOVAs by subject');
 
 for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(x);    % Display current subject
+    subject_data = importdata(filenames(x).name);
     temp_data1 = transpose(subject_data.ERP.data{1}(c_index,:));
     temp_data2 = transpose(subject_data.ERP.data{2}(c_index,:));
     summary_data1(:,1) = temp_data1;
@@ -178,12 +177,13 @@ clear x;
 
 %% FFT Analysis
 cd(working_dir2);
-filenames = dir(strcat(prefix,'*'));   % Get a count of file number
+filenames = dir(strcat(prefix,'*'));
 file_num = length(filenames);
 
 for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Summarizing FFT for subject ' x]);    % Display current subject
+    num = num2str(x);
+    subject_data = importdata(filenames(x).name);
+    disp(['Summarizing FFT for subject ' num]);
     for i = 1:3
         for ii = 1:62
             for iii = 1:62
@@ -228,9 +228,10 @@ clear temp_data;
 clear temp_sub_sum;
 clear x;
 
+disp('Summarizing FFT descriptive stats by subject');
+
 for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Running FFT descriptive stats for subject ' x]);    % Display current subject
+    subject_data = importdata(filenames(x).name);
     for i = 1:3
         for ii = 1:62
             for iii = 1:62
@@ -288,8 +289,9 @@ filenames = dir(strcat(prefix,'*'));   % Get a count of file number
 file_num = length(filenames);
 
 for x = 1:file_num
+    num = num2str(x);
     subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Summarizing wavelets for subject ' x]);    % Display current subject
+    disp(['Summarizing wavelets for subject ' num]);    % Display current subject
     for i = 1:3
         for ii = 1:62
             for iii = 1:62
@@ -308,7 +310,8 @@ for x = 1:file_num
 end
 
 for x = 1:3
-    disp(['Combining wavelets for condition ' x]);
+    num = num2str(x);
+    disp(['Combining wavelets for condition ' num]);
     for i = 1:62
         for ii = 1:file_num
             temp_sub_sum(ii,:,:) = summary_data{ii}{x}(i,:,:); % Collapse by subject
@@ -338,6 +341,7 @@ clear grand_summary;
 clear i;
 clear ii;
 clear iii;
+
 clear subject_data;
 clear summary_data;
 clear summary_table;
@@ -348,4 +352,4 @@ clear time_point;
 clear x;
 
 %% Save Data
-save(save_path,'cog_assess');
+save(save_path,'final_summary');

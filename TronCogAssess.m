@@ -32,12 +32,12 @@ for y = 1:2
     elseif y == 2
         cd(working_dir2);
     end
-    filenames = dir(strcat(prefix,'*'));   % Get a count of file number
+    filenames = dir(strcat(prefix,'*'));
     file_num = length(filenames);
+    disp('Summarizing ERP by subject');
     
     for x = 1:file_num
-        subject_data = importdata(filenames(x).name); % Import subject data
-        disp(['Summarizing ERP for subject ' x]);    % Display current subject
+        subject_data = importdata(filenames(x).name);
         for i = 1:2
             for ii = 1:62
                 for iii = 1:62
@@ -86,9 +86,10 @@ for y = 1:2
     clear temp_sub_sum;
     clear x;
     
+    disp('Running ERP descriptive stats by subject');
+    
     for x = 1:file_num
-        subject_data = importdata(filenames(x).name); % Import subject data
-        disp(['Running ERP descriptive stats for subject ' x]);    % Display current subject
+        subject_data = importdata(filenames(x).name);
         for i = 1:2
             for ii = 1:62
                 for iii = 1:62
@@ -129,8 +130,7 @@ for y = 1:2
     disp('Running ERP ANOVAs');
     
     for x = 1:file_num
-        subject_data = importdata(filenames(x).name); % Import subject data
-        disp(x);    % Display current subject
+        subject_data = importdata(filenames(x).name);
         temp_data1 = transpose(subject_data.ERP.data{1}(c_index,:));
         temp_data2 = transpose(subject_data.ERP.data{2}(c_index,:));
         summary_data1(:,1) = temp_data1;
