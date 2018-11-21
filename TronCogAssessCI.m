@@ -39,7 +39,6 @@ end
 
 c_index1 = find(chan_loc == 1);
 c_index2 = find(chan_loc == 2);
-c_index3 = find(chan_loc == 3);
 
 clear chan_loc;
 clear i;
@@ -103,16 +102,18 @@ for y = 1:2
     if y == 1
         cd(working_dir1);
         analysis = 'rewp';
+        c_index = c_index1;
     elseif y == 2
         cd(working_dir2);
         analysis = 'p300';
+        c_index = c_index2;
     end
     for i = 1:200
         subject = num2str((i*4)-200);
         for x = 1:file_num
             subject_data = importdata(filenames(x).name); % Import subject data
-            summary_data(x,1) = subject_data.ERP.data{1}(c_index1,i);
-            summary_data(x,2) = subject_data.ERP.data{2}(c_index1,i);
+            summary_data(x,1) = subject_data.ERP.data{1}(c_index,i);
+            summary_data(x,2) = subject_data.ERP.data{2}(c_index,i);
         end
         
         disp(['Calculating ERP t-tests at ' subject ' ms']);
@@ -131,6 +132,7 @@ for y = 1:2
     
     clear a;
     clear b;
+    clear c_index;
     clear cond_ttest;
     clear cond1;
     clear h;
@@ -148,7 +150,6 @@ save(save_path,'cog_assess');
 %% Clean Workspace
 clear c_index1;
 clear c_index2;
-clear c_index3;
 clear file_num;
 clear filenames;
 clear subject_data;

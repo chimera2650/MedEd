@@ -79,7 +79,8 @@ summary_mean2 = mean(summary_data2(:,:));
 summary_diff = summary_mean1 - summary_mean2;
 ci_data = transpose(cog_assess.rewp.ci_data(:,6));
 
-f1 = figure(1);
+f1 = figure('Name','Reward Positivity',...
+    'NumberTitle','off');
 hold on;
 bl = boundedline(time,summary_mean1,ci_data,...
     time,summary_mean2,ci_data,...
@@ -99,7 +100,7 @@ l2 = line([min(x_lim) max(x_lim)],[0 0],...
     'LineWidth',1);
 
 legend({'Win','Loss','Difference'});
-text(550,(max(ax.YLim)*0.9),sig_label,...
+text(50,(max(y_lim)*0.9),sig_label,...
     'FontWeight','bold',...
     'FontAngle','italic',...
     'FontSize',10);
@@ -130,9 +131,10 @@ hold off
 
 set(f1,...
     'Units','inches',...
-    'Position',[0 0 12 8]);
+    'Position',[20.0000 0.4583 13.3333 9.4479]);
 cd(working_dir3);
 export_fig(f1,'RewP','-png');
+[20.0000 0.4583 13.3333 9.4479]
 
 %% Clean Workspace
 clear ax;
@@ -171,8 +173,8 @@ summary_data2 = [];
 
 for x = 1:file_num
     subject_data = importdata(filenames(x).name); % Import subject data
-    summary_data1(end+1,:) = subject_data.ERP.data{1}(c_index1,:);
-    summary_data2(end+1,:) = subject_data.ERP.data{2}(c_index1,:);
+    summary_data1(end+1,:) = subject_data.ERP.data{1}(c_index2,:);
+    summary_data2(end+1,:) = subject_data.ERP.data{2}(c_index2,:);
 end
 
 summary_mean1 = mean(summary_data1(:,:));
@@ -180,7 +182,8 @@ summary_mean2 = mean(summary_data2(:,:));
 summary_diff = summary_mean1 - summary_mean2;
 ci_data = transpose(cog_assess.p300.ci_data(:,6));
 
-f2 = figure(2);
+f2 = figure('Name','P300',...
+    'NumberTitle','off');
 hold on;
 bl = boundedline(time,summary_mean1,ci_data,...
     time,summary_mean2,ci_data,...
@@ -200,7 +203,7 @@ l2 = line([min(x_lim) max(x_lim)],[0 0],...
     'LineWidth',1);
 
 legend({'Oddball','Control','Difference'});
-text(550,(max(ax.YLim)*0.9),sig_label,...
+text(50,(max(y_lim)*0.9),sig_label,...
     'FontWeight','bold',...
     'FontAngle','italic',...
     'FontSize',10);
@@ -231,7 +234,7 @@ hold off
 
 set(f2,...
     'Units','inches',...
-    'Position',[0 0 12 8]);
+    'Position',[20.0000 0.4583 13.3333 9.4479]);
 cd(working_dir3);
 export_fig(f2,'P300','-png');
 
@@ -251,4 +254,5 @@ clear summary_data2;
 clear summary_diff;
 clear summary_mean1;
 clear summary_mean2;
+clear time;
 clear x;

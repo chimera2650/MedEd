@@ -108,7 +108,8 @@ ci_data = final_summary.ERP.ci_data(:,6);
 x_lim = [-200 600];
 y_lim = [-10 15];
 
-f1 = figure(1);
+f1 = figure('Name','Reward Positivity',...
+    'NumberTitle','off');
 hold on;
 bl = boundedline(time,summary_mean1,ci_data,...
     time,summary_mean2,ci_data,...
@@ -157,9 +158,6 @@ s.MarkerFaceColor = 'k';
 s.MarkerSize = 8;
 hold off
 
-set(f1,...
-    'Units','inches',...
-    'Position',[0 0 12 8]);
 cd(working_dir3);
 export_fig(f1,'Feedback','-png');
 
@@ -192,7 +190,8 @@ cd(working_dir2);
 colors2 = cbrewer('qual','Dark2',8);
 colors2 = flipud(colors2);
 
-f2 = figure(2);
+f2 = figure('Name','FFT',...
+    'NumberTitle','off');
 for x = 1:2
     if x == 1
         c_index = c_index2;
@@ -286,9 +285,6 @@ for x = 1:2
     hold off
 end
 
-set(f2,...
-    'Units','inches',...
-    'Position',[0 0 12 8]);
 cd(working_dir3);
 export_fig(f2,'FFT','-png');
 
@@ -328,7 +324,8 @@ cd(working_dir2);
 colors3 = cbrewer('div','RdBu',64,'PCHIP');
 colors3 = flipud(colors3);
 
-f3 = figure(3);
+f3 = figure('Name','Wavelets',...
+    'NumberTitle','off');
 for i = 1:2
     if i == 1
         c_index = c_index2;
@@ -398,9 +395,6 @@ for i = 1:2
     colormap(colors3);
 end
 
-set(f3,...
-    'Units','inches',...
-    'Position',[0 0 12 8]);
 cd(working_dir3);
 export_fig(f3,'Wavelet','-png');
 
@@ -433,7 +427,8 @@ cd(working_dir2);
 colors4 = cbrewer('div','RdBu',64,'PCHIP');
 colors4 = flipud(colors4);
 
-f4 = figure(4);
+f4 = figure('Name','Topography',...
+    'NumberTitle','off');
 for i = 1:2
     if i == 1
         t_wind = t_wind1;
@@ -486,9 +481,6 @@ for i = 1:2
     drawnow;
 end
 
-set(f4,...
-    'Units','inches',...
-    'Position',[0 0 12 8]);
 cd(working_dir3);
 export_fig(f4,'Topo','-png');
 
@@ -518,7 +510,8 @@ cd(working_dir2);
 colors5 = cbrewer('qual', 'Dark2', 8);
 colors5 = flipud(colors5);
 
-f5 = figure(5);
+f5 = figure('Name','Behavioural',...
+    'NumberTitle','off');
 for i = 1:3
     if i == 1
         analysis = 'accuracy';
@@ -706,9 +699,6 @@ for i = 1:3
     hold off
 end
 
-set(f5,...
-    'Units','inches',...
-    'Position',[0 0 12 8]);
 cd(working_dir3);
 export_fig(f5,'Behavior','-png');
 
@@ -765,80 +755,3 @@ clear f_wind1;
 clear f_wind2;
 clear t_wind1;
 clear t_wind2;
-
-%% Old Plot Code
-% plot_win = plot(final_summary.ERP.time,final_summary.ERP.data{1}(c_index1,:),...
-%     'k-',...
-%     'LineWidth',2);
-% hold on
-% plot_loss = plot(final_summary.ERP.time,final_summary.ERP.data{2}(c_index1,:),...
-%     'r--',...
-%     'LineWidth',2);
-% line([0 0],[-7.5 17.5],...
-%     'Color','k',...
-%     'LineStyle',':',...
-%     'LineWidth',1);
-% line([-200 600],[0 0],...
-%     'Color','k',...
-%     'LineStyle',':',...
-%     'LineWidth',1);
-% shade = fill([250 250 325 325],[-5 15 15 -5],[.7 .7 .7]);
-% hold off
-% title('ERP of Win/Loss in learning phase');
-% set(gca,'children',flipud(get(gca,'children')));
-% set(shade,'LineStyle','none',...
-%     'FaceAlpha',.5);
-% xlim([-200 600]);
-% ylim([-7.5 17.5]);
-% legend([plot_win plot_loss],{'Win','Loss'});
-% ax = gca;
-% ax.FontSize = 12;
-% ax.FontName = 'Arial';
-% ax.LineWidth = 1.5;
-% ax.YLabel.String = 'Power (\muV)';
-% ax.XLabel.String = 'Time (ms)';
-% ax.FontWeight = 'bold';
-% ax.Box = 'off';
-% ax.YDir = 'reverse';
-% ax.Legend.Location = 'northeast';
-% ax.Legend.Box = 'off';
-% 
-% clear ax;
-% clear plot_win;
-% clear plot_loss;
-% clear shade;
-% 
-% plot_0C = plot(final_summary.FFT.freq,final_summary.FFT.data{1}(c_index,:),...
-%     'k-',...
-%     'LineWidth',2);
-% hold on
-% plot_1C = plot(final_summary.FFT.freq,final_summary.FFT.data{2}(c_index,:),...
-%     'b--',...
-%     'LineWidth',2);
-% plot_2C = plot(final_summary.FFT.freq,final_summary.FFT.data{3}(c_index,:),...
-%     'r:',...
-%     'LineWidth',2);
-% shade = fill(shade1,shade2,[.7 .7 .7]);
-% hold off
-% title(sprintf('%s band plot of 2000ms preceeding decision',band));
-% set(gca,'children',flipud(get(gca,'children')));
-% set(shade,'LineStyle','none');
-% xlim([0 20]);
-% ylim([0 4]);
-% 
-% if i == 1
-%     legend([plot_0C plot_1C plot_2C shade],{'No Conflict','One Conflict','Two Conflict','Theta'});
-% elseif i == 2
-%     legend([plot_0C plot_1C plot_2C shade],{'No Conflict','One Conflict','Two Conflict','Alpha'});
-% end
-% 
-% ax = gca;
-% ax.FontSize = 12;
-% ax.FontName = 'Arial';
-% ax.LineWidth = 1.5;
-% ax.YLabel.String = 'Power (\muV^2)';
-% ax.XLabel.String = 'Frequency (Hz)';
-% ax.FontWeight = 'bold';
-% ax.Box = 'off';
-% ax.Legend.Location = 'northeast';
-% ax.Legend.Box = 'off';

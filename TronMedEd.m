@@ -4,352 +4,375 @@ clear;
 clc;
 
 %% Define Variables
-prefix = 'MedEdFlynn_';
+chan_count = 62; % Number of channels in analysis
+chan_name1 = 'FCz'; % Name of channel where effect occurs
+chan_name2 = 'Fz';
+chan_name3 = 'Pz';
+cond_count = 2; % Number of conditions in analysis
+d_name = 'med_ed.mat'; % Name of master data file
+prefix = 'MedEdFlynn_'; % Prefix of raw data files
+f_res = 0.5; % Frequency resolution
+freq_points = [0 30]; % Desired time range for data
+s_rate = 4; % Sampling rate in milliseconds
+time_points1 = [-200 600]; % Desired time range for data
+time_points2 = [-2000 0]; % Desired time range for data
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\cog_assess.mat';
+    master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
+    erp_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
+    fft_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    wav_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\med_ed.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\cog_assess.mat';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
+    erp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
+    fft_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    wav_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\med_ed.mat';
 end
 
 clear comp
 
 %% Load Data
-cd(working_dir);
-load('final_summary.mat');
+cd(master_dir);
+load(d_name);
+freq_range = abs(max(freq_points) - min(freq_points));
+time_range1 = abs(max(time_points1) - min(time_points1));
+time_range2 = abs(max(time_points2) - min(time_points2));
+
+for a = 1:chan_count
+    if strcmp(summary.chanlocs(a).labels,chan_name1) == 1
+        c_index(a) = 1;
+    elseif strcmp(summary.chanlocs(a).labels,chan_name2) == 1
+        c_index(a) = 2;
+    elseif strcmp(summary.chanlocs(a).labels,chan_name3) == 1
+        c_index(a) = 3;
+    else
+        c_index(a) = 0;
+    end
+end
+
+chan_num1 = find(c_index == 1);
+chan_num2 = find(c_index == 2);
+chan_num3 = find(c_index == 3);
+
+clear a;
+clear c_index;
 
 %% ERP Analysis
-cd(working_dir1);
+%Summarize ERP data by subject
+cd(erp_dir);
 filenames = dir(strcat(prefix,'*'));
 file_num = length(filenames);
 disp('Summarizing ERP by subject');
 
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name);
-    for i = 1:2
-        for ii = 1:62
-            for iii = 1:62
-                if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels) == 1
-                    chan_loc(iii) = 1;
+for a = 1:file_num
+    % First, data is collected by subject into a temporary array
+    sub_data = importdata(filenames(a).name);
+    for b = 1:cond_count
+        % Each array is divided into cells, one per condition
+        for c = 1:chan_count
+            % Each row in the cell corrosponds to a channel
+            for d = 1:chan_count
+                % This normalizes the row number to ensure that all
+                % channels corrospond to the same row
+                if strcmpi(sub_data.chanlocs(d).labels,summary.chanlocs(c).labels) == 1
+                    chan_loc(d) = 1;
                 else
-                    chan_loc(iii) = 0;
+                    chan_loc(d) = 0;
                 end
             end
             c_index = find(chan_loc == 1);
-            temp_data(ii,:) = subject_data.ERP.data{i}(c_index,:);
+            temp_data{a}{b}(c,:) = sub_data.ERP.data{b}(c_index,:);
         end
-        summary_table{i} = temp_data;
     end
-    summary_data{x} = summary_table;
 end
 
-disp('Combining subject ERP data');
-
-for x = 1:2
-    for i = 1:62
-        for ii = 1:file_num
-            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
-        end
-        temp_sub_sum(13,:) = [];
-        temp_chan_sum(i,:) = mean(temp_sub_sum(:,:)); % Create a row for each channel
-    end
-    grand_summary{x} = temp_chan_sum; % Create a cell for each condition
-end
-
-final_summary.ERP.data = grand_summary;
-
+clear a;
+clear b;
+clear c;
 clear c_index;
 clear chan_loc;
-clear i;
-clear ii;
-clear iii;
-clear subject_data;
-clear summary_data;
-clear summary_table;
-clear temp_chan_sum;
+clear d;
+clear sub_data;
+
+disp('Combining ERP data by condition');
+
+for a = 1:cond_count
+    % Data is collapsed between subjects to create condition averages
+    for b = 1:chan_count
+        for c = 1:file_num
+            temp_sum(c,:) = temp_data{c}{a}(b,:);
+        end
+        sum_data{a}(b,:) = nanmean(temp_sum(:,:));
+    end
+end
+
+summary.ERP.data = sum_data;
+
+clear a;
+clear b;
+clear c;
+clear temp_sum;
+
+% Standard Deviation for ERP
+disp('Calculating ERP standard deviations');
+
+for a = 1:cond_count
+    % Data is collapsed between subjects to create condition standard
+    % deviations
+    for b = 1:chan_count
+        for c = 1:file_num
+            temp_sum(c,:) = temp_data{c}{a}(b,:);
+        end
+        sum_data{a}(b,:) = nanstd(temp_sum(:,:));
+    end
+end
+
+summary.ERP.std = sum_data;
+
+clear a;
+clear b;
+clear c;
+clear sum_data;
 clear temp_data;
-clear temp_sub_sum;
-clear x;
+clear temp_sum;
 
-disp('Summarizing ERP descriptive stats by subject');
+% ANOVA
+disp('Calculating between-subject ANOVAs for ERP');
 
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name);
-    for i = 1:2
-        for ii = 1:62
-            for iii = 1:62
-                if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels) == 1
-                    chan_loc(iii) = 1;
-                else
-                    chan_loc(iii) = 0;
-                end
-            end
-            c_index = find(chan_loc == 1);
-            temp_data(ii,:) = subject_data.ERP.data{i}(c_index,:);
-        end
-        summary_table{i} = temp_data;
-    end
-    summary_data{x} = summary_table;
-end
-
-disp('Combining descriptive stats for ERP');
-
-for x = 1:2
-    for i = 1:62
-        for ii = 1:file_num
-            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:);
-        end
-        temp_sub_sum(13,:) = [];
-        temp_chan_sum(i,:) = std(temp_sub_sum(:,:));
-    end
-    grand_summary{x} = temp_chan_sum;
-end
-final_summary.ERP.std = grand_summary;
-
-summary_table = [];
-disp('Running ERP ANOVAs by subject');
-
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name);
-    temp_data1 = transpose(subject_data.ERP.data{1}(c_index,:));
-    temp_data2 = transpose(subject_data.ERP.data{2}(c_index,:));
-    summary_data1(:,1) = temp_data1;
-    summary_data1(:,2) = temp_data2;
+for a = 1:file_num
+    sub_data = importdata(filenames(a).name);
+    temp_data(:,1) = transpose(sub_data.ERP.data{1}(chan_num1,:));
+    temp_data(:,2) = transpose(sub_data.ERP.data{2}(chan_num1,:));
     
-    for i = 1:length(summary_data1)
-        summary_data2(i,:) = mean(summary_data1(i,:));
+    for b = 1:length(temp_data)
+        temp_sum = nanmean(temp_data(b,:),1);
     end
     
-    summary_table(end+1,:) = transpose(summary_data2);
+    sum_data(a,:) = transpose(temp_sum);
 end
 
-cond1 = isnan(summary_table(:,1));
-summary_table(cond1,:) = [];
-summary_table = transpose(summary_table);
+clear a;
+clear b;
+clear sub_data;
+clear temp_data;
+clear temp_sum;
 
-[p,tbl,stats] = anova1(summary_table,[],'off');
-ERPanova.p = p;
-ERPanova.tbl = tbl;
-ERPanova.stats = stats;
-final_summary.ERP.anova = ERPanova;
+% Remove empty rows
+nan_rows = isnan(sum_data(:,1));
+sum_data(nan_rows,:) = [];
+sum_data = transpose(sum_data);
 
-clear c_index;
-clear cond1;
-clear ERPanova;
-clear i;
+% Calculate ANOVA
+[p,tbl,stats] = anova1(sum_data,[],'off');
+sum_anova.p = p;
+sum_anova.tbl = tbl;
+sum_anova.stats = stats;
+summary.ERP.anova = sum_anova;
+
+clear chan_num;
+clear nan_rows;
 clear p;
 clear stats;
-clear subject_data;
-clear summary_data1;
-clear summary_data2;
+clear sub_data;
+clear sum_anova;
+clear sum_data;
 clear tbl;
-clear temp_data1;
-clear temp_data2;
-clear x;
 
-for x = 1:200
-    time_point(1,x) = (-200+(4*x));
+% Create a table for time points; used in plotting data
+disp('Creating timepoints for ERP');
+
+for a = 1:(time_range1/s_rate)
+    t_point(1,a) = (min(time_points1)+(s_rate*a));
 end
-final_summary.ERP.time = time_point;
 
-clear c_index;
-clear chan_loc;
-clear filenames;
-clear grand_summary;
-clear i;
-clear ii;
-clear iii;
-clear subject_data;
-clear summary_data;
-clear summary_table;
-clear temp_chan_sum;
-clear temp_data;
-clear temp_sub_sum;
-clear time_point;
-clear x;
+summary.ERP.time = t_point;
+
+clear a;
+clear t_point;
+clear time_points1;
+clear time_range1;
 
 %% FFT Analysis
-cd(working_dir2);
-filenames = dir(strcat(prefix,'*'));
-file_num = length(filenames);
+cd(fft_dir);
 
-for x = 1:file_num
-    num = num2str(x);
-    subject_data = importdata(filenames(x).name);
-    disp(['Summarizing FFT for subject ' num]);
-    for i = 1:3
-        for ii = 1:62
-            for iii = 1:62
-                if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels)
-                    chan_loc(iii) = 1;
+% Summarise FFT data by subject
+disp('Summarizing FFT by subject. Please wait...');
+
+for a = 1:file_num
+    % First, data is collected by subject into a temporary array
+    sub_data = importdata(filenames(a).name);
+    for b = 1:cond_count
+        % Each array is divided into cells, one per condition
+        for c = 1:chan_count
+            % Each row in the cell corrosponds to a channel
+            for d = 1:chan_count
+                % This normalizes the row number to ensure that all
+                % channels corrospond to the same row
+                if strcmpi(sub_data.chanlocs(d).labels,summary.chanlocs(c).labels)
+                    chan_loc(d) = 1;
                 else
-                    chan_loc(iii) = 0;
+                    chan_loc(d) = 0;
                 end
             end
             c_index = find(chan_loc == 1);
-            temp_data(ii,:) = subject_data.FFT.data{i}(c_index,:);
+            temp_data{a}{b}(c,:) = sub_data.FFT.data{b}(c_index,:);
         end
-        summary_table{i} = temp_data;
     end
-    summary_data{x} = summary_table;
 end
 
-disp('Combining subject FFT data');
-
-for x = 1:3
-    for i = 1:62
-        for ii = 1:file_num
-            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
-        end
-        temp_chan_sum(i,:) = mean(temp_sub_sum(:,:)); % Create a row for each channel
-    end
-    grand_summary{x} = temp_chan_sum; % Create a cell for each condition
-end
-final_summary.FFT.data = grand_summary;
-
+clear a;
+clear b;
+clear c;
 clear c_index;
 clear chan_loc;
-clear grand_summary;
-clear i;
-clear ii;
-clear iii;
-clear subject_data;
-clear summary_data;
-clear summary_table;
-clear temp_chan_sum;
-clear temp_data;
-clear temp_sub_sum;
-clear x;
+clear d;
+clear sub_data;
 
-disp('Summarizing FFT descriptive stats by subject');
+disp('Combining FFT data by condition');
 
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name);
-    for i = 1:3
-        for ii = 1:62
-            for iii = 1:62
-                if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels)
-                    chan_loc(iii) = 1;
-                else
-                    chan_loc(iii) = 0;
-                end
-            end
-            c_index = find(chan_loc == 1);
-            temp_data(ii,:) = subject_data.FFT.data{i}(c_index,:);
+for a = 1:cond_count
+    % Data is collapsed between subjects to create condition averages
+    for b = 1:chan_count
+        for c = 1:file_num
+            temp_sum(c,:) = temp_data{c}{a}(b,:);
         end
-        summary_table{i} = temp_data;
+        sum_data{a}(b,:) = nanmean(temp_sum(:,:));
     end
-    summary_data{x} = summary_table;
 end
 
-disp('Combining descriptive stats for FFT');
+summary.FFT.data = sum_data;
 
-for x = 1:3
-    for i = 1:62
-        for ii = 1:file_num
-            temp_sub_sum(ii,:) = summary_data{ii}{x}(i,:); % Collapse by subject
+clear a;
+clear b;
+clear c;
+clear temp_sum;
+
+% Standard deviation for FFT
+disp('Calculating FFT standard deviations');
+
+for a = 1:cond_count
+    % Data is collapsed between subjects to create condition standard
+    % deviations
+    for b = 1:chan_count
+        for c = 1:file_num
+            temp_sum(c,:) = temp_data{c}{a}(b,:);
         end
-        temp_chan_sum(i,:) = std(temp_sub_sum(:,:)); % Create a row for each channel
+        sum_data{a}(b,:) = nanstd(temp_sum(:,:));
     end
-    grand_summary{x} = temp_chan_sum; % Create a cell for each condition
 end
-final_summary.FFT.std = grand_summary;
 
-for x = 1:59
-    freq_point(1,x) = 0.5+(0.5*x);
-end
-final_summary.FFT.freq = freq_point;
+summary.FFT.std = sum_data;
 
-clear c_index;
-clear chan_loc;
-clear filenames;
-clear freq_point;
-clear grand_summary;
-clear i;
-clear ii;
-clear iii;
-clear subject_data;
-clear summary_data;
-clear summary_table;
-clear temp_chan_sum;
+clear a;
+clear b;
+clear c;
+clear sum_data;
 clear temp_data;
-clear temp_sub_sum;
-clear x;
+clear temp_sum;
+
+% Create frequency points for plots
+disp('Creating frequency points');
+
+% Create a table for frequency points; used in plotting data
+for a = 1:(freq_range/f_res)
+    f_point(1,a) = (1+min(freq_points)+(f_res*a));
+end
+
+summary.FFT.freq = f_point;
+
+clear a;
+clear f_point;
 
 %% Wavelet Analysis
-cd(working_dir2);
-filenames = dir(strcat(prefix,'*'));   % Get a count of file number
-file_num = length(filenames);
+%Summarise data
+disp('Summarizing wavelets by subject. Please wait...');
 
-for x = 1:file_num
-    num = num2str(x);
-    subject_data = importdata(filenames(x).name); % Import subject data
-    disp(['Summarizing wavelets for subject ' num]);    % Display current subject
-    for i = 1:3
-        for ii = 1:62
-            for iii = 1:62
-                if strcmpi(subject_data.chanlocs(iii).labels,final_summary.chanlocs(ii).labels)
-                    chan_loc(iii) = 1;
+for a = 1:file_num
+    % First, data is collected by subject into a temporary array
+    sub_data = importdata(filenames(a).name);
+    for b = 1:cond_count
+        % Each array is divided into cells, one per condition
+        for c = 1:chan_count
+            % Each row in the cell corrosponds to a channel
+            for d = 1:chan_count
+                % This normalizes the row number to ensure that all
+                % channels corrospond to the same row
+                if strcmpi(sub_data.chanlocs(d).labels,summary.chanlocs(c).labels)
+                    chan_loc(d) = 1;
                 else
-                    chan_loc(iii) = 0;
+                    chan_loc(d) = 0;
                 end
             end
             c_index = find(chan_loc == 1);
-            temp_data(ii,:,:) = subject_data.WAV.data{i}(c_index,:,:);
+            temp_data{a}{b}(c,:,:) = sub_data.FFT.data{b}(c_index,:);
         end
-        summary_table{i} = temp_data;
     end
-    summary_data{x} = summary_table;
 end
 
-for x = 1:3
-    num = num2str(x);
-    disp(['Combining wavelets for condition ' num]);
-    for i = 1:62
-        for ii = 1:file_num
-            temp_sub_sum(ii,:,:) = summary_data{ii}{x}(i,:,:); % Collapse by subject
-        end
-        temp_chan_sum(i,:,:) = mean(temp_sub_sum(:,:,:)); % Create a row for each channel
-    end
-    grand_summary{x} = temp_chan_sum; % Create a cell for each condition
-end
-    final_summary.wavelet.data = grand_summary;
-
-for x = 1:59
-    freq_point(1,x) = 0.5+(0.5*x);
-end
-final_summary.wavelet.freq = freq_point;
-
-for x = 1:500
-    time_point(1,x) = (4*x)-2000;
-end
-final_summary.wavelet.time = time_point;
-
+clear a;
+clear b;
+clear c;
 clear c_index;
 clear chan_loc;
-clear file_num;
-clear filenames;
-clear freq_point;
-clear grand_summary;
-clear i;
-clear ii;
-clear iii;
+clear d;
+clear sub_data;
 
-clear subject_data;
-clear summary_data;
-clear summary_table;
-clear temp_chan_sum;
-clear temp_data;
-clear temp_sub_sum;
-clear time_point;
-clear x;
+disp('Combining wavelet data by condition. Please wait...');
+
+for a = 1:cond_count
+    % Data is collapsed between subjects to create condition averages
+    for b = 1:chan_count
+        for c = 1:file_num
+            temp_sum(c,:,:) = temp_data{c}{a}(b,:,:);
+        end
+        sum_data{a}(b,:,:) = nanmean(temp_sum(:,:,:));
+    end
+end
+
+summary.WAV.data = sum_data;
+
+clear a;
+clear b;
+clear c;
+clear temp_sum;
+
+%% Create frequency and time points for plots
+disp('Creating frequency and time points');
+
+% Create a table for frequency points; used in plotting data
+for a = 1:(freq_range/f_res)
+    f_point(1,a) = (1+min(freq_points)+(f_res*a));
+end
+
+summary.WAV.freq = f_point;
+
+clear a;
+clear f_point;
+clear f_res;
+clear freq_points;
+clear freq_range;
+
+% Create a table for time points; used in plotting data
+for a = 1:(time_range2/s_rate)
+    t_point(1,a) = (min(time_points2)+(s_rate*a));
+end
+
+summary.WAV.time = t_point;
+
+clear a;
+clear s_rate;
+clear t_point;
+clear time_points2;
+clear time_range2;
 
 %% Save Data
-save(save_path,'final_summary');
+disp('Saving data');
+save(save_dir,'summary');
+
+%% Final Cleanup
+disp('Analysis complete');
+
+clearvars -except summary;
