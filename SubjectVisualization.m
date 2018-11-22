@@ -7,7 +7,6 @@ close all;
 %% Define Variables
 chan_count = 62; % Number of channels in analysis
 chan_name = 'FCz'; % Name of channel where effect occurs
-cond_count = 2; % Number of conditions in analysis
 d_name = 'med_ed.mat'; % Name of master data file
 prefix = 'MedEdFlynn_'; % Prefix of raw data files
 y_lim = [-20 20]; % Set range for y-axis
@@ -35,11 +34,9 @@ chan_num = find(c_index == 1);
 for a = 1:length(filenames)
     sub_data = importdata(filenames(a).name);
     sum_win(a,:) = sub_data.ERP.data{1}(chan_num,:);
-    sum_loss(a,:) = sub_data.ERP.data{2}(chan_num,:);
 end
 
 mean_win = nanmean(sum_win,1);
-mean_loss = nanmean(sum_loss,1);
 
 clear a;
 clear c_index;

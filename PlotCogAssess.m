@@ -5,91 +5,75 @@ clear;
 close all;
 
 %% Set Variables
-prefix = 'CogAssess_flynn_';
+chan_count = 62; % Number of channels in analysis
 chan_name1 = 'FCz';
 chan_name2 = 'Pz';
+d_name = 'cog_assess.mat'; % Name of master data file
+prefix = 'CogAssess_flynn_'; % Prefix of raw data files
+s_rate = 4; % Sampling rate in milliseconds
 significance = 0.05;
 x_lim = [-200 600];
 y_lim = [-5 15];
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Cog Assess\RewP';
-    working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
-    working_dir3 = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
+    master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\RewP';
-    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
-    working_dir3 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 
 clear comp
 
 %% Load Variables
-cd(working_dir);
-load('cog_assess.mat');
+cd(master_dir);
+load(d_name);
+set(0,'DefaultFigurePosition',[1921,45,1280,907]);
 
-for i = 1:62
-    if strcmp(cog_assess.chanlocs(i).labels,chan_name1) == 1
-        chan_loc(i) = 1;
-    elseif strcmp(cog_assess.chanlocs(i).labels,chan_name2) == 1
-        chan_loc(i) = 2;
+for a = 1:62
+    if strcmp(summary.chanlocs(a).labels,chan_name1) == 1
+        chan_loc(a) = 1;
+    elseif strcmp(summary.chanlocs(a).labels,chan_name2) == 1
+        chan_loc(a) = 2;
     else
-        chan_loc(i) = 0;
+        chan_loc(a) = 0;
     end
 end
 
-c_index1 = find(chan_loc == 1);
-c_index2 = find(chan_loc == 2);
 sig_label = strcat('p > ',num2str(significance));
-colors1 = cbrewer('qual','Dark2',8);
-colors1 = flipud(colors1);
-time = cog_assess.time;
+colors = cbrewer('qual','Dark2',8);
+colors = flipud(colors);
+time = summary.time;
 
-clear i;
-clear chan_loc
+clear a;
 
 %% Plot Reward Positivity
-cd(working_dir1);
 disp('Plotting RewP');
 
-for i = 1:200
-    if cog_assess.rewp.ttest(i,1) < significance
-        sig(i) = 1;
+for a = 1:length(time)
+    if summary.rewp.ttest(a,1) < significance
+        sig(a) = 1;
     else
-        sig(i) = NaN;
+        sig(a) = NaN;
     end
 end
 
-filenames = dir(strcat(prefix,'*'));   % Get a count of file number
-file_num = length(filenames);
-summary_data1 = [];
-summary_data2 = [];
-
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    summary_data1(end+1,:) = subject_data.ERP.data{1}(c_index1,:);
-    summary_data2(end+1,:) = subject_data.ERP.data{2}(c_index1,:);
-end
-
-summary_mean1 = mean(summary_data1(:,:));
-summary_mean2 = mean(summary_data2(:,:));
-summary_diff = summary_mean1 - summary_mean2;
-ci_data = transpose(cog_assess.rewp.ci_data(:,6));
+c_index = find(chan_loc == 1);
+sum_win = summary.rewp.data{1}(c_index,:);
+sum_loss = summary.rewp.data{2}(c_index,:);
+sum_diff = sum_win - sum_loss;
+ci_data = transpose(summary.rewp.ci_data(:,6));
 
 f1 = figure('Name','Reward Positivity',...
     'NumberTitle','off');
 hold on;
-bl = boundedline(time,summary_mean1,ci_data,...
-    time,summary_mean2,ci_data,...
-    time,summary_diff,ci_data,...
-    'cmap',colors1,'alpha');
-
+bl = boundedline(time,sum_win,ci_data,...
+    time,sum_loss,ci_data,...
+    time,sum_diff,ci_data,...
+    'cmap',colors,'alpha');
 ax = gca;
-
-s = plot(cog_assess.time,sig*(max(y_lim)*0.9),'sk');
+s = plot(time,sig*(max(y_lim)*0.9),'sk');
 l1 = line([0 0],[min(y_lim) max(y_lim)],...
     'Color','k',...
     'LineStyle',':',...
@@ -98,14 +82,11 @@ l2 = line([min(x_lim) max(x_lim)],[0 0],...
     'Color','k',...
     'LineStyle',':',...
     'LineWidth',1);
-
 legend({'Win','Loss','Difference'});
 text(50,(max(y_lim)*0.9),sig_label,...
     'FontWeight','bold',...
     'FontAngle','italic',...
     'FontSize',10);
-
-ax = gca;
 ax.FontSize = 12;
 ax.XLim = x_lim;
 ax.XLabel.String = 'Time (ms)';
@@ -116,83 +97,61 @@ ax.Legend.Box = 'off';
 ax.Legend.FontSize = 12;
 ax.Legend.FontWeight = 'bold';
 ax.YDir = 'reverse';
-
 bl(1).LineWidth = 2;
 bl(1).LineStyle = '-';
 bl(2).LineWidth = 2;
 bl(2).LineStyle = '--';
 bl(3).LineWidth = 2;
 bl(3).LineStyle = ':';
-
 s.MarkerEdgeColor = 'k';
 s.MarkerFaceColor = 'k';
 s.MarkerSize = 8;
 hold off
-
-set(f1,...
-    'Units','inches',...
-    'Position',[20.0000 0.4583 13.3333 9.4479]);
-cd(working_dir3);
+cd(save_dir);
 export_fig(f1,'RewP','-png');
-[20.0000 0.4583 13.3333 9.4479]
 
 %% Clean Workspace
+clear a;
 clear ax;
 clear bl;
 clear ci_data;
 clear f1;
-clear i;
 clear l1;
 clear l2;
 clear s;
 clear sig;
-clear subject_data;
-clear summary_data1;
-clear summary_data2;
-clear summary_diff;
-clear summary_mean1;
-clear summary_mean2;
-clear x;
+clear sum_win;
+clear sum_loss;
+clear sum_diff;
 
 %% Plot P300
-cd(working_dir2);
 disp('Plotting P300');
 
-for i = 1:200
-    if cog_assess.p300.ttest(i,1) < significance
-        sig(i) = 1;
+for a = 1:length(time)
+    if summary.p300.ttest(a,1) < significance
+        sig(a) = 1;
     else
-        sig(i) = NaN;
+        sig(a) = NaN;
     end
 end
 
 filenames = dir(strcat(prefix,'*'));   % Get a count of file number
 file_num = length(filenames);
-summary_data1 = [];
-summary_data2 = [];
-
-for x = 1:file_num
-    subject_data = importdata(filenames(x).name); % Import subject data
-    summary_data1(end+1,:) = subject_data.ERP.data{1}(c_index2,:);
-    summary_data2(end+1,:) = subject_data.ERP.data{2}(c_index2,:);
-end
-
-summary_mean1 = mean(summary_data1(:,:));
-summary_mean2 = mean(summary_data2(:,:));
-summary_diff = summary_mean1 - summary_mean2;
-ci_data = transpose(cog_assess.p300.ci_data(:,6));
+c_index = find(chan_loc == 2);
+sum_odd = summary.p300.data{1}(c_index,:);
+sum_con = summary.p300.data{2}(c_index,:);
+sum_diff = sum_odd - sum_con;
+ci_data = transpose(summary.p300.ci_data(:,6));
 
 f2 = figure('Name','P300',...
     'NumberTitle','off');
 hold on;
-bl = boundedline(time,summary_mean1,ci_data,...
-    time,summary_mean2,ci_data,...
-    time,summary_diff,ci_data,...
-    'cmap',colors1,'alpha');
-
+bl = boundedline(time,sum_odd,ci_data,...
+    time,sum_con,ci_data,...
+    time,sum_diff,ci_data,...
+    'cmap',colors,'alpha');
 ax = gca;
-
-s = plot(cog_assess.time,sig*(max(y_lim)*0.9),'sk');
+s = plot(time,sig*(max(y_lim)*0.9),'sk');
 l1 = line([0 0],[min(y_lim) max(y_lim)],...
     'Color','k',...
     'LineStyle',':',...
@@ -201,14 +160,11 @@ l2 = line([min(x_lim) max(x_lim)],[0 0],...
     'Color','k',...
     'LineStyle',':',...
     'LineWidth',1);
-
 legend({'Oddball','Control','Difference'});
 text(50,(max(y_lim)*0.9),sig_label,...
     'FontWeight','bold',...
     'FontAngle','italic',...
     'FontSize',10);
-
-ax = gca;
 ax.FontSize = 12;
 ax.XLim = x_lim;
 ax.XLabel.String = 'Time (ms)';
@@ -219,40 +175,32 @@ ax.Legend.Box = 'off';
 ax.Legend.FontSize = 12;
 ax.Legend.FontWeight = 'bold';
 ax.YDir = 'reverse';
-
 bl(1).LineWidth = 2;
 bl(1).LineStyle = '-';
 bl(2).LineWidth = 2;
 bl(2).LineStyle = '--';
 bl(3).LineWidth = 2;
 bl(3).LineStyle = ':';
-
 s.MarkerEdgeColor = 'k';
 s.MarkerFaceColor = 'k';
 s.MarkerSize = 8;
 hold off
-
-set(f2,...
-    'Units','inches',...
-    'Position',[20.0000 0.4583 13.3333 9.4479]);
-cd(working_dir3);
+cd(save_dir);
 export_fig(f2,'P300','-png');
 
 %% Clean Workspace
+clear a;
 clear ax;
 clear bl;
 clear ci_data;
 clear f2;
-clear i;
 clear l1;
 clear l2;
 clear s;
 clear sig;
-clear subject_data;
-clear summary_data1;
-clear summary_data2;
-clear summary_diff;
-clear summary_mean1;
-clear summary_mean2;
-clear time;
-clear x;
+clear sum_con;
+clear sum_diff;
+clear sum_odd;
+
+%% Final Clear
+clearvars -except summary

@@ -8,9 +8,10 @@ chan_count = 62; % Number of channels in analysis
 chan_name1 = 'FCz'; % Name of channel where effect occurs
 chan_name2 = 'Fz';
 chan_name3 = 'Pz';
-cond_count = 2; % Number of conditions in analysis
+cond_count1 = 2; % Number of conditions in analysis
+cond_count2 = 3;
 d_name = 'med_ed.mat'; % Name of master data file
-prefix = 'MedEdFlynn_'; % Prefix of raw data files
+prefix = 'MedEdFlynn_';
 f_res = 0.5; % Frequency resolution
 freq_points = [0 30]; % Desired time range for data
 s_rate = 4; % Sampling rate in milliseconds
@@ -70,7 +71,7 @@ disp('Summarizing ERP by subject');
 for a = 1:file_num
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
-    for b = 1:cond_count
+    for b = 1:cond_count1
         % Each array is divided into cells, one per condition
         for c = 1:chan_count
             % Each row in the cell corrosponds to a channel
@@ -99,7 +100,7 @@ clear sub_data;
 
 disp('Combining ERP data by condition');
 
-for a = 1:cond_count
+for a = 1:cond_count1
     % Data is collapsed between subjects to create condition averages
     for b = 1:chan_count
         for c = 1:file_num
@@ -119,7 +120,7 @@ clear temp_sum;
 % Standard Deviation for ERP
 disp('Calculating ERP standard deviations');
 
-for a = 1:cond_count
+for a = 1:cond_count1
     % Data is collapsed between subjects to create condition standard
     % deviations
     for b = 1:chan_count
@@ -197,6 +198,8 @@ clear time_range1;
 
 %% FFT Analysis
 cd(fft_dir);
+filenames = dir(strcat(prefix,'*'));
+file_num = length(filenames);
 
 % Summarise FFT data by subject
 disp('Summarizing FFT by subject. Please wait...');
@@ -204,7 +207,7 @@ disp('Summarizing FFT by subject. Please wait...');
 for a = 1:file_num
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
-    for b = 1:cond_count
+    for b = 1:cond_count2
         % Each array is divided into cells, one per condition
         for c = 1:chan_count
             % Each row in the cell corrosponds to a channel
@@ -233,7 +236,7 @@ clear sub_data;
 
 disp('Combining FFT data by condition');
 
-for a = 1:cond_count
+for a = 1:cond_count2
     % Data is collapsed between subjects to create condition averages
     for b = 1:chan_count
         for c = 1:file_num
@@ -253,7 +256,7 @@ clear temp_sum;
 % Standard deviation for FFT
 disp('Calculating FFT standard deviations');
 
-for a = 1:cond_count
+for a = 1:cond_count2
     % Data is collapsed between subjects to create condition standard
     % deviations
     for b = 1:chan_count
@@ -288,12 +291,15 @@ clear f_point;
 
 %% Wavelet Analysis
 %Summarise data
+cd(wav_dir);
+filenames = dir(strcat(prefix,'*'));
+file_num = length(filenames);
 disp('Summarizing wavelets by subject. Please wait...');
 
 for a = 1:file_num
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
-    for b = 1:cond_count
+    for b = 1:cond_count2
         % Each array is divided into cells, one per condition
         for c = 1:chan_count
             % Each row in the cell corrosponds to a channel
@@ -307,7 +313,7 @@ for a = 1:file_num
                 end
             end
             c_index = find(chan_loc == 1);
-            temp_data{a}{b}(c,:,:) = sub_data.FFT.data{b}(c_index,:);
+            temp_data{a}{b}(c,:,:) = sub_data.WAV.data{b}(c_index,:,:);
         end
     end
 end
@@ -322,7 +328,7 @@ clear sub_data;
 
 disp('Combining wavelet data by condition. Please wait...');
 
-for a = 1:cond_count
+for a = 1:cond_count2
     % Data is collapsed between subjects to create condition averages
     for b = 1:chan_count
         for c = 1:file_num
