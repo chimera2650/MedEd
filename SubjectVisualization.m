@@ -61,12 +61,16 @@ for a = 1:length(filenames)
     q = questdlg(num,... % Generate input window to keep or flag participant
         'Action',...
         'Keep',...
-        'Flag','Flag');
+        'Flag',...
+        'Cancel','Cancel');
     switch q % Define what action should be taken for each possible input
         case 'Keep'
             tracker(a,1) = 0;
         case 'Flag'
             tracker(a,1) = 1;
+        case 'Cancel'
+            close all;
+            return;
     end
     sub.Color(4) = 0.25; % Increase subject transparency to allow for next subject to be visible
 end

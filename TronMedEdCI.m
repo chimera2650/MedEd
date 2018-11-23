@@ -29,11 +29,11 @@ cd(working_dir);
 load('final_summary.mat');
 
 for i = 1:62
-    if strcmp(final_summary.chanlocs(i).labels,chan_name1) == 1
+    if strcmp(summary.chanlocs(i).labels,chan_name1) == 1
         chan_loc(i) = 1;
-    elseif strcmp(final_summary.chanlocs(i).labels,chan_name2) == 1
+    elseif strcmp(summary.chanlocs(i).labels,chan_name2) == 1
         chan_loc(i) = 2;
-    elseif strcmp(final_summary.chanlocs(i).labels,chan_name3) == 1
+    elseif strcmp(summary.chanlocs(i).labels,chan_name3) == 1
         chan_loc(i) = 3;
     else
         chan_loc(i) = 0;
@@ -78,7 +78,7 @@ for i = 1:200
     ci_data(i,6) = sqrt(ci_data(i,5)/ci_data(i,3))*(ts);
 end
 
-final_summary.ERP.ci_data = ci_data;
+summary.ERP.ci_data = ci_data;
 
 clear ci_data;
 clear cond1;
@@ -113,7 +113,7 @@ for i = 1:200
     cond_ttest(i,1) = p;
 end
 
-final_summary.ERP.ttest = cond_ttest;
+summary.ERP.ttest = cond_ttest;
 
 clear a;
 clear b;
@@ -155,7 +155,7 @@ for i = 1:59
     ci_data(i,6) = sqrt(ci_data(i,5)/ci_data(i,3))*(ts*(ci_data(i,4)-1));
 end
 
-final_summary.FFT.ci_data.frontal = ci_data;
+summary.FFT.ci_data.frontal = ci_data;
 
 for i = 1:59
     num = num2str(i/2);
@@ -182,7 +182,7 @@ for i = 1:59
     ci_data(i,6) = sqrt(ci_data(i,5)/ci_data(i,3))*(ts*(ci_data(i,4)-1));
 end
 
-final_summary.FFT.ci_data.parietal = ci_data;
+summary.FFT.ci_data.parietal = ci_data;
 
 clear ci_data;
 clear cond1;
@@ -216,7 +216,7 @@ for i = 1:59
     cond_ttest(i,1) = p;
 end
 
-final_summary.FFT.ttest.frontal = cond_ttest;
+summary.FFT.ttest.frontal = cond_ttest;
 cond_ttest = [];
 
 for i = 1:59
@@ -238,7 +238,7 @@ for i = 1:59
     cond_ttest(i,1) = p;
 end
 
-final_summary.FFT.ttest.parietal = cond_ttest;
+summary.FFT.ttest.parietal = cond_ttest;
 
 clear a;
 clear b;
