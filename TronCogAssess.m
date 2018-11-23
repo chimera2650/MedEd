@@ -33,32 +33,20 @@ cd(master_dir);
 load(d_name);
 time_range = abs(max(time_points) - min(time_points));
 
-for b = 1:chan_count
-    if strcmp(summary.chanlocs(b).labels,chan_name1) == 1
-        c_loc(b) = 1;
-    elseif strcmp(summary.chanlocs(b).labels,chan_name2) == 1
-        c_loc(b) = 2;
-    else
-        c_loc(b) = 0;
-    end
-end
-
-clear a;
-
 %% ERP Analysis
 for a = 1:2
     if a == 1
         analysis = 'rewp';
         cd(rewp_dir);
-        chan_num = find(c_loc == 1);
     elseif a == 2
         analysis = 'p300';
         cd(p3_dir);
-        chan_num = find(c_loc == 2);
     end
     
     filenames = dir(strcat(prefix,'*'));
     file_num = length(filenames);
+    
+    disp(['Summarizing ' analysis ' by subject']);
     
     for b = 1:file_num
         % First, data is collected by subject into a temporary array
@@ -85,13 +73,26 @@ for a = 1:2
     clear b;
     clear c;
     clear d;
-    clear e;
     clear c_index;
     clear chan_loc;
-    clear d;
+    clear e;
     clear sub_data;
     
-    disp('Combining ERP data by condition');
+    disp(['Generating raw ' analysis ' data table']);
+    
+    for b = 1:cond_count
+        for c = 1:file_num
+            raw_data(:,:,b,c) = temp_data{c}{b}(:,:);
+        end
+    end
+    
+    summary.(analysis).raw = raw_data;
+    
+    clear b;
+    clear c;
+    clear raw_data;
+    
+    disp(['Combining ' analysis ' data by condition']);
     
     for b = 1:cond_count
         % Data is collapsed between subjects to create condition averages
@@ -111,7 +112,7 @@ for a = 1:2
     clear temp_sum;
     
     % Standard Deviation for ERP
-    disp('Calculating ERP standard deviations');
+    disp(['Calculating ' analysis ' standard deviations']);
     
     for b = 1:cond_count
         % Data is collapsed between subjects to create condition standard
@@ -130,54 +131,75 @@ for a = 1:2
     clear c;
     clear d;
     clear sum_data;
-    clear temp_data;
     clear temp_sum;
     
-    % ANOVA
-    disp('Calculating between-subject ANOVAs for ERP');
-    
-    for b = 1:file_num
-        sub_data = importdata(filenames(b).name);
-        temp_data(:,1) = transpose(sub_data.ERP.data{1}(chan_num,:));
-        temp_data(:,2) = transpose(sub_data.ERP.data{2}(chan_num,:));
-        
-        for c = 1:length(temp_data)
-            temp_sum = nanmean(temp_data(c,:),1);
+    for b = 1:chan_count
+        for c = 1:(time_range/s_rate)
+            num = summary.chanlocs(b).labels;
+            
+            if c == 1
+                disp(['Calculating ' analysis ' confidence intervals and t-tests for ' num]);
+            end
+            
+            for d = 1:file_num
+                for e = 1:cond_count
+                    sum_data(d,e) = temp_data{d}{e}(b,c);
+                end
+            end
+            
+            cond1 = isnan(sum_data(:,2));
+            sum_data(cond1,:) = [];
+            t_data1 = sum_data(:,1);
+            t_data2 = sum_data(:,2);
+            [p,tbl] = anova1(sum_data,{'win','loss'},'off');
+            sum_data = mean(sum_data,2);
+            ci_data(c,1) = mean(sum_data);
+            ci_data(c,2) = std(sum_data);
+            ci_data(c,3) = length(sum_data);
+            ci_data(c,4) = ci_data(c,2)/sqrt(ci_data(c,3)-1);
+            ts = tinv(0.95,ci_data(c,3)-1);
+            ci_data(c,5) = tbl{3,4};
+            ci_data(c,6) = sqrt(ci_data(c,5)/ci_data(c,3))*(ts);
+            
+            clear p;
+            
+            [h,p] = ttest(t_data1,t_data2,'tail','both');
+            erp_ttest(b,c) = p;
         end
-        
-        sum_data(b,:) = transpose(temp_sum);
+        erp_ci(b,:) = transpose(ci_data(:,6));
     end
+    
+    summary.(analysis).ci_data = erp_ci;
+    summary.(analysis).ttest = erp_ttest;
     
     clear b;
     clear c;
-    clear sub_data;
-    clear temp_data;
-    clear temp_sum;
-    
-    % Remove empty rows
-    nan_rows = isnan(sum_data(:,1));
-    sum_data(nan_rows,:) = [];
-    sum_data = transpose(sum_data);
-    
-    % Calculate ANOVA
-    [p,tbl,stats] = anova1(sum_data,[],'off');
-    sum_anova.p = p;
-    sum_anova.tbl = tbl;
-    sum_anova.stats = stats;
-    summary.(analysis).anova = sum_anova;
-    
-    clear chan_num;
-    clear nan_rows;
+    clear c_index;
+    clear chan_loc;
+    clear ci_data;
+    clear cond1;
+    clear d;
+    clear e;
+    clear erp_ci;
+    clear erp_ttest;
+    clear h;
+    clear num;
     clear p;
-    clear stats;
     clear sub_data;
-    clear sum_anova;
     clear sum_data;
+    clear t_data1;
+    clear t_data2;
     clear tbl;
+    clear temp_data;
+    clear ts;
+    
+    clear b;
+    clear filenames;
+    clear file_num;
+    clear t_point;
 end
 
 clear a;
-clear c_loc;
 
 %% Create a table for time points; used in plotting data
 disp('Creating timepoints for ERP');

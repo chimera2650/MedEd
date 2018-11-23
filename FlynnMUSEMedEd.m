@@ -3,14 +3,17 @@ clear;
 
 cd('C:\Users\Jordan\Documents\MATLAB\flynn');
 
-for i = 1:3
-    if i == 1
+for a = 1:3
+    if a == 1
         analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEThetaConfig.txt';
-    elseif i == 2
+    elseif a == 2
         analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEAlphaConfig.txt';
-    elseif i == 3
+    elseif a == 3
         analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEFeedbackConfig.txt';
     end
     
-    FLYNN(analysis);
+    FLYNN(analysis,'C:\Users\Jordan\Documents\MATLAB\flynn\Standard-10-20-NEL-62.locs');
 end
+
+clear a;
+clear analysis;

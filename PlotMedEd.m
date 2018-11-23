@@ -24,6 +24,7 @@ comp = getenv('computername');
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
     erp_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
+    erpnl_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
     fft_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
     wav_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
     topo_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
@@ -32,6 +33,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
     erp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
+    erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
     fft_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
     wav_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
     topo_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
@@ -81,20 +83,20 @@ colors = cbrewer('qual','Dark2',8);
 colors = flipud(colors);
 x_lim = [-200 600];
 y_lim = [-20 20];
+c_index = find(chan_loc == 1);
 
 for a = 1:length(time)
-    if summary.ERP.ttest(a,1) < significance
-        sig(a) = 1;
+    if summary.ERP.ttest(c_index,a) < significance
+        sig(1,a) = 1;
     else
-        sig(a) = NaN;
+        sig(1,a) = NaN;
     end
 end
 
-c_index = find(chan_loc == 1);
 sum_win = summary.ERP.data{1}(c_index,:);
 sum_loss = summary.ERP.data{2}(c_index,:);
 sum_diff = sum_win - sum_loss;
-ci_data = transpose(summary.ERP.ci_data(:,6));
+ci_data = summary.ERP.ci_data(c_index,:);
 
 f1 = figure('Name','Reward Positivity',...
     'NumberTitle','off');
@@ -155,12 +157,93 @@ clear sum_win;
 clear sum_loss;
 clear sum_diff;
 
+%% Plot Non-Learners
+disp('Plotting Non-Learners');
+time = summary.ERP_NL.time;
+colors = cbrewer('qual','Dark2',8);
+colors = flipud(colors);
+x_lim = [-200 600];
+y_lim = [-20 20];
+c_index = find(chan_loc == 1);
+
+for a = 1:length(time)
+    if summary.ERP_NL.ttest(c_index,a) < significance
+        sig(1,a) = 1;
+    else
+        sig(1,a) = NaN;
+    end
+end
+
+sum_win = summary.ERP_NL.data{1}(c_index,:);
+sum_loss = summary.ERP_NL.data{2}(c_index,:);
+sum_diff = sum_win - sum_loss;
+ci_data = summary.ERP_NL.ci_data(c_index,:);
+
+f2 = figure('Name','Non-Learners',...
+    'NumberTitle','off');
+hold on;
+bl = boundedline(time,sum_win,ci_data,...
+    time,sum_loss,ci_data,...
+    time,sum_diff,ci_data,...
+    'cmap',colors,'alpha');
+ax = gca;
+s = plot(time,sig*(max(y_lim)*0.9),'sk');
+l1 = line([0 0],[min(y_lim) max(y_lim)],...
+    'Color','k',...
+    'LineStyle',':',...
+    'LineWidth',1);
+l2 = line([min(x_lim) max(x_lim)],[0 0],...
+    'Color','k',...
+    'LineStyle',':',...
+    'LineWidth',1);
+legend({'Win','Loss','Difference'});
+text(50,(max(y_lim)*0.9),sig_label,...
+    'FontWeight','bold',...
+    'FontAngle','italic',...
+    'FontSize',10);
+ax.FontSize = 12;
+ax.XLim = x_lim;
+ax.XLabel.String = 'Time (ms)';
+ax.YLim = y_lim;
+ax.YLabel.String = 'Voltage (\muV^2)';
+ax.Legend.Location = 'southwest';
+ax.Legend.Box = 'off';
+ax.Legend.FontSize = 12;
+ax.Legend.FontWeight = 'bold';
+ax.YDir = 'reverse';
+bl(1).LineWidth = 2;
+bl(1).LineStyle = '-';
+bl(2).LineWidth = 2;
+bl(2).LineStyle = '--';
+bl(3).LineWidth = 2;
+bl(3).LineStyle = ':';
+s.MarkerEdgeColor = 'k';
+s.MarkerFaceColor = 'k';
+s.MarkerSize = 8;
+hold off
+cd(save_dir);
+export_fig(f2,'Feedback NL','-png');
+
+%% Clean Workspace
+clear a;
+clear ax;
+clear bl;
+clear ci_data;
+clear f2;
+clear l1;
+clear l2;
+clear s;
+clear sig;
+clear sum_win;
+clear sum_loss;
+clear sum_diff;
+
 %% Plot FFT
 disp('Plotting FFT');
 cd(fft_dir);
 colors = cbrewer('qual','Dark2',8);
 colors = flipud(colors);
-f2 = figure('Name','FFT',...
+f3 = figure('Name','FFT',...
         'NumberTitle','off');
     
 for a = 1:2
@@ -183,17 +266,17 @@ for a = 1:2
     y_lim = [0 6];
     
     for b = 1:(length(freq))
-        if summary.FFT.ttest.(region)(b,:) < significance
-            sig(b) = 1;
+        if summary.FFT.ttest(c_index,b) < significance
+            sig(1,b) = 1;
         else
-            sig(b) = NaN;
+            sig(1,b) = NaN;
         end
     end
     
     sum_0c = summary.FFT.data{1}(c_index,1:59);
     sum_1c = summary.FFT.data{2}(c_index,1:59);
     sum_2c = summary.FFT.data{3}(c_index,1:59);
-    ci_data = transpose(summary.FFT.ci_data.(region)(:,6));
+    ci_data = summary.FFT.ci_data(c_index,1:59);
     
     subplot(1,2,a);
     hold on;
@@ -230,7 +313,7 @@ for a = 1:2
 end
 
 cd(save_dir);
-export_fig(f2,'FFT','-png');
+export_fig(f3,'FFT','-png');
 
 %% Clean Workspace
 clear a;
@@ -238,7 +321,7 @@ clear ax;
 clear b;
 clear bl;
 clear ci_data;
-clear f2;
+clear f3;
 clear s;
 clear sig;
 clear sum_0c;
@@ -250,7 +333,7 @@ disp('Plotting wavelets');
 colors3 = cbrewer('div','RdBu',64,'PCHIP');
 colors3 = flipud(colors3);
 
-f3 = figure('Name','Wavelets',...
+f4 = figure('Name','Wavelets',...
     'NumberTitle','off');
 for a = 1:2
     if a == 1
@@ -325,7 +408,7 @@ for a = 1:2
 end
 
 cd(save_dir);
-export_fig(f3,'Wavelet','-png');
+export_fig(f4,'Wavelet','-png');
 
 %% Clean Workspace
 clear a;
@@ -336,7 +419,7 @@ clear c_index;
 clear chan_name;
 clear colors;
 clear cpos;
-clear f3;
+clear f4;
 clear freq;
 clear i;
 clear plot_0C;
@@ -358,7 +441,7 @@ disp('Plotting topographies');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-f4 = figure('Name','Topography',...
+f5 = figure('Name','Topography',...
     'NumberTitle','off');
 for a = 1:2
     if a == 1
@@ -413,13 +496,13 @@ for a = 1:2
 end
 
 cd(save_dir);
-export_fig(f4,'Topo','-png');
+export_fig(f5,'Topo','-png');
 
 %% Clean Up Workspace
 clear ax;
 clear c;
 clear colors;
-clear f4;
+clear f5;
 clear f_index;
 clear f_wind;
 clear i;
@@ -441,7 +524,7 @@ cd(beh_dir);
 colors = cbrewer('qual', 'Dark2', 8);
 colors = flipud(colors);
 
-f5 = figure('Name','Behavioural',...
+f6 = figure('Name','Behavioural',...
     'NumberTitle','off');
 for a = 1:3
     if a == 1
@@ -631,7 +714,7 @@ for a = 1:3
 end
 
 cd(save_dir);
-export_fig(f5,'Behavior','-png');
+export_fig(f6,'Behavior','-png');
 
 %% Clean Workspace
 clear analysis;
@@ -642,7 +725,7 @@ clear ci;
 clear ci_data;
 clear colors5;
 clear e;
-clear f5;
+clear f6;
 clear h;
 clear i;
 clear ii;
