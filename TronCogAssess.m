@@ -20,10 +20,10 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     p3_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\cog_assess.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    rewp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\RewP';
-    p3_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Cog Assess\P300';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\cog_assess.mat';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess';
+    rewp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\RewP';
+    p3_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\P300';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\cog_assess.mat';
 end
 
 clear comp
@@ -68,8 +68,13 @@ for a = 1:2
                 temp_data{b}{c}(d,:) = sub_data.ERP.data{c}(c_index,:);
             end
         end
+        artifacts(a,1) = mean(cell2mat(sub_data.ERP.nAccepted));
+        artifacts(a,2) = mean(cell2mat(sub_data.ERP.nRejected));
     end
     
+    summary.(analysis).artifacts = artifacts;
+    
+    clear artifacts;
     clear b;
     clear c;
     clear d;
@@ -133,14 +138,29 @@ for a = 1:2
     clear sum_data;
     clear temp_sum;
     
+    if a == 1
+        dispstat('','init');
+        dispstat(sprintf('Calculating RewP confidence intervals and t-tests. Please wait...'),'keepthis');
+    elseif a == 2
+        dispstat('','init');
+        dispstat(sprintf('Calculating P300 confidence intervals and t-tests. Please wait...'),'keepthis');
+    end
+    
     for b = 1:chan_count
+        if b == 1
+            perc_last = 0;
+            dispstat(sprintf('Progress %d%%',0))
+        end
+        
+        perc_stat = round((b/chan_count)*100);
+        
+        if perc_stat ~= perc_last
+            dispstat(sprintf('Progress %d%%',perc_stat));
+        end
+        
+        perc_last = perc_stat;
+        
         for c = 1:(time_range/s_rate)
-            num = summary.chanlocs(b).labels;
-            
-            if c == 1
-                disp(['Calculating ' analysis ' confidence intervals and t-tests for ' num]);
-            end
-            
             for d = 1:file_num
                 for e = 1:cond_count
                     sum_data(d,e) = temp_data{d}{e}(b,c);
@@ -166,9 +186,11 @@ for a = 1:2
             [h,p] = ttest(t_data1,t_data2,'tail','both');
             erp_ttest(b,c) = p;
         end
+        
         erp_ci(b,:) = transpose(ci_data(:,6));
     end
     
+    dispstat('Finished.','keepprev');
     summary.(analysis).ci_data = erp_ci;
     summary.(analysis).ttest = erp_ttest;
     
@@ -208,7 +230,7 @@ for a = 1:(time_range/s_rate)
     t_point(1,a) = (min(time_points)+(s_rate*a));
 end
 
-summary.ERP.time = t_point;
+summary.time = t_point;
 
 clear a;
 clear t_point;

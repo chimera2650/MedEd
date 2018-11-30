@@ -10,9 +10,9 @@ chan_name = 'FCz'; % Name of channel where effect occurs
 d_name = 'med_ed.mat'; % Name of master data file
 prefix = 'MedEdFlynn_'; % Prefix of raw data files
 y_lim = [-20 20]; % Set range for y-axis
-master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data'; % Location of master data file
-erp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback'; % Location of raw data for condition 1
-save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\flag.mat';  % Location where analyzed data is to be saved
+master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd'; % Location of master data file
+erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback'; % Location of raw data for condition 1
+save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\flag.mat';  % Location where analyzed data is to be saved
 
 %% Load Data
 cd(master_dir);

@@ -22,22 +22,22 @@ cond2 = 3;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-    erp_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    erpnl_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
-    fft_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    wav_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    topo_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    beh_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral';
+    master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
+    erp_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Feedback';
+    erpnl_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Feedback NL';
+    fft_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    wav_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    topo_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    beh_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    erp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
-    fft_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    wav_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    topo_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    beh_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
+    erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback';
+    erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback NL';
+    fft_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
+    wav_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
+    topo_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
+    beh_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 

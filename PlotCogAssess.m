@@ -17,10 +17,10 @@ y_lim = [-5 15];
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
+    master_dir = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess';
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 
@@ -50,20 +50,20 @@ clear a;
 
 %% Plot Reward Positivity
 disp('Plotting RewP');
+c_index = find(chan_loc == 1);
 
 for a = 1:length(time)
-    if summary.rewp.ttest(a,1) < significance
-        sig(a) = 1;
+    if summary.rewp.ttest(c_index,a) < significance
+        sig(1,a) = 1;
     else
-        sig(a) = NaN;
+        sig(1,a) = NaN;
     end
 end
 
-c_index = find(chan_loc == 1);
 sum_win = summary.rewp.data{1}(c_index,:);
 sum_loss = summary.rewp.data{2}(c_index,:);
 sum_diff = sum_win - sum_loss;
-ci_data = transpose(summary.rewp.ci_data(:,6));
+ci_data = summary.rewp.ci_data(c_index,:);
 
 f1 = figure('Name','Reward Positivity',...
     'NumberTitle','off');
@@ -126,22 +126,21 @@ clear sum_diff;
 
 %% Plot P300
 disp('Plotting P300');
+c_index = find(chan_loc == 2);
 
 for a = 1:length(time)
-    if summary.p300.ttest(a,1) < significance
-        sig(a) = 1;
+    if summary.p300.ttest(c_index,a) < significance
+        sig(1,a) = 1;
     else
-        sig(a) = NaN;
+        sig(1,a) = NaN;
     end
 end
 
-filenames = dir(strcat(prefix,'*'));   % Get a count of file number
-file_num = length(filenames);
-c_index = find(chan_loc == 2);
 sum_odd = summary.p300.data{1}(c_index,:);
 sum_con = summary.p300.data{2}(c_index,:);
 sum_diff = sum_odd - sum_con;
-ci_data = transpose(summary.p300.ci_data(:,6));
+ci_data = 
+summary.p300.ci_data(c_index,:);
 
 f2 = figure('Name','P300',...
     'NumberTitle','off');

@@ -5,9 +5,6 @@ clc;
 
 %% Define Variables
 chan_count = 62; % Number of channels in analysis
-chan_name1 = 'FCz'; % Name of channel where effect occurs
-chan_name2 = 'Fz';
-chan_name3 = 'Pz';
 cond_count1 = 2; % Number of conditions in analysis
 cond_count2 = 3;
 d_name = 'med_ed.mat'; % Name of master data file
@@ -20,19 +17,19 @@ time_points2 = [-2000 0]; % Desired time range for data
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    master_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data';
-    erp_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    erpnl_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
-    fft_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    wav_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\med_ed.mat';
+    master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
+    erp_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Feedback';
+    erpnl_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Feedback NL';
+    fft_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    wav_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    master_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    erp_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback';
-    erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Feedback NL';
-    fft_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    wav_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\med_ed.mat';
+    master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
+    erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback';
+    erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback NL';
+    fft_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
+    wav_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
 end
 
 clear comp
@@ -71,9 +68,14 @@ for a = 1:file_num
             temp_data{a}{b}(c,:) = sub_data.ERP.data{b}(c_index,:);
         end
     end
+    artifacts(a,1) = mean(cell2mat(sub_data.ERP.nAccepted));
+    artifacts(a,2) = mean(cell2mat(sub_data.ERP.nRejected));
 end
 
+summary.ERP.artifacts = artifacts;
+
 clear a;
+clear artifacts;
 clear b;
 clear c;
 clear c_index;
@@ -136,13 +138,23 @@ clear c;
 clear sum_data;
 clear temp_sum;
 
+dispstat('','init');
+dispstat(sprintf('Begining ERP confidence intervals...'),'keepthis');
+
 for a = 1:chan_count
-    for b = 1:(time_range1/s_rate)
-        num = summary.chanlocs(a).labels;
-        
-        if b == 1
-            disp(['Calculating ERP confidence intervals and t-tests for ' num]);
+    for b = 1:(time_range1/s_rate)        
+        if a == 1
+            perc_last = 0;
+            dispstat(sprintf('Progress %d%%',0))
         end
+        
+        perc_stat = round((a/chan_count)*100);
+        
+        if perc_stat ~= perc_last
+            dispstat(sprintf('Progress %d%%',perc_stat));
+        end
+        
+        perc_last = perc_stat;
         
         for c = 1:file_num
             for d = 1:cond_count1
@@ -172,6 +184,7 @@ for a = 1:chan_count
     erp_ci(a,:) = transpose(ci_data(:,6));
 end
 
+dispstat('Finished.','keepprev');
 summary.ERP.ci_data = erp_ci;
 summary.ERP.ttest = erp_ttest;
 
@@ -238,9 +251,14 @@ for a = 1:file_num
             temp_data{a}{b}(c,:) = sub_data.ERP.data{b}(c_index,:);
         end
     end
+    artifacts(a,1) = mean(cell2mat(sub_data.ERP.nAccepted));
+    artifacts(a,2) = mean(cell2mat(sub_data.ERP.nRejected));
 end
 
+summary.ERP_NL.artifacts = artifacts;
+
 clear a;
+clear atrifacts;
 clear b;
 clear c;
 clear c_index;
@@ -303,13 +321,23 @@ clear c;
 clear sum_data;
 clear temp_sum;
 
+dispstat('','init');
+dispstat(sprintf('Begining NL confidence intervals...'),'keepthis');
+
 for a = 1:chan_count
     for b = 1:(time_range1/s_rate)
-        num = summary.chanlocs(a).labels;
-        
-        if b == 1
-            disp(['Calculating ERP NL confidence intervals and t-tests for ' num]);
+        if a == 1
+            perc_last = 0;
+            dispstat(sprintf('Progress %d%%',0))
         end
+        
+        perc_stat = round((a/chan_count)*100);
+        
+        if perc_stat ~= perc_last
+            dispstat(sprintf('Progress %d%%',perc_stat));
+        end
+        
+        perc_last = perc_stat;
         
         for c = 1:file_num
             for d = 1:cond_count1
@@ -339,6 +367,7 @@ for a = 1:chan_count
     erp_ci(a,:) = transpose(ci_data(:,6));
 end
 
+dispstat('Finished.','keepprev');
 summary.ERP_NL.ci_data = erp_ci;
 summary.ERP_NL.ttest = erp_ttest;
 
@@ -385,9 +414,22 @@ filenames = dir(strcat(prefix,'*'));
 file_num = length(filenames);
 
 % Summarise FFT data by subject
-disp('Summarizing FFT by subject. Please wait...');
+dispstat('','init');
+dispstat(sprintf('Summarizing FFT by subject. Please wait...'),'keepthis');
 
 for a = 1:file_num
+    if a == 1
+        perc_last = 0;
+        dispstat(sprintf('Progress %d%%',0))
+    end
+    
+    perc_stat = round((a/file_num)*100);
+    
+    if perc_stat ~= perc_last
+        dispstat(sprintf('Progress %d%%',perc_stat));
+    end
+    
+    perc_last = perc_stat;
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
     for b = 1:cond_count2
@@ -407,9 +449,15 @@ for a = 1:file_num
             temp_data{a}{b}(c,:) = sub_data.FFT.data{b}(c_index,:);
         end
     end
+    artifacts(a,1) = mean(cell2mat(sub_data.FFT.nAccepted));
+    artifacts(a,2) = mean(cell2mat(sub_data.FFT.nRejected));
 end
 
+dispstat('Finished.','keepprev');
+summary.FFT.artifacts = artifacts;
+
 clear a;
+clear artifacts;
 clear b;
 clear c;
 clear c_index;
@@ -472,16 +520,26 @@ clear c;
 clear sum_data;
 clear temp_sum;
 
+dispstat('','init');
+dispstat(sprintf('Begining FFT confidence intervals...'),'keepthis');
+
 for a = 1:chan_count
     for b = 1:(freq_range/f_res)
-        num = summary.chanlocs(a).labels;
-        
-        if b == 1
-            disp(['Calculating FFT confidence intervals and t-tests for ' num]);
+        if a == 1
+            perc_last = 0;
+            dispstat(sprintf('Progress %d%%',0))
         end
         
+        perc_stat = round((a/chan_count)*100);
+        
+        if perc_stat ~= perc_last
+            dispstat(sprintf('Progress %d%%',perc_stat));
+        end
+        
+        perc_last = perc_stat;
+        
         for c = 1:file_num
-            for d = 1:cond_count1
+            for d = 1:cond_count2
                 sum_data(c,d) = temp_data{c}{d}(a,b);
             end
         end
@@ -489,8 +547,8 @@ for a = 1:chan_count
         cond1 = isnan(sum_data(:,2));
         sum_data(cond1,:) = [];
         t_data1 = sum_data(:,1);
-        t_data2 = sum_data(:,2);
-        [p,tbl] = anova1(sum_data,{'win','loss'},'off');
+        t_data2 = sum_data(:,3);
+        [p,tbl] = anova1(sum_data,{'No Conflict','One Conflict','Two Conflict'},'off');
         sum_data = mean(sum_data,2);
         ci_data(b,1) = mean(sum_data);
         ci_data(b,2) = std(sum_data);
@@ -508,6 +566,7 @@ for a = 1:chan_count
     fft_ci(a,:) = transpose(ci_data(:,6));
 end
 
+dispstat('Finished.','keepprev');
 summary.FFT.ci_data = fft_ci;
 summary.FFT.ttest = fft_ttest;
 
@@ -552,9 +611,22 @@ clear file_num;
 cd(wav_dir);
 filenames = dir(strcat(prefix,'*'));
 file_num = length(filenames);
-disp('Summarizing wavelets by subject. Please wait...');
+dispstat('','init');
+dispstat(sprintf('Summarizing wavelets by subject. Please wait...'),'keepthis');
 
 for a = 1:file_num
+    if a == 1
+        perc_last = 0;
+        dispstat(sprintf('Progress %d%%',0))
+    end
+    
+    perc_stat = round((a/file_num)*100);
+    
+    if perc_stat ~= perc_last
+        dispstat(sprintf('Progress %d%%',perc_stat));
+    end
+    
+    perc_last = perc_stat;
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
     for b = 1:cond_count2
@@ -574,15 +646,31 @@ for a = 1:file_num
             temp_data{a}{b}(c,:,:) = sub_data.WAV.data{b}(c_index,:,:);
         end
     end
+    artifacts(a,1) = mean(cell2mat(sub_data.WAV.nAccepted));
+    artifacts(a,2) = mean(cell2mat(sub_data.WAV.nRejected));
 end
 
+dispstat('Finished.','keepprev');
+summary.WAV.artifacts = artifacts;
+
 clear a;
+clear artifacts;
 clear b;
 clear c;
 clear c_index;
 clear chan_loc;
 clear d;
 clear sub_data;
+
+disp('Generating raw wavelet data table');
+
+for a = 1:cond_count2
+    for b = 1:file_num
+       raw_data(:,:,:,a,b) = temp_data{b}{a}(:,:,:); 
+    end
+end
+
+summary.FFT.raw = raw_data;
 
 disp('Combining wavelet data by condition. Please wait...');
 

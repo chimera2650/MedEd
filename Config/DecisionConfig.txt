@@ -2,7 +2,7 @@
 "001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,031,033,035,037,041,043,044,047,048,049,050,051,054" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
 "[]" % Baseline correction (use [] for no baseline)
 "15,150" % Artifact parameters (gradient, amplitude)
-"C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Decision\MedEdFlynn_"
+"C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision\MedEdFlynn_"
 %"ERP,Decision (No Conflict),-1996,0,0CD" % ERP analysis, marker, start time, end time, condition name
 %"ERP,Decision (One Conflict),-1996,0,1CD"
 %"ERP,Decision (Two Conflict),-1996,0,2CD"

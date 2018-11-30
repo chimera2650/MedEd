@@ -10,22 +10,22 @@ sub_keep = '001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    working_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\';
-    working_dir1 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
-    working_dir2 = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';
-    save_path = 'C:\Users\chime\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    working_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
+    working_dir1 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
+    working_dir2 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral\Raw';
+    save_path = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
-    working_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data';
-    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\';
-    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\Big System\Behavioral\Raw\';
-    save_path = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Data\final_summary.mat';
+    working_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
+    working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
+    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral\Raw';
+    save_path = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
 end
 
 clear comp
 
 %% Load Data
 cd(working_dir);
-load('final_summary.mat');
+load('med_ed.mat');
 cd(working_dir1);
 
 if strcmp(analysis,'feedback') == 1
@@ -50,15 +50,15 @@ end
 
 clear x;
 
-final_summary.behavioral = [];
-final_summary.behavioral.ttest = [];
-final_summary.behavioral.ttest = string(final_summary.behavioral.ttest);
-final_summary.behavioral.ttest(2,1) = '0-1';
-final_summary.behavioral.ttest(3,1) = '0-2';
-final_summary.behavioral.ttest(4,1) = '1-2';
-final_summary.behavioral.ttest(1,2) = 'accuracy';
-final_summary.behavioral.ttest(1,3) = 'reactiontime';
-final_summary.behavioral.ttest(1,4) = 'confidence';
+summary.behavioral = [];
+summary.behavioral.ttest = [];
+summary.behavioral.ttest = string(summary.behavioral.ttest);
+summary.behavioral.ttest(2,1) = '0-1';
+summary.behavioral.ttest(3,1) = '0-2';
+summary.behavioral.ttest(4,1) = '1-2';
+summary.behavioral.ttest(1,2) = 'accuracy';
+summary.behavioral.ttest(1,3) = 'reactiontime';
+summary.behavioral.ttest(1,4) = 'confidence';
 
 %% Correlate conflict score
 disp('Correlating conflict scores');
@@ -66,14 +66,14 @@ disp('Correlating conflict scores');
 subject_data.cfscore = zeros(nrow,1);
 subject_data.cfscore = (1-(((abs(subject_data.ALT-70)/60)+(abs(subject_data.AST-275)/225))*0.5));
 
-final_summary.behavioral.correlation = [];
-final_summary.behavioral.correlation = string(final_summary.behavioral.correlation);
-final_summary.behavioral.correlation(1,1) = 'winloss';
-final_summary.behavioral.correlation(2,1) = round(corr(subject_data.cfscore,subject_data.winloss),3);
-final_summary.behavioral.correlation(1,2) = 'RT';
-final_summary.behavioral.correlation(2,2) = round(corr(subject_data.cfscore,subject_data.RT),3);
-final_summary.behavioral.correlation(1,3) = 'confidence';
-final_summary.behavioral.correlation(2,3) = round(corr(subject_data.cfscore,subject_data.confidence),3);
+summary.behavioral.correlation = [];
+summary.behavioral.correlation = string(summary.behavioral.correlation);
+summary.behavioral.correlation(1,1) = 'winloss';
+summary.behavioral.correlation(2,1) = round(corr(subject_data.cfscore,subject_data.winloss),3);
+summary.behavioral.correlation(1,2) = 'RT';
+summary.behavioral.correlation(2,2) = round(corr(subject_data.cfscore,subject_data.RT),3);
+summary.behavioral.correlation(1,3) = 'confidence';
+summary.behavioral.correlation(2,3) = round(corr(subject_data.cfscore,subject_data.confidence),3);
 
 clear nrow;
 clear ncol;
@@ -225,9 +225,9 @@ clear i;
 clear temp_data;
 clear sigaccuracy;
 
-final_summary.behavioral.ttest(2,2) = ttest(accuracy.significance.c0,accuracy.significance.c1);
-final_summary.behavioral.ttest(3,2) = ttest(accuracy.significance.c0,accuracy.significance.c2);
-final_summary.behavioral.ttest(4,2) = ttest(accuracy.significance.c1,accuracy.significance.c2);
+summary.behavioral.ttest(2,2) = ttest(accuracy.significance.c0,accuracy.significance.c1);
+summary.behavioral.ttest(3,2) = ttest(accuracy.significance.c0,accuracy.significance.c2);
+summary.behavioral.ttest(4,2) = ttest(accuracy.significance.c1,accuracy.significance.c2);
 
 %% Reaction Time
 disp('Summarizing reaction time data');
@@ -376,9 +376,9 @@ clear temp_data1;
 clear temp_data2;
 clear sigRT;
 
-final_summary.behavioral.ttest(2,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c1);
-final_summary.behavioral.ttest(3,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c2);
-final_summary.behavioral.ttest(4,3) = ttest(reactiontime.significance.c1,reactiontime.significance.c2);
+summary.behavioral.ttest(2,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c1);
+summary.behavioral.ttest(3,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c2);
+summary.behavioral.ttest(4,3) = ttest(reactiontime.significance.c1,reactiontime.significance.c2);
 
 %% Confidence
 disp('Summarizing confidence data');
@@ -528,9 +528,9 @@ clear temp_data2;
 clear sigconf;
 clear subject_data;
 
-final_summary.behavioral.ttest(2,4) = ttest(confidence.significance.c0,confidence.significance.c1);
-final_summary.behavioral.ttest(3,4) = ttest(confidence.significance.c0,confidence.significance.c2);
-final_summary.behavioral.ttest(4,4) = ttest(confidence.significance.c1,confidence.significance.c2);
+summary.behavioral.ttest(2,4) = ttest(confidence.significance.c0,confidence.significance.c1);
+summary.behavioral.ttest(3,4) = ttest(confidence.significance.c0,confidence.significance.c2);
+summary.behavioral.ttest(4,4) = ttest(confidence.significance.c1,confidence.significance.c2);
 
 %% Summarize Important Variables
 disp('Summarizing important variables');
@@ -602,13 +602,13 @@ clear ultra;
 
 %% Consolidate Data
 disp('Consolidating and saving data');
-final_summary.behavioral.accuracy = accuracy;
-final_summary.behavioral.reactiontime = reactiontime;
-final_summary.behavioral.confidence = confidence;
-final_summary.behavioral.variables = variables;
+summary.behavioral.accuracy = accuracy;
+summary.behavioral.reactiontime = reactiontime;
+summary.behavioral.confidence = confidence;
+summary.behavioral.variables = variables;
 
 %% Save Data
-save(save_path,'final_summary');
+save(save_path,'summary');
 
 %% Clean Up Workspace
 clear accuracy;
