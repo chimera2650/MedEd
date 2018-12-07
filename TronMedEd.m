@@ -524,7 +524,7 @@ dispstat('','init');
 dispstat(sprintf('Begining FFT confidence intervals...'),'keepthis');
 
 for a = 1:chan_count
-    for b = 1:(freq_range/f_res)
+    for b = 1:((freq_range/f_res)-1)
         if a == 1
             perc_last = 0;
             dispstat(sprintf('Progress %d%%',0))
@@ -541,13 +541,22 @@ for a = 1:chan_count
         for c = 1:file_num
             for d = 1:cond_count2
                 sum_data(c,d) = temp_data{c}{d}(a,b);
+                for e = 1:5
+                    f = b-3+e;
+                    if f < 1
+                        win_data(e) = NaN;
+                    else
+                        win_data(e) = temp_data{c}{d}(a,f);
+                    end
+                end
+                t_data(c,d) = nanmean(win_data);
             end
         end
         
         cond1 = isnan(sum_data(:,2));
         sum_data(cond1,:) = [];
-        t_data1 = sum_data(:,1);
-        t_data2 = sum_data(:,3);
+        t_data1 = t_data(:,1);
+        t_data2 = t_data(:,3);
         [p,tbl] = anova1(sum_data,{'No Conflict','One Conflict','Two Conflict'},'off');
         sum_data = mean(sum_data,2);
         ci_data(b,1) = mean(sum_data);
@@ -567,8 +576,8 @@ for a = 1:chan_count
 end
 
 dispstat('Finished.','keepprev');
-summary.FFT.ci_data = fft_ci;
-summary.FFT.ttest = fft_ttest;
+summary.FFT.ci_data = fft_ci(:,1:59);
+summary.FFT.ttest = fft_ttest(:,1:59);
 
 clear a;
 clear b;
@@ -629,6 +638,7 @@ for a = 1:file_num
     perc_last = perc_stat;
     % First, data is collected by subject into a temporary array
     sub_data = importdata(filenames(a).name);
+    
     for b = 1:cond_count2
         % Each array is divided into cells, one per condition
         for c = 1:chan_count
@@ -670,7 +680,11 @@ for a = 1:cond_count2
     end
 end
 
-summary.FFT.raw = raw_data;
+summary.WAV.raw = raw_data;
+
+clear a;
+clear b;
+clear raw_data;
 
 disp('Combining wavelet data by condition. Please wait...');
 
@@ -691,12 +705,61 @@ clear b;
 clear c;
 clear temp_sum;
 
+dispstat('','init');
+dispstat(sprintf('Calculating Cohens d between no conflict and high conflict conditions. Please wait...'),'keepthis');
+
+for a = 1:chan_count
+    if a == 1
+        perc_last = 0;
+        dispstat(sprintf('Progress %d%%',0))
+    end
+    
+    perc_stat = round((a/chan_count)*100);
+    
+    if perc_stat ~= perc_last
+        dispstat(sprintf('Progress %d%%',perc_stat));
+    end
+    
+    perc_last = perc_stat;
+    
+    for b = 1:((freq_range/f_res)-1)
+        for c = 1:(time_range2/s_rate)
+            for d = 1:file_num
+                t_data(1,d) = temp_data{d}{1}(a,b,c);
+                t_data(2,d) = temp_data{d}{3}(a,b,c);
+            end
+            
+            stdev(1) = std(t_data(1,:));
+            stdev(2) = std(t_data(2,:));
+            m_data(1) = mean(t_data(1,:));
+            m_data(2) = mean(t_data(2,:));
+            pool_stdev = sqrt(((stdev(1)^2)+(stdev(2)^2))/(file_num-2));
+            cohen(a,b,c) = (m_data(2)-m_data(1))/pool_stdev;
+        end
+    end
+end
+
+dispstat('Finished.','keepprev');
+summary.WAV.cohen = cohen;
+
+clear a;
+clear b;
+clear c;
+clear cohen;
+clear d;
+clear m_data;
+clear num;
+clear pool_stdev;
+clear std;
+clear t_data;
+clear temp_data;
+
 %% Create frequency and time points for plots
 disp('Creating frequency and time points');
 
 % Create a table for frequency points; used in plotting data
 for a = 1:(freq_range/f_res)
-    f_point(1,a) = (1+min(freq_points)+(f_res*a));
+    f_point(1,a) = (min(freq_points)+((f_res*a)+0.5));
 end
 
 summary.WAV.freq = f_point;

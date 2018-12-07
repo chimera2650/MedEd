@@ -30,6 +30,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     topo_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
     beh_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
+    set(0,'DefaultFigurePosition','remove');
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback';
@@ -39,6 +40,7 @@ elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     topo_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
     beh_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
+    set(0,'DefaultFigurePosition',[1921,45,1280,907]);
 end
 
 clear comp
@@ -46,7 +48,6 @@ clear comp
 %% Load Variables
 cd(master_dir);
 load(d_name);
-set(0,'DefaultFigurePosition',[1921,45,1280,907]);
 
 for a = 1:62
     if strcmp(summary.chanlocs(a).labels,chan_name1) == 1
@@ -384,6 +385,7 @@ for a = 1:2
     drawnow;
     
     ax = gca;
+    ax.CLim = wav_limits;
     ax.FontSize = 12;
     ax.FontName = 'Arial';
     ax.LineWidth = 1.5;
@@ -485,6 +487,7 @@ for a = 1:2
     
     ax = gca;
     ax.FontSize = 12;
+    ax.CLim = topo_limits;
     
     c = colorbar();
     c.TickDirection = 'out';
@@ -757,6 +760,114 @@ clear ylab;
 clear ypos1;
 clear ypos2;
 clear ypos3;
+
+%% Plot Cohen's d for wavelets
+disp('Plotting Cohens d');
+colors6 = cbrewer('div','RdBu',64,'PCHIP');
+colors6 = flipud(colors6);
+
+f6 = figure('Name','Cohens d',...
+    'NumberTitle','off');
+
+for a = 1:2
+    if a == 1
+        c_index = find(chan_loc == 2);
+        chan_name = chan_name2;
+        y_lim = [4 8];
+        y_tick = [4 6 8];
+        % t_data(:,:,:,1) = squeeze(summary.WAV.cohen(3,7:15,:));
+        % t_data(:,:,:,2) = squeeze(summary.WAV.cohen(4,7:15,:));
+        % plotdata = squeeze(mean(t_data,4));
+        plotdata = squeeze(summary.WAV.cohen(c_index,7:15,:));
+        freq = summary.WAV.freq(1,7:15)-0.5;
+    elseif a == 2
+        c_index = find(chan_loc == 3);
+        chan_name = chan_name3;
+        y_lim = [8 15];
+        y_tick = [8 10 12 14];
+        plotdata = squeeze(summary.WAV.cohen(c_index,15:29,:));
+        freq = summary.WAV.freq(1,15:29)-0.5;
+    end
+    
+    time = summary.WAV.time;
+    subplot(2,1,a);
+    s = surf(time,freq,plotdata);
+    
+    title(sprintf(['Cohens d for ' chan_name]));
+    set(gca,'ydir','normal');
+    
+    c = colorbar;
+    c.TickDirection = 'out';
+    c.Box = 'off';
+    c.Label.String = 'Cohens d';
+    c.Limits = [-2 2];
+    drawnow;
+    
+    axpos = get(gca,'Position');
+    cpos = c.Position;
+    cpos(3) = 0.5*cpos(3);
+    c.Position = cpos;
+    drawnow;
+    
+    set(gca,'position',axpos);
+    drawnow;
+    
+    ax = gca;
+    ax.CLim = [-2 2];
+    ax.FontSize = 12;
+    ax.FontName = 'Arial';
+    ax.LineWidth = 1.5;
+    ax.YLabel.String = 'Frequency (Hz)';
+    ax.YTick = y_tick;
+    ax.YLim = y_lim;
+    ax.XLabel.String = 'Time (ms)';
+    ax.XTick = [-2000 -1500 -1000 -500 0];
+    ax.XLim = [-2000 0];
+    ax.ZLabel.String = 'Cohens d';
+    ax.ZTick = [-2 -1.5 -1 -0.5 0 0.5 1 1.5 2];
+    ax.ZLim = [-2 2];
+    ax.TickDir = 'out';
+    ax.FontWeight = 'bold';
+    ax.Box = 'off';
+    
+    s.EdgeColor = 'none';
+    s.FaceColor = 'interp';
+    shade.FaceColor = 'none';
+    shade.EdgeColor = [0 0 0];
+    shade.LineWidth = 2;
+    
+    view([0,0,90]);
+    colormap(colors6);
+end
+
+cd(save_dir);
+export_fig(f6,'Cohens d','-png');
+
+%% Clean Workspace
+clear a;
+clear ax;
+clear axpos;
+clear c;
+clear c_index;
+clear chan_name;
+clear colors;
+clear cpos;
+clear f4;
+clear freq;
+clear i;
+clear plot_0C;
+clear plot_1C;
+clear plot_2C;
+clear plotdata;
+clear s;
+clear shade;
+clear shade_x;
+clear shade_y;
+clear shade_z;
+clear time;
+clear wav_limits;
+clear wav_wind1;
+clear wav_wind2;
 
 %% Clean Up Workspace
 clear ans;
