@@ -6,18 +6,18 @@ clc;
 %% Define Variables
 prefix = 'Medical_DM_';
 analysis = 'conflict';
-sub_keep = '001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,031,033,035,037,041,043,044,047,048,049,050,051,054';
+sub_keep = '001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,031,033,035,037,041,043,044,047,048,049,050,051,054,056,057';
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
-    working_dir2 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral\Raw';
+    working_dir2 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
     save_path = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
 elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
-    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral\Raw';
+    working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
     save_path = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
 end
 
@@ -611,7 +611,4 @@ summary.behavioral.variables = variables;
 save(save_path,'summary');
 
 %% Clean Up Workspace
-clear accuracy;
-clear confidence;
-clear reactiontime;
-clear variables;
+clearvars -except summary;
