@@ -139,7 +139,7 @@ end
 sum_odd = summary.p300.data{1}(c_index,:);
 sum_con = summary.p300.data{2}(c_index,:);
 sum_diff = sum_odd - sum_con;
-ci_data = 
+ci_data = summary.p300.ci_data(c_index,:);
 summary.p300.ci_data(c_index,:);
 
 f2 = figure('Name','P300',...

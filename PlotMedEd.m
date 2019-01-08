@@ -157,6 +157,8 @@ clear sig;
 clear sum_win;
 clear sum_loss;
 clear sum_diff;
+clear x_lim;
+clear y_lim;
 
 %% Plot Non-Learners
 disp('Plotting Non-Learners');
@@ -238,6 +240,8 @@ clear sig;
 clear sum_win;
 clear sum_loss;
 clear sum_diff;
+clear x_lim;
+clear y_lim;
 
 %% Plot FFT
 disp('Plotting FFT');
@@ -320,19 +324,24 @@ export_fig(f3,'FFT','-png');
 clear a;
 clear ax;
 clear b;
+clear band;
 clear bl;
 clear ci_data;
 clear f3;
+clear region;
 clear s;
 clear sig;
 clear sum_0c;
 clear sum_1c;
 clear sum_2c;
+clear sh;
+clear x_lim;
+clear y_lim;
 
 %% Plot Wavelets
 disp('Plotting wavelets');
-colors3 = cbrewer('div','RdBu',64,'PCHIP');
-colors3 = flipud(colors3);
+colors = cbrewer('div','RdBu',64,'PCHIP');
+colors = flipud(colors);
 
 f4 = figure('Name','Wavelets',...
     'NumberTitle','off');
@@ -406,7 +415,7 @@ for a = 1:2
     shade.LineWidth = 2;
     
     view([0,0,90]);
-    colormap(colors3);
+    colormap(colors);
 end
 
 cd(save_dir);
@@ -502,6 +511,7 @@ cd(save_dir);
 export_fig(f5,'Topo','-png');
 
 %% Clean Up Workspace
+clear a;
 clear ax;
 clear c;
 clear colors;
@@ -720,6 +730,7 @@ cd(save_dir);
 export_fig(f6,'Behavior','-png');
 
 %% Clean Workspace
+clear a;
 clear analysis;
 clear ax;
 clear c;
@@ -763,10 +774,10 @@ clear ypos3;
 
 %% Plot Cohen's d for wavelets
 disp('Plotting Cohens d');
-colors6 = cbrewer('div','RdBu',64,'PCHIP');
-colors6 = flipud(colors6);
+colors = cbrewer('div','RdBu',64,'PCHIP');
+colors = flipud(colors);
 
-f6 = figure('Name','Cohens d',...
+f7 = figure('Name','Cohens d',...
     'NumberTitle','off');
 
 for a = 1:2
@@ -775,9 +786,6 @@ for a = 1:2
         chan_name = chan_name2;
         y_lim = [4 8];
         y_tick = [4 6 8];
-        % t_data(:,:,:,1) = squeeze(summary.WAV.cohen(3,7:15,:));
-        % t_data(:,:,:,2) = squeeze(summary.WAV.cohen(4,7:15,:));
-        % plotdata = squeeze(mean(t_data,4));
         plotdata = squeeze(summary.WAV.cohen(c_index,7:15,:));
         freq = summary.WAV.freq(1,7:15)-0.5;
     elseif a == 2
@@ -837,11 +845,11 @@ for a = 1:2
     shade.LineWidth = 2;
     
     view([0,0,90]);
-    colormap(colors6);
+    colormap(colors);
 end
 
 cd(save_dir);
-export_fig(f6,'Cohens d','-png');
+export_fig(f7,'Cohens d','-png');
 
 %% Clean Workspace
 clear a;
@@ -852,7 +860,7 @@ clear c_index;
 clear chan_name;
 clear colors;
 clear cpos;
-clear f4;
+clear f7;
 clear freq;
 clear i;
 clear plot_0C;
@@ -868,6 +876,8 @@ clear time;
 clear wav_limits;
 clear wav_wind1;
 clear wav_wind2;
+clear y_lim;
+clear y_tick;
 
 %% Clean Up Workspace
 clear ans;
