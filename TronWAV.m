@@ -38,7 +38,7 @@ time_range2 = abs(max(time_points2) - min(time_points2));
 
 %% Wavelet Analysis
 %Summarise data
-for a = 2:2
+for a = 1:2
     if a == 1
         cd(temp_dir);
         analysis = 'template';

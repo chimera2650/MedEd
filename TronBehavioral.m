@@ -4,8 +4,8 @@ clear;
 clc;
 
 %% Define Variables
+d_name = 'med_ed_behav.mat';
 prefix = 'Medical_DM_';
-analysis = 'conflict';
 sub_keep = '001,002,003,005,008,009,011,012,013,014,022,024,025,027,029,030,031,035,037,041,043,044,047,048,049,050,051,054,056,057';
 comp = getenv('computername');
 
@@ -13,12 +13,12 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     working_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     working_dir1 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
     working_dir2 = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
-    save_path = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
-elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
+    save_path = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_behav.mat';
+elseif strcmp(comp,'OLAV-PATTY') == 1
     working_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     working_dir1 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
     working_dir2 = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
-    save_path = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
+    save_path = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_behav.mat';
 end
 
 clear comp

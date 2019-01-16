@@ -6,7 +6,7 @@ clc;
 close all;
 
 %% Load Variables
-file_name = 'med_ed.mat';
+file_name = 'med_ed_wav.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 pval = 0.05;
@@ -24,10 +24,10 @@ comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 
 clear comp
@@ -52,7 +52,7 @@ freq_points = linspace(min_freq,max_freq,num_frex);
 time_points = linspace(min_time,max_time,num_time);
 max_cluster_sizes = zeros(1,n_permutes);
 max_val = zeros(n_permutes,2);
-cluster_thresh = prctile(max_cluster_sizes,100-(100*pval));
+cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));
 
 clear a;
 
@@ -82,14 +82,14 @@ for y = 1:2
     
     mean_h0 = squeeze(mean(permmaps,1));
     std_h0 = squeeze(std(permmaps,1));
-    zmap = (diff_map-mean_h0)./std_h0;
-    zmap(abs(zmap)<zval) = 0;
+    zmap = (diff_map - mean_h0) ./ std_h0;
+    zmap(abs(zmap) < zval) = 0;
     
     %% Correct for multiple comparisons
     for c = 1:n_permutes
         threshimg = squeeze(permmaps(c,:,:));
-        threshimg = (threshimg-mean_h0)./std_h0;
-        threshimg(abs(threshimg)<zval) = 0;
+        threshimg = (threshimg - mean_h0) ./ std_h0;
+        threshimg(abs(threshimg) < zval) = 0;
         islands = bwconncomp(threshimg);
         
         if numel(islands.PixelIdxList)>0
@@ -105,17 +105,17 @@ for y = 1:2
     zmap_clust = zmap;
     islands = bwconncomp(zmap_clust);
     
-    for d=1:islands.NumObjects
-        if numel(islands.PixelIdxList{d}==d)<cluster_thresh
-            zmap_clust(islands.PixelIdxList{d})=0;
+    for d = 1:islands.NumObjects
+        if numel(islands.PixelIdxList{d} == d) < cluster_thresh
+            zmap_clust(islands.PixelIdxList{d}) = 0;
         end
     end
     
     %% Threshold based on cluster value    
-    thresh_lo = prctile(max_val(:,1),100*(pval/2));
-    thresh_hi = prctile(max_val(:,2),100-100*(pval/2));
+    thresh_lo = prctile(max_val(:,1),100 * (pval / 2));
+    thresh_hi = prctile(max_val(:,2),100 - 100 * (pval / 2));
     zmap_tcorr = diff_map;
-    zmap_tcorr(zmap_tcorr>thresh_lo & zmap_tcorr<thresh_hi) = 0;
+    zmap_tcorr(zmap_tcorr > thresh_lo & zmap_tcorr < thresh_hi) = 0;
     
     %% Plot data
     figure(1)
@@ -127,10 +127,11 @@ for y = 1:2
     
     subplot(2,2,plot_num+1)
     hist(max_cluster_sizes,50);
-    line([prctile(max_cluster_sizes,100-(100*pval)) prctile(max_cluster_sizes,100-(100*pval))],...
+    line([prctile(max_cluster_sizes,100 - (100 * pval)) ...
+        prctile(max_cluster_sizes,100 - (100 * pval))],...
         [0 120],'Color',[1 0 0])
     
-    subplot(2,2,plot_num+2)
+    subplot(2,2,plot_num + 2)
     hist(max_val,1000);
     line([thresh_lo thresh_lo],[1 40]);
     line([thresh_hi thresh_hi],[1 40]);
@@ -140,8 +141,9 @@ for y = 1:2
     else
         plot_num = 3;
     end
+    
     figure(2)
-    subplot(2,3,plot_num+1)
+    subplot(2,3,plot_num + 1)
     s = surf(time_points,freq_points,diff_map);
     xlabel('Time (ms)'), ylabel('Frequency (Hz)');
     set(gca,'clim',c_lim,'xlim',x_lim,'ylim',y_lim,'ydir','nor');
