@@ -25,7 +25,7 @@ comp = getenv('computername');
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
-elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
+elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed.mat';
 end
@@ -53,6 +53,8 @@ time_points = linspace(min_time,max_time,num_time);
 max_cluster_sizes = zeros(1,n_permutes);
 max_val = zeros(n_permutes,2);
 cluster_thresh = prctile(max_cluster_sizes,100-(100*pval));
+
+clear a;
 
 for y = 1:2
     %% Statistics via permutation testing

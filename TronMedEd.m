@@ -23,7 +23,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     fft_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
     wav_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
     save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed.mat';
-elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
+elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback';
     erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback NL';
