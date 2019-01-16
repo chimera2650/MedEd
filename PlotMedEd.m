@@ -360,7 +360,7 @@ for a = 1:2
         chan_name = chan_name3;
     end
     
-    plotdata = squeeze(summary.WAV.data{cond1}(c_index,:,:)) - squeeze(summary.WAV.data{cond2}(c_index,:,:));
+    plotdata = squeeze(summary.WAV.data{cond2}(c_index,:,:));% - squeeze(summary.WAV.data{cond1}(c_index,:,:));
     freq = summary.WAV.freq(1,1:59);
     time = summary.WAV.time;
     subplot(2,1,a);
@@ -381,7 +381,7 @@ for a = 1:2
     c.TickDirection = 'out';
     c.Box = 'off';
     c.Label.String = 'Power (dB)';
-    c.Limits = wav_limits;
+    %c.Limits = wav_limits;
     drawnow;
     
     axpos = get(gca,'Position');
@@ -394,7 +394,7 @@ for a = 1:2
     drawnow;
     
     ax = gca;
-    ax.CLim = wav_limits;
+    %ax.CLim = wav_limits;
     ax.FontSize = 12;
     ax.FontName = 'Arial';
     ax.LineWidth = 1.5;
@@ -784,17 +784,17 @@ for a = 1:2
     if a == 1
         c_index = find(chan_loc == 2);
         chan_name = chan_name2;
-        y_lim = [4 8];
-        y_tick = [4 6 8];
-        plotdata = squeeze(summary.WAV.cohen(c_index,7:15,:));
-        freq = summary.WAV.freq(1,7:15)-0.5;
+        y_lim = [4 6];
+        y_tick = [4 5 6];
+        plotdata = squeeze(summary.WAV.cohen(c_index,7:11,:));
+        freq = summary.WAV.freq(1,7:11);
     elseif a == 2
         c_index = find(chan_loc == 3);
         chan_name = chan_name3;
-        y_lim = [8 15];
-        y_tick = [8 10 12 14];
-        plotdata = squeeze(summary.WAV.cohen(c_index,15:29,:));
-        freq = summary.WAV.freq(1,15:29)-0.5;
+        y_lim = [8 12];
+        y_tick = [8 9 10 11 12];
+        plotdata = squeeze(summary.WAV.cohen(c_index,15:23,:));
+        freq = summary.WAV.freq(1,15:23);
     end
     
     time = summary.WAV.time;
@@ -880,13 +880,4 @@ clear y_lim;
 clear y_tick;
 
 %% Clean Up Workspace
-clear ans;
-clear c_index1;
-clear c_index2;
-clear c_index3;
-clear cond1;
-clear cond2;
-clear f_wind1;
-clear f_wind2;
-clear t_wind1;
-clear t_wind2;
+clearvars -except summary;

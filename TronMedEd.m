@@ -139,7 +139,7 @@ clear sum_data;
 clear temp_sum;
 
 dispstat('','init');
-dispstat(sprintf('Begining ERP confidence intervals...'),'keepthis');
+dispstat(sprintf('Calculating ERP confidence intervals. Please wait...'),'keepthis');
 
 for a = 1:chan_count
     for b = 1:(time_range1/s_rate)        
@@ -322,7 +322,7 @@ clear sum_data;
 clear temp_sum;
 
 dispstat('','init');
-dispstat(sprintf('Begining NL confidence intervals...'),'keepthis');
+dispstat(sprintf('Calculating NL confidence intervals. Please wait...'),'keepthis');
 
 for a = 1:chan_count
     for b = 1:(time_range1/s_rate)
@@ -521,7 +521,7 @@ clear sum_data;
 clear temp_sum;
 
 dispstat('','init');
-dispstat(sprintf('Begining FFT confidence intervals...'),'keepthis');
+dispstat(sprintf('Calculating FFT confidence intervals. Please wait...'),'keepthis');
 
 for a = 1:chan_count
     for b = 1:((freq_range/f_res)-1)
@@ -686,7 +686,7 @@ clear a;
 clear b;
 clear raw_data;
 
-disp('Combining wavelet data by condition. Please wait...');
+disp('Combining wavelet data by condition');
 
 for a = 1:cond_count2
     % Data is collapsed between subjects to create condition averages

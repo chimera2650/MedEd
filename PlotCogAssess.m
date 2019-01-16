@@ -29,7 +29,7 @@ clear comp
 %% Load Variables
 cd(master_dir);
 load(d_name);
-set(0,'DefaultFigurePosition',[1921,45,1280,907]);
+% set(0,'DefaultFigurePosition',ans);
 
 for a = 1:62
     if strcmp(summary.chanlocs(a).labels,chan_name1) == 1
