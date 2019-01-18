@@ -6,21 +6,13 @@ clc;
 close all;
 
 %% Load Variables
+% analysis = 'template';
 analysis = 'decision';
 file_name = 'med_ed_wav.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-pval = 0.05;
-min_freq = 1;
-max_freq = 15;
-num_frex = 29;
-min_time = -1996;
-max_time = 0;
-num_time = 500;
-n_permutes = 1000;
 c_lim = [-1.5 1.5];
-x_lim = [-1996 0];
-y_lim = [1 15];
+zval = 0.05;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -48,13 +40,14 @@ for a = 1:62
     end
 end
 
-freq_points = summary.(analysis).freq;
+freq_points = summary.(analysis).freq(1,1:29);
 time_points = summary.(analysis).time;
-max_val = zeros(n_permutes,2);
-cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));
+x_lim = [min(time_points) max(time_points)];
+y_lim = [min(freq_points) max(freq_points)];
+num_freq = size(freq_points,2);
+num_time = size(time_points,2);
 
-clear a;
-
+%% Generate Plots
 for a = 1:2
     if a == 1
         chan_name = chan_name1;
@@ -65,9 +58,10 @@ for a = 1:2
     end
     
     c_index = find(chan_loc == a);
-    plot_data = summary.(analysis).data(c_index,:,:);
-    zmap_clust = summary.(analysis).cluster(c_index,:,:);
-    zmap_tcorr = summary.(analysis).maximum(c_index,:,:);
+    plot_data(:,:) = squeeze(summary.(analysis).data{3}(c_index,1:num_freq,1:num_time)) -...
+        squeeze(summary.(analysis).data{1}(c_index,1:num_freq,1:num_time));
+    zmap_clust(:,:) = squeeze(summary.(analysis).cluster(c_index,:,:));
+    zmap_tcorr(:,:) = squeeze(summary.(analysis).maximum(c_index,:,:));
     
     figure(1)
     subplot(2,3,plot_num + 1)

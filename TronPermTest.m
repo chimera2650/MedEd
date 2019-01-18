@@ -16,14 +16,15 @@ num_frex = 29;
 min_time = -1996;
 max_time = 0;
 num_time = 500;
+n_permutes = 1000;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_wav.m';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_wav.m';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
 end
 
 clear comp
