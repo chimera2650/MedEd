@@ -3,12 +3,9 @@
 "[]" % Baseline correction (use [] for no baseline)
 "15,150" % Artifact parameters (gradient, amplitude)
 "C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision\MedEdFlynn_"
-%"ERP,Decision (No Conflict),-1996,0,0CD" % ERP analysis, marker, start time, end time, condition name
-%"ERP,Decision (One Conflict),-1996,0,1CD"
-%"ERP,Decision (Two Conflict),-1996,0,2CD"
-"FFT,Decision (No Conflict),-1996,0,0CD" % FFT Template analysis, marker, start time, end time, condition name
-"FFT,Decision (One Conflict),-1996,0,1CD"
-"FFT,Decision (Two Conflict),-1996,0,2CD"
-"WAV,Decision (No Conflict),-1996,0,[],[],1,30,59,6,0CD"
-"WAV,Decision (One Conflict),-1996,0,[],[],1,30,59,6,1CD"
-"WAV,Decision (Two Conflict),-1996,0,[],[],1,30,59,6,2CD"
+"FFT,Decision (No Conflict),-996,0,0CD" % FFT Template analysis, marker, start time, end time, condition name
+"FFT,Decision (One Conflict),-996,0,1CD"
+"FFT,Decision (Two Conflict),-996,0,2CD"
+"WAV,Decision (No Conflict),-2196,200,[],[],1,30,59,6,0CD"
+"WAV,Decision (One Conflict),-2196,200,[],[],1,30,59,6,1CD"
+"WAV,Decision (Two Conflict),-2196,200,[],[],1,30,59,6,2CD"

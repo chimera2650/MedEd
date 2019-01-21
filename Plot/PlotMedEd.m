@@ -31,7 +31,7 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     beh_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
     set(0,'DefaultFigurePosition','remove');
-elseif strcmp(comp,'DESKTOP-U0FBSG7') == 1
+elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     erp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback';
     erpnl_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Feedback NL';

@@ -9,7 +9,7 @@ cond_count = 3;
 d_name = 'med_ed_wav.mat'; % Name of master data file
 prefix = 'MedEdFlynn_';
 f_res = 0.5; % Frequency resolution
-freq_points = [0.5 30]; % Desired time range for data
+freq_points = [1 30]; % Desired time range for data
 s_rate = 4; % Sampling rate in milliseconds
 time_points1 = [0 1996];
 time_points2 = [-1996 0]; % Desired time range for data
@@ -200,7 +200,7 @@ for a = 1:2
     clear freq_range;
     
     % Create a table for time points; used in plotting data
-    t_point = linspace(min(time_points),max(time_points),(time_range/s_rate));
+    t_point = linspace(min(time_points),max(time_points),(time_range/s_rate)+1);
     summary.(analysis).time = t_point;
     
     clear s_rate;
