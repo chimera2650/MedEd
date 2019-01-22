@@ -13,7 +13,7 @@ t_wind1 = [-1000 -500];
 f_wind1 = [5 7];
 t_wind2 = [-800 -500];
 f_wind2 = [10 14];
-wav_limits = [-2 2];
+wav_limits = [-1.5 1.5];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
@@ -34,12 +34,12 @@ clear comp
 
 %% Load Variables
 cd(master_dir);
-load(d_name);
+load('chanlocs.mat');
 
 for b = 1:62
-    if strcmp(summary.chanlocs(b).labels,chan_name1) == 1
+    if strcmp(chanlocs(b).labels,chan_name1) == 1
         chan_loc(b) = 1;
-    elseif strcmp(summary.chanlocs(b).labels,chan_name2) == 1
+    elseif strcmp(chanlocs(b).labels,chan_name2) == 1
         chan_loc(b) = 2;
     end
 end
@@ -63,19 +63,26 @@ disp('Plotting wavelets');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-f1 = figure('Name','Wavelets',...
-    'NumberTitle','off');
-
 for a = 1:2
+    if a == 1
+        cd(master_dir);
+        load('med_ed_twav.mat');
+        analysis = 'template';
+        save_name = 'WAV_Template';
+        f1 = figure('Name','Template','NumberTitle','off');
+        x_lim = [0 2000];
+        x_tick = [0 500 1000 1500 2000];
+    elseif a == 2
+        cd(master_dir);
+        load('med_ed_dwav.mat');
+        analysis = 'decision';
+        save_name = 'WAV_Decision';
+        f2 = figure('Name','Decision','NumberTitle','off');
+        x_lim = [-2000 0];
+        x_tick = [-2000 -1500 -1000 -500 0];
+    end
+    
     for b = 1:2
-        if a == 1
-            analysis = 'template';
-            save_name = 'WAV_Template';
-        elseif a == 2
-            analysis = 'decision';
-            save_name = 'WAV_Decision';
-        end
-        
         if b == 1
             c_index = find(chan_loc == 1);
             shade_x = [wav_wind1(1,1) wav_wind1(2,1) wav_wind1(3,1) wav_wind1(4,1)];
@@ -90,14 +97,14 @@ for a = 1:2
             chan_name = chan_name2;
         end
         
-        plotdata = squeeze(summary.(analysis).data{cond2}(c_index,:,1:499)) - squeeze(summary.(analysis).data{cond1}(c_index,:,1:499));
-        freq = summary.(analysis).freq(1,1:59);
-        time = summary.(analysis).time;
+        plotdata = squeeze(summary.data{cond2}(c_index,:,:)) - squeeze(summary.data{cond1}(c_index,:,:));
+        freq = summary.freq;
+        time = summary.time;
         
         subplot(2,1,b);
         s = surf(time,freq,plotdata);
         hold on
-        shade = fill3(shade_x,shade_y,shade_z,0);
+        %shade = fill3(shade_x,shade_y,shade_z,0);
         hold off
         
         title(['Difference wavelet for ' chan_name ' during ' analysis]);
@@ -107,7 +114,7 @@ for a = 1:2
         c.TickDirection = 'out';
         c.Box = 'off';
         c.Label.String = 'Power (dB)';
-        %c.Limits = wav_limits;
+        c.Limits = wav_limits;
         drawnow;
         
         axpos = get(gca,'Position');
@@ -120,16 +127,16 @@ for a = 1:2
         drawnow;
         
         ax = gca;
-        %ax.CLim = wav_limits;
+        ax.CLim = wav_limits;
         ax.FontSize = 12;
         ax.FontName = 'Arial';
         ax.LineWidth = 1.5;
         ax.YLabel.String = 'Frequency (Hz)';
         ax.YTick = [0 5 10 15 20 25 30];
-        ax.YLim = [0 30];
+        ax.YLim = [1 30];
         ax.XLabel.String = 'Time (ms)';
-        ax.XTick = [-2000 -1500 -1000 -500 0];
-        ax.XLim = [-2000 0];
+        ax.XTick = x_tick;
+        ax.XLim = x_lim;
         ax.TickDir = 'out';
         ax.FontWeight = 'bold';
         ax.Box = 'off';
@@ -145,7 +152,11 @@ for a = 1:2
     end
     
     cd(save_dir);
-    export_fig(f1,save_name,'-png');
+    if a == 1
+        export_fig(f1,save_name,'-png');
+    elseif a == 2
+        export_fig(f2,save_name,'-png');
+    end
 end
 
 %% Clean Workspace

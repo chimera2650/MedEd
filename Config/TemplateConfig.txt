@@ -1,11 +1,11 @@
 "C:\Users\Jordan\Documents\Experiments\MedEd\Export\Template\MedEd_"
-"001,002,003,005,008,009,011,012,013,014,016,022,024,025,027,029,030,031,033,035,037,041,043,044,047,048,049,050,051,054,056,057" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
+"001,002,003,005,008,009,011,012,013,014,022,024,025,027,029,030,031,035,037,041,043,044,047,048,049,050,051,054,056,057" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
 "-200,0" % Baseline correction (use [] for no baseline)
 "15,150" % Artifact parameters (gradient, amplitude)
 "C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Template\MedEdFlynn_"
-"FFT,Decision (No Conflict),0,996,0CT" % FFT Template analysis, marker, start time, end time, condition name
-"FFT,Decision (One Conflict),0,996,1CT"
-"FFT,Decision (Two Conflict),0,996,2CT"
-"WAV,Decision (No Conflict),-200,2196,[],[],1,30,59,6,0CT"
-"WAV,Decision (One Conflict),-200,2196,[],[],1,30,59,6,1CT"
-"WAV,Decision (Two Conflict),-200,2196,[],[],1,30,59,6,2CT"
+"FFT,Template (No Conflict),0,996,0CT" % FFT Template analysis, marker, start time, end time, condition name
+"FFT,Template (One Conflict),0,996,1CT"
+"FFT,Template (Two Conflict),0,996,2CT"
+"WAV,Template (No Conflict),-200,2196,[],[],1,30,59,6,0CT"
+"WAV,Template (One Conflict),-200,2196,[],[],1,30,59,6,1CT"
+"WAV,Template (Two Conflict),-200,2196,[],[],1,30,59,6,2CT"

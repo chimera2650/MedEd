@@ -24,7 +24,7 @@ elseif strcmp(comp,'OLAV-PATTY') == 1
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_erp.mat';
 end
 
-clear comp
+clearvars comp;
 
 %% Load Data
 cd(master_dir);
@@ -64,14 +64,7 @@ end
 
 summary.ERP.artifacts = artifacts;
 
-clear a;
-clear artifacts;
-clear b;
-clear c;
-clear c_index;
-clear chan_loc;
-clear d;
-clear sub_data;
+clearvars  a artifacts b c c_index chan_loc d sub_data;
 
 disp('Generating raw ERP data table');
 
@@ -83,9 +76,7 @@ end
 
 summary.ERP.raw = raw_data;
 
-clear a;
-clear b;
-clear raw_data;
+clearvars a b raw_data;
 
 disp('Combining ERP data by condition');
 
@@ -101,10 +92,7 @@ end
 
 summary.ERP.data = sum_data;
 
-clear a;
-clear b;
-clear c;
-clear temp_sum;
+clearvars a b c temp_sum;
 
 % Standard Deviation for ERP
 disp('Calculating ERP standard deviations');
@@ -122,11 +110,7 @@ end
 
 summary.ERP.std = sum_data;
 
-clear a;
-clear b;
-clear c;
-clear sum_data;
-clear temp_sum;
+clearvars a b c sum_data temp_sum;
 
 dispstat('','init');
 dispstat(sprintf('Calculating ERP confidence intervals. Please wait...'),'keepthis');
@@ -166,7 +150,7 @@ for a = 1:chan_count
         ci_data(b,5) = tbl{3,4};
         ci_data(b,6) = sqrt(ci_data(b,5)/ci_data(b,3))*(ts);
         
-        clear p;
+        clearvars p;
         
         [h,p] = ttest(t_data1,t_data2,'tail','both');
         erp_ttest(a,b) = p;
@@ -178,26 +162,8 @@ dispstat('Finished.','keepprev');
 summary.ERP.ci_data = erp_ci;
 summary.ERP.ttest = erp_ttest;
 
-clear a;
-clear b;
-clear c;
-clear c_index;
-clear chan_loc;
-clear ci_data;
-clear cond1;
-clear d;
-clear erp_ci;
-clear erp_ttest;
-clear h;
-clear num;
-clear p;
-clear sub_data;
-clear sum_data;
-clear t_data1;
-clear t_data2;
-clear tbl;
-clear temp_data;
-clear ts;
+clearvars a b c c_index chan_loc ci_data cond1 d erp_ci erp_ttest h num p ...
+    sub_data sum_data t_data1 t_data2 tbl temp_data ts;
 
 % Create a table for time points; used in plotting data
 disp('Creating timepoints for ERP');
@@ -208,11 +174,7 @@ end
 
 summary.ERP.time = t_point;
 
-clear a;
-clear erp_dir;
-clear filenames;
-clear file_num;
-clear t_point;
+clearvars a erp_dir filenames file_num t_point;
 
 %% ERP NL Analysis
 %Summarize ERP data by subject
@@ -247,14 +209,7 @@ end
 
 summary.ERP_NL.artifacts = artifacts;
 
-clear a;
-clear atrifacts;
-clear b;
-clear c;
-clear c_index;
-clear chan_loc;
-clear d;
-clear sub_data;
+clearvars a artifacts b c c_index chan_loc d sub_data;
 
 disp('Generating raw ERP NL data table');
 
@@ -266,9 +221,7 @@ end
 
 summary.ERP_NL.raw = raw_data;
 
-clear a;
-clear b;
-clear raw_data;
+clearvars a b raw_data;
 
 disp('Combining ERP NL data by condition');
 
@@ -284,10 +237,7 @@ end
 
 summary.ERP_NL.data = sum_data;
 
-clear a;
-clear b;
-clear c;
-clear temp_sum;
+clearvars a b c temp_sum;
 
 % Standard Deviation for ERP
 disp('Calculating ERP NL standard deviations');
@@ -305,11 +255,7 @@ end
 
 summary.ERP_NL.std = sum_data;
 
-clear a;
-clear b;
-clear c;
-clear sum_data;
-clear temp_sum;
+clearvars a b c sum_data temp_sum;
 
 dispstat('','init');
 dispstat(sprintf('Calculating NL confidence intervals. Please wait...'),'keepthis');
@@ -361,26 +307,8 @@ dispstat('Finished.','keepprev');
 summary.ERP_NL.ci_data = erp_ci;
 summary.ERP_NL.ttest = erp_ttest;
 
-clear a;
-clear b;
-clear c;
-clear c_index;
-clear chan_loc;
-clear ci_data;
-clear cond1;
-clear d;
-clear erp_ci;
-clear erp_ttest;
-clear h;
-clear num;
-clear p;
-clear sub_data;
-clear sum_data;
-clear t_data1;
-clear t_data2;
-clear tbl;
-clear temp_data;
-clear ts;
+clearvars a b c c_index chan_loc ci_data cond1 d erp_ci erp_ttest h num p ...
+    sub_data sum_data t_data1 t_data2 tbl temp_data ts;
 
 % Create a table for time points; used in plotting data
 disp('Creating timepoints for ERP NL');
@@ -391,12 +319,7 @@ end
 
 summary.ERP_NL.time = t_point;
 
-clear a;
-clear filenames;
-clear file_num;
-clear t_point;
-clear time_points1;
-clear time_range1;
+clearvars a filenames file_num t_point time_points1 time_range1;
 
 %% Save Data
 disp('Saving data');

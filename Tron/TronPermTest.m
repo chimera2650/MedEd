@@ -6,54 +6,54 @@ clc;
 close all;
 
 %% Load Variables
-file_name = 'med_ed_wav.mat';
+t_name = 'med_ed_twav.mat';
+d_name = 'med_ed_dwav.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 pval = 0.05;
-min_freq = 1;
-max_freq = 15;
-num_frex = 29;
-min_time = -1996;
-max_time = 0;
-num_time = 500;
 n_permutes = 1000;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
+    tsave_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_tperm.mat';
+    dsave_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_dperm.mat';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
+    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_tperm.mat';
+    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dperm.mat';
 end
 
-clear comp
+clearvars comp
 
 %% Load Data
-cd(master_dir);
-load(file_name);
 zval = abs(norminv(pval));
-freq_points = linspace(min_freq,max_freq,num_frex);
-time_points = linspace(min_time,max_time,num_time);
-max_cluster_sizes = zeros(1,n_permutes);
-max_val = zeros(n_permutes,2);
-cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));
 
-for a = 2:2
+for a = 1:2
     if a == 1
+        cd(master_dir);
         analysis = 'template';
+        load(t_name);
+        save_dir = tsave_dir;
+        time_point = linspace(0,1996,500);
     elseif a == 2
+        cd(master_dir);
         analysis = 'decision';
+        load(d_name);
+        save_dir = dsave_dir;
+        time_point = linspace(-1996,0,500);
     end
+   
+    freq_point = linspace(1,15,29);
     
     for b = 1:62
         %% Statistics via permutation testing
-        WAV_data = squeeze(summary.(analysis).raw(b,1:29,:,[1,3],:));
+        WAV_data = squeeze(summary.raw(b,1:29,:,[1,3],:));
         WAV_data1 = permute(squeeze(WAV_data(:,:,1,:)),[3,1,2]);
         WAV_data2 = permute(squeeze(WAV_data(:,:,2,:)),[3,1,2]);
         temp_dist = cat(3,WAV_data1,WAV_data2);
         perm_dist = permute(temp_dist,[2,3,1]);
-        permmaps = zeros(n_permutes,num_frex,num_time);
+        permmaps = zeros(n_permutes,size(freq_point,2),size(time_point,2));
         diff_map = mean(squeeze(WAV_data(:,:,2,:) - WAV_data(:,:,1,:)),3);
         dispstat('','init');
         dispstat(sprintf(['Permuting ' summary.chanlocs(b).labels ' wavelets for ' analysis '. Please wait...']),'keepthis');
@@ -63,16 +63,23 @@ for a = 2:2
             dispstat(sprintf('Progress %d%%',perc_stat));
             random_perm = randperm(size(perm_dist,2));
             temp_perm = perm_dist(:,random_perm,:);
-            permmaps(c,:,:) = squeeze(mean((temp_perm(:,1:num_time,:) -...
-                temp_perm(:,num_time+1:end,:)),3));
+            permmaps(c,:,:) = squeeze(mean((temp_perm(:,1:size(time_point,2),:) -...
+                temp_perm(:,size(time_point,2)+1:end,:)),3));
         end
+        
+        clearvars c perc_stat random_perm temp_dist temp_perm  WAV_data ...
+            WAV_data1 WAV_data2 
         
         mean_h0 = squeeze(mean(permmaps,1));
         std_h0 = squeeze(std(permmaps,1));
         zmap = (diff_map - mean_h0) ./ std_h0;
         zmap(abs(zmap) < zval) = 0;
         
-        %% Correct for multiple comparisons        
+        %% Correct for multiple comparisons      
+        max_cluster_sizes = zeros(1,n_permutes);
+        max_val = zeros(n_permutes,2);
+        cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));
+        
         for c = 1:n_permutes
             threshimg = squeeze(permmaps(c,:,:));
             threshimg = (threshimg - mean_h0) ./ std_h0;
@@ -88,6 +95,9 @@ for a = 2:2
             max_val(c,:) = [min(temp) max(temp)];
         end
         
+        clearvars c max_cluster_sizes mean_h0 perm_maps std_h0 temp ...
+            tempclustsizes threshimg;
+        
         %% Threshold based on cluster size
         dispstat('Finished.','keepprev');
         zmap_clust = zmap;
@@ -99,21 +109,36 @@ for a = 2:2
             end
         end
         
+        clearvars c cluster_thresh islands zmap;
+        
         %% Threshold based on cluster value
         thresh_lo = prctile(max_val(:,1),100 * (pval / 2));
         thresh_hi = prctile(max_val(:,2),100 - 100 * (pval / 2));
         zmap_tcorr = diff_map;
         zmap_tcorr(zmap_tcorr > thresh_lo & zmap_tcorr < thresh_hi) = 0;
-        summary.(analysis).cluster(b,:,:) = zmap_clust(:,:);
-        summary.(analysis).maximum(b,:,:) = zmap_tcorr(:,:);
+        cluster(b,:,:) = zmap_clust(:,:);
+        maximum(b,:,:) = zmap_tcorr(:,:);
+        data(b,:,:) = diff_map(:,:);
+        
+        clearvars max_val thresh_hi thresh_low zmap_clust zmap_tcorr;
     end
+    
+    %% Save Data
+    clearvars b;
+    
+    disp('Saving data');
+    perm.chanlocs = chanlocs;
+    perm.data = data;
+    perm.cluster = cluster;
+    perm.maximum = maximum;
+    perm.freq = freq_point;
+    perm.time = time_point;
+    save(save_dir,'perm');
+    
+    clearvars analysis cluster maximum save_dir;
 end
-
-%% Save Data
-disp('Saving data');
-save(save_dir,'summary');
 
 %% Final Cleanup
 disp('Analysis complete');
 
-clearvars -except summary;
+clearvars -except perm;

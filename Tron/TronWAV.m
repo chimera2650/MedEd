@@ -6,7 +6,8 @@ clc;
 %% Define Variables
 chan_count = 62; % Number of channels in analysis
 cond_count = 3;
-d_name = 'med_ed_wav.mat'; % Name of master data file
+t_name = 'med_ed_twav.mat'; % Name of master data file
+d_name = 'med_ed_dwav.mat'; % Name of master data file
 prefix = 'MedEdFlynn_';
 f_res = 0.5; % Frequency resolution
 freq_points = [1 30]; % Desired time range for data
@@ -19,36 +20,46 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     temp_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Template';
     dec_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
+    tsave_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_twav.mat';
+    dsave_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_dwav.mat';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     temp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Template';
     dec_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_wav.mat';
+    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_twav.mat';
+    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dwav.mat';
 end
 
-clear comp
+clearvars comp
 
 %% Load Data
-cd(master_dir);
-load(d_name);
-freq_range = abs(max(freq_points) - min(freq_points));
-time_range1 = abs(max(time_points1) - min(time_points1));
-time_range2 = abs(max(time_points2) - min(time_points2));
+freq_count = (abs(max(freq_points) - min(freq_points))/f_res)+1;
+time_count1 = (abs(max(time_points1) - min(time_points1))/s_rate)+1;
+time_count2 = (abs(max(time_points2) - min(time_points2))/s_rate)+1;
 
 %% Wavelet Analysis
 %Summarise data
 for a = 1:2
     if a == 1
+        cd(master_dir);
+        load(t_name);
+    elseif a == 2
+        cd(master_dir);
+        load(d_name);
+    end
+    
+    if a == 1
         cd(temp_dir);
         analysis = 'template';
         time_points = time_points1;
-        time_range = time_range1;
+        time_count = time_count1;
+        save_dir = tsave_dir;
     elseif a == 2
         cd(dec_dir);
         analysis = 'decision';
         time_points = time_points2;
-        time_range = time_range2;
+        time_count = time_count2;
+        save_dir = dsave_dir;
     end
     
     filenames = dir(strcat(prefix,'*'));
@@ -86,7 +97,7 @@ for a = 1:2
                     end
                 end
                 c_index = find(chan_loc == 1);
-                temp_data{b}{c}(d,:,:) = sub_data.WAV.data{c}(c_index,:,:);
+                temp_data{b}{c}(d,:,:) = sub_data.WAV.data{c}(c_index,:,51:550);
             end
         end
         artifacts(b,1) = mean(cell2mat(sub_data.WAV.nAccepted));
@@ -94,16 +105,9 @@ for a = 1:2
     end
     
     dispstat('Finished.','keepprev');
-    summary.(analysis).artifacts = artifacts;
+    summary.artifacts = artifacts;
     
-    clear artifacts;
-    clear b;
-    clear c;
-    clear c_index;
-    clear chan_loc;
-    clear d;
-    clear e;
-    clear sub_data;
+    clearvars artifacts b c c_index chan_loc d e sub_data;
     
     disp(['Generating raw ' analysis ' wavelet data table']);
     
@@ -113,11 +117,9 @@ for a = 1:2
         end
     end
     
-    summary.(analysis).raw = raw_data;
+    summary.raw = raw_data;
     
-    clear b;
-    clear c;
-    clear raw_data;
+    clearvars b c raw_data;
     
     disp(['Combining ' analysis ' wavelet data by condition']);
     
@@ -131,12 +133,9 @@ for a = 1:2
         end
     end
     
-    summary.(analysis).data = sum_data;
+    summary.data = sum_data;
     
-    clear b;
-    clear c;
-    clear d;
-    clear temp_sum;
+    clearvars b c d temp_sum;
     
     dispstat('','init');
     dispstat(sprintf(['Calculating Cohens d between no conflict and high conflict ' analysis ' conditions. Please wait...']),'keepthis');
@@ -155,8 +154,8 @@ for a = 1:2
         
         perc_last = perc_stat;
         
-        for c = 1:((freq_range/f_res)-1)
-            for d = 1:(time_range/s_rate)
+        for c = 1:freq_count
+            for d = 1:time_count
                 for e = 1:file_num
                     t_data(1,e) = temp_data{e}{1}(b,c,d);
                     t_data(2,e) = temp_data{e}{3}(b,c,d);
@@ -173,45 +172,29 @@ for a = 1:2
     end
     
     dispstat('Finished.','keepprev');
-    summary.(analysis).cohen = cohen;
+    summary.cohen = cohen;
     
-    clear b;
-    clear c;
-    clear cohen;
-    clear d;
-    clear e;
-    clear m_data;
-    clear num;
-    clear pool_stdev;
-    clear std;
-    clear t_data;
-    clear temp_data;
+    clearvars b c cohen d e m_data num pool_stdev std t_data temp_data;
     
     %% Create frequency and time points for plots
     disp(['Creating ' analysis ' frequency and time points']);
     
     % Create a table for frequency points; used in plotting data
-    f_point = linspace(min(freq_points),max(freq_points),(freq_range/f_res));
-    summary.(analysis).freq = f_point;
+    f_point = linspace(min(freq_points),max(freq_points),freq_count);
+    summary.freq = f_point;
     
-    clear f_point;
-    clear f_res;
-    clear freq_points;
-    clear freq_range;
+    clearvars f_point
     
     % Create a table for time points; used in plotting data
-    t_point = linspace(min(time_points),max(time_points),(time_range/s_rate)+1);
-    summary.(analysis).time = t_point;
+    t_point = linspace(min(time_points),max(time_points),time_count);
+    summary.time = t_point;
     
-    clear s_rate;
-    clear t_point;
-    clear time_points2;
-    clear time_range2;
+    clearvars s_rate t_point time_count time_points;
+    
+    %% Save Data
+    disp('Saving data');
+    save(save_dir,'summary');
 end
-
-%% Save Data
-disp('Saving data');
-save(save_dir,'summary');
 
 %% Final Cleanup
 disp('Analysis complete');

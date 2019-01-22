@@ -9,7 +9,7 @@ cond_count = 3;
 d_name = 'med_ed_fft.mat'; % Name of master data file
 prefix = 'MedEdFlynn_';
 f_res = 0.5; % Frequency resolution
-freq_points = [0.5 30]; % Desired time range for data
+freq_points = [1 30]; % Desired frequency range for data
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -24,12 +24,12 @@ elseif strcmp(comp,'OLAV-PATTY') == 1
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_fft.mat';
 end
 
-clear comp
+clearvars comp
 
 %% Load Data
 cd(master_dir);
 load(d_name);
-freq_range = abs(max(freq_points) - min(freq_points));
+freq_count = (abs(max(freq_points) - min(freq_points))/f_res)+1;
 
 %% FFT Analysis
 for a = 2:2
@@ -87,14 +87,7 @@ for a = 2:2
     dispstat('Finished.','keepprev');
     summary.(analysis).artifacts = artifacts;
     
-    clear artifacts;
-    clear b;
-    clear c;
-    clear c_index;
-    clear chan_loc;
-    clear d;
-    clear e;
-    clear sub_data;
+    clearvars artifacts b c c_index chan_loc d e sub_data;
     
     disp(['Generating raw ' analysis ' data table']);
     
@@ -106,9 +99,7 @@ for a = 2:2
     
     summary.(analysis).raw = raw_data;
     
-    clear b;
-    clear c;
-    clear raw_data;
+    clearvars b c raw_data;
     
     disp(['Combining ' analysis ' data by condition']);
     
@@ -124,10 +115,7 @@ for a = 2:2
     
     summary.(analysis).data = sum_data;
     
-    clear b;
-    clear c;
-    clear d;
-    clear temp_sum;
+    clearvars b c d temp_sum;
     
     % Standard deviation for FFT
     disp(['Calculating ' analysis ' standard deviations']);
@@ -145,17 +133,13 @@ for a = 2:2
     
     summary.(analysis).std = sum_data;
     
-    clear b;
-    clear c;
-    clear d;
-    clear sum_data;
-    clear temp_sum;
+    clearvars b c d sum_data temp_sum;
     
     dispstat('','init');
     dispstat(sprintf(['Calculating ' analysis ' confidence intervals. Please wait...']),'keepthis');
     
     for b = 1:chan_count
-        for c = 1:((freq_range/f_res))
+        for c = 1:freq_count
             if b == 1
                 perc_last = 0;
                 dispstat(sprintf('Progress %d%%',0))
@@ -207,43 +191,21 @@ for a = 2:2
     end
     
     dispstat('Finished.','keepprev');
-    summary.(analysis).ci_data = fft_ci(:,1:59);
-    summary.(analysis).ttest = fft_ttest(:,1:59);
+    summary.(analysis).ci_data = fft_ci(:,1:freq_count);
+    summary.(analysis).ttest = fft_ttest(:,1:freq_count);
     
-    clear b;
-    clear c;
-    clear c_index;
-    clear chan_loc;
-    clear ci_data;
-    clear cond1;
-    clear d;
-    clear e;
-    clear f;
-    clear fft_ci;
-    clear fft_ttest;
-    clear g;
-    clear h;
-    clear num;
-    clear p;
-    clear sub_data;
-    clear sum_data;
-    clear t_data1;
-    clear t_data2;
-    clear tbl;
-    clear temp_data;
-    clear ts;
+    clearvars b c c_index chan_loc ci_data cond1 d e f fft_ci fft_ttest ...
+        g h num p sub_data sum_data t_data1 t_data2 tbl temp_data ts;
 end
 
 % Create frequency points for plots
 disp('Creating frequency points');
 
 % Create a table for frequency points; used in plotting data
-f_point = linspace(min(freq_points),max(freq_points),(freq_range/f_res));
+f_point = linspace(min(freq_points),max(freq_points),freq_count);
 summary.freq = f_point;
 
-clear f_point;
-clear filenames;
-clear file_num;
+clearvars f_point filenames file_num;
 
 %% Save Data
 disp('Saving data');
