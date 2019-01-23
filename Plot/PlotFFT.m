@@ -54,15 +54,17 @@ f1 = figure('Name','FFT',...
     'NumberTitle','off');
 
 for a = 1:2
-    for b = 1:2
-        if a == 1
-            save_name = 'FFT_Template';
-            analysis = 'template';
-        elseif a == 2
-            save_name = 'FFT_Decision';
-            analysis = 'decision';
-        end
+    if a == 1
+        save_name = 'FFT_Template';
+        analysis = 'template';
+        f1 = figure('Name','Template','NumberTitle','off');
+    elseif a == 2
+        save_name = 'FFT_Decision';
+        analysis = 'decision';
+        f2 = figure('Name','Decision','NumberTitle','off');
+    end
         
+    for b = 1:2
         if b == 1
             c_index = find(chan_loc == 1);
             chan_name = chan_name1;
@@ -126,8 +128,14 @@ for a = 1:2
         s.MarkerSize = 8;
         hold off
     end
+    
     cd(save_dir);
-    export_fig(f1,save_name,'-png');
+    
+    if a == 1
+        export_fig(f1,save_name,'-png');
+    elseif a == 2
+        export_fig(f2,save_name,'-png');
+    end
 end
 
 %% Clean Workspace

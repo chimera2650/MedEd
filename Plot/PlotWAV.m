@@ -9,10 +9,6 @@ prefix = 'MedEdFlynn_';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 d_name = 'med_ed_wav.mat'; % Name of master data file
-t_wind1 = [-1000 -500];
-f_wind1 = [5 7];
-t_wind2 = [-800 -500];
-f_wind2 = [10 14];
 wav_limits = [-1.5 1.5];
 cond1 = 1;
 cond2 = 3;
@@ -44,18 +40,6 @@ for b = 1:62
     end
 end
 
-% Theta highlight
-wav_wind1 = [min(t_wind1) min(f_wind1) 2;...
-    max(t_wind1) min(f_wind1) 2;...
-    max(t_wind1) max(f_wind1) 2;...
-    min(t_wind1) max(f_wind1) 2];
-
-% Alpha highlight
-wav_wind2 = [min(t_wind2) min(f_wind2) 2;...
-    max(t_wind2) min(f_wind2) 2;...
-    max(t_wind2) max(f_wind2) 2;...
-    min(t_wind2) max(f_wind2) 2];
-
 clear a;
 
 %% Plot Wavelets
@@ -63,7 +47,7 @@ disp('Plotting wavelets');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-for a = 1:2
+for a = 2:2
     if a == 1
         cd(master_dir);
         load('med_ed_twav.mat');
@@ -72,6 +56,10 @@ for a = 1:2
         f1 = figure('Name','Template','NumberTitle','off');
         x_lim = [0 2000];
         x_tick = [0 500 1000 1500 2000];
+        t_wind1 = [];
+        f_wind1 = [];
+        t_wind2 = [];
+        f_wind2 = [];
     elseif a == 2
         cd(master_dir);
         load('med_ed_dwav.mat');
@@ -80,7 +68,23 @@ for a = 1:2
         f2 = figure('Name','Decision','NumberTitle','off');
         x_lim = [-2000 0];
         x_tick = [-2000 -1500 -1000 -500 0];
+        t_wind1 = [-1700 -1550];
+        f_wind1 = [7 8];
+        t_wind2 = [-475 -375];
+        f_wind2 = [11 14];
     end
+    
+    % Theta highlight
+    wav_wind1 = [min(t_wind1) min(f_wind1) 2;...
+        max(t_wind1) min(f_wind1) 2;...
+        max(t_wind1) max(f_wind1) 2;...
+        min(t_wind1) max(f_wind1) 2];
+    
+    % Alpha highlight
+    wav_wind2 = [min(t_wind2) min(f_wind2) 2;...
+        max(t_wind2) min(f_wind2) 2;...
+        max(t_wind2) max(f_wind2) 2;...
+        min(t_wind2) max(f_wind2) 2];
     
     for b = 1:2
         if b == 1
@@ -104,7 +108,7 @@ for a = 1:2
         subplot(2,1,b);
         s = surf(time,freq,plotdata);
         hold on
-        %shade = fill3(shade_x,shade_y,shade_z,0);
+        shade = fill3(shade_x,shade_y,shade_z,0);
         hold off
         
         title(['Difference wavelet for ' chan_name ' during ' analysis]);
@@ -152,6 +156,7 @@ for a = 1:2
     end
     
     cd(save_dir);
+    
     if a == 1
         export_fig(f1,save_name,'-png');
     elseif a == 2

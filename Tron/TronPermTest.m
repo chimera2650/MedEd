@@ -8,8 +8,6 @@ close all;
 %% Load Variables
 t_name = 'med_ed_twav.mat';
 d_name = 'med_ed_dwav.mat';
-chan_name1 = 'Fz';
-chan_name2 = 'Pz';
 pval = 0.05;
 n_permutes = 1000;
 comp = getenv('computername');
@@ -56,7 +54,8 @@ for a = 1:2
         permmaps = zeros(n_permutes,size(freq_point,2),size(time_point,2));
         diff_map = mean(squeeze(WAV_data(:,:,2,:) - WAV_data(:,:,1,:)),3);
         dispstat('','init');
-        dispstat(sprintf(['Permuting ' summary.chanlocs(b).labels ' wavelets for ' analysis '. Please wait...']),'keepthis');
+        dispstat(sprintf(['Permuting ' summary.chanlocs(b).labels ' wavelets for '...
+            analysis '. Please wait...']),'keepthis');
         
         for c = 1:n_permutes
             perc_stat = round((c / n_permutes) * 100);
@@ -67,7 +66,7 @@ for a = 1:2
                 temp_perm(:,size(time_point,2)+1:end,:)),3));
         end
         
-        clearvars c perc_stat random_perm temp_dist temp_perm  WAV_data ...
+        clearvars c perm_dist perc_stat random_perm temp_dist temp_perm WAV_data ...
             WAV_data1 WAV_data2 
         
         mean_h0 = squeeze(mean(permmaps,1));
@@ -95,7 +94,7 @@ for a = 1:2
             max_val(c,:) = [min(temp) max(temp)];
         end
         
-        clearvars c max_cluster_sizes mean_h0 perm_maps std_h0 temp ...
+        clearvars c max_cluster_sizes mean_h0 permmaps std_h0 temp ...
             tempclustsizes threshimg;
         
         %% Threshold based on cluster size
@@ -120,14 +119,13 @@ for a = 1:2
         maximum(b,:,:) = zmap_tcorr(:,:);
         data(b,:,:) = diff_map(:,:);
         
-        clearvars max_val thresh_hi thresh_low zmap_clust zmap_tcorr;
+        clearvars max_val thresh_hi thresh_lo zmap_clust zmap_tcorr;
     end
     
     %% Save Data
     clearvars b;
     
     disp('Saving data');
-    perm.chanlocs = chanlocs;
     perm.data = data;
     perm.cluster = cluster;
     perm.maximum = maximum;
@@ -135,7 +133,7 @@ for a = 1:2
     perm.time = time_point;
     save(save_dir,'perm');
     
-    clearvars analysis cluster maximum save_dir;
+    clearvars analysis cluster data diff_map maximum save_dir;
 end
 
 %% Final Cleanup

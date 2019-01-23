@@ -7,7 +7,8 @@ close all;
 %% Set Variables
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-d_name = 'med_ed_wav.mat'; % Name of master data file
+t_name = 'med_ed_twav.mat'; % Name of master data file
+d_name = 'med_ed_dwav.mat'; % Name of master data file
 t_wind1 = [-1000 -500];
 f_wind1 = [5 7];
 t_wind2 = [-800 -500];
@@ -19,7 +20,7 @@ comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    topo_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
+    topo_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
     set(0,'DefaultFigurePosition','remove');
 elseif strcmp(comp,'OLAV-PATTY') == 1
@@ -33,12 +34,13 @@ clear comp
 
 %% Load Variables
 cd(master_dir);
-load(d_name);
+
+load('chanlocs.mat');
 
 for b = 1:62
-    if strcmp(summary.chanlocs(b).labels,chan_name1) == 1
+    if strcmp(chanlocs(b).labels,chan_name1) == 1
         chan_loc(b) = 1;
-    elseif strcmp(summary.chanlocs(b).labels,chan_name2) == 1
+    elseif strcmp(chanlocs(b).labels,chan_name2) == 1
         chan_loc(b) = 2;
     end
 end
@@ -50,19 +52,30 @@ disp('Plotting topographies');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-f1 = figure('Name','Topography',...
-    'NumberTitle','off');
-
 for a = 2:2
+    if a == 1
+        cd(master_dir);
+        load(t_name);
+        t_wind1 = [];
+        f_wind1 = [];
+        t_wind2 = [];
+        f_wind2 = [];
+        f2 = figure('Name','Template','NumberTitle','off');
+        analysis = 'template';
+        save_name = 'Topo_Template';
+    elseif a == 2
+        cd(master_dir);
+        load(d_name);
+        analysis = 'decision';
+        save_name = 'Topo_Decision';
+        t_wind1 = [-1700 -1550];
+        f_wind1 = [7 8];
+        t_wind2 = [-475 -375];
+        f_wind2 = [11 14];
+        f2 = figure('Name','Decision','NumberTitle','off');
+    end
+    
     for b = 1:2
-        if a == 1
-            analysis = 'template';
-            save_name = 'Topo_Template';
-        elseif a == 2
-            analysis = 'decision';
-            save_name = 'Topo_Decision';
-        end
-        
         if b == 1
             t_wind = t_wind1;
             f_wind = f_wind1;
@@ -75,11 +88,11 @@ for a = 2:2
             chan_name = chan_name2;
         end
         
-        t_index = dsearchn(summary.(analysis).time',t_wind');
-        f_index = dsearchn(summary.(analysis).freq',f_wind');
+        t_index = dsearchn(summary.time',t_wind');
+        f_index = dsearchn(summary.freq',f_wind');
         
         for ii = 1:3
-            t_data{ii} = squeeze(mean(summary.(analysis).data{ii}(:,f_index(1):f_index(2),t_index(1):t_index(2)),3));
+            t_data{ii} = squeeze(mean(summary.data{ii}(:,f_index(1):f_index(2),t_index(1):t_index(2)),3));
         end
         
         topodata = t_data{cond2}-t_data{cond1};
@@ -118,7 +131,12 @@ for a = 2:2
     end
     
     cd(save_dir);
-    export_fig(f1,save_name,'-png');
+    
+    if a == 1
+        export_fig(f1,save_name,'-png');
+    elseif a == 2
+        export_fig(f2,save_name,'-png');
+    end
 end
 
 %% Clean Up Workspace

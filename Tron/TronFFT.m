@@ -32,7 +32,7 @@ load(d_name);
 freq_count = (abs(max(freq_points) - min(freq_points))/f_res)+1;
 
 %% FFT Analysis
-for a = 2:2
+for a = 1:2
     if a == 1
         cd(temp_dir);
         analysis = 'template';

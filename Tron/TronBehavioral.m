@@ -25,7 +25,7 @@ clearvars comp
 
 %% Load Data
 cd(master_dir);
-%load(d_name);
+load(d_name);
 cd(behav_dir);
 
 subject_data = load('Medical_DM_Conflict.txt');
@@ -44,7 +44,8 @@ end
 
 clearvars a;
 
-% summary.conflict.ttest = string(summary.conflict.ttest);
+summary.conflict.ttest = [];
+summary.conflict.ttest = string(summary.conflict.ttest);
 summary.conflict.ttest(2,1) = '0-1';
 summary.conflict.ttest(3,1) = '0-2';
 summary.conflict.ttest(4,1) = '1-2';
@@ -57,7 +58,8 @@ disp('Correlating conflict scores');
 
 subject_data.cfscore = zeros(nrow,1);
 subject_data.cfscore = (1-(((abs(subject_data.ALT-70)/60)+(abs(subject_data.AST-275)/225))*0.5));
-summary.conflict.correlation = string(summary.(analysis).correlation);
+summary.conflict.correlation = [];
+summary.conflict.correlation = string(summary.conflict.correlation);
 summary.conflict.correlation(1,1) = 'winloss';
 summary.conflict.correlation(2,1) = round(corr(subject_data.cfscore,subject_data.winloss),3);
 summary.conflict.correlation(1,2) = 'RT';
@@ -69,6 +71,7 @@ clearvars nrow;
 
 %% Accuracy
 disp('Summarizing accuracy data');
+winloss = [];
 
 % Create summary data
 for a = 1:max(subject_data.subject)
@@ -114,7 +117,7 @@ end
 clearvars a cond1 temp_data1 temp_data2;
 
 cond1 = isnan(plotwinloss(:,2));
-plotwinloss(cond2,:) = [];
+plotwinloss(cond1,:) = [];
 plotwinloss = array2table(plotwinloss,'VariableNames',{'conflict','mean','stdev','num'});
 plotwinloss.error = (plotwinloss.stdev./sqrt(plotwinloss.num));
 ts = tinv(0.95,(plotwinloss.num)-1);
@@ -144,6 +147,8 @@ accuracy.anova.output = ranova(rm);
 clearvars meas rm temp_data1;
 
 % Within Confidence Intervals
+ci = [];
+
 for a = 1:max(accuracy.summary.subject)
     cond1 = accuracy.summary.subject(:) == a;
     temp_data1 = accuracy.summary.mean(cond1);
@@ -187,6 +192,7 @@ clearvars accuracy sigaccuracy;
 
 %% Reaction Time
 disp('Summarizing reaction time data');
+RT = [];
 
 for a = 1:max(subject_data.subject)
     cond1 = subject_data.subject == a;
@@ -260,6 +266,8 @@ reactiontime.anova.output = ranova(rm);
 clearvars meas rm temp_data1;
 
 % Within Confidence Intervals
+ci = [];
+
 for a = 1:max(reactiontime.summary.subject)
     cond1 = reactiontime.summary.subject(:) == a;
     temp_data1 = reactiontime.summary.mean(cond1);
@@ -295,15 +303,16 @@ clearvars a cond1 temp_data1 temp_data2;
 
 sigRT = array2table(sigRT,'VariableNames',{'c0','c1','c2'});
 reactiontime.significance = sigRT;
-summary.(analysis).ttest(2,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c1);
-summary.(analysis).ttest(3,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c2);
-summary.(analysis).ttest(4,3) = ttest(reactiontime.significance.c1,reactiontime.significance.c2);
+summary.conflict.ttest(2,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c1);
+summary.conflict.ttest(3,3) = ttest(reactiontime.significance.c0,reactiontime.significance.c2);
+summary.conflict.ttest(4,3) = ttest(reactiontime.significance.c1,reactiontime.significance.c2);
 summary.conflict.reactiontime = reactiontime;
 
 clearvars reactiontime sigRT;
 
 %% Confidence
 disp('Summarizing confidence data');
+conf = [];
 
 for a = 1:max(subject_data.subject)
     cond1 = subject_data.subject == a;
@@ -377,6 +386,8 @@ confidence.anova.output = ranova(rm);
 clearvars meas rm temp_data1;
 
 % Within Confidence Intervals
+ci = [];
+
 for a = 1:max(confidence.summary.subject)
     cond1 = confidence.summary.subject(:) == a;
     temp_data1 = confidence.summary.mean(cond1);
@@ -412,9 +423,9 @@ clearvars a cond1 temp_data1 temp_data2;
 
 sigconf = array2table(sigconf,'VariableNames',{'c0','c1','c2'});
 confidence.significance = sigconf;
-summary.(analysis).ttest(2,4) = ttest(confidence.significance.c0,confidence.significance.c1);
-summary.(analysis).ttest(3,4) = ttest(confidence.significance.c0,confidence.significance.c2);
-summary.(analysis).ttest(4,4) = ttest(confidence.significance.c1,confidence.significance.c2);
+summary.conflict.ttest(2,4) = ttest(confidence.significance.c0,confidence.significance.c1);
+summary.conflict.ttest(3,4) = ttest(confidence.significance.c0,confidence.significance.c2);
+summary.conflict.ttest(4,4) = ttest(confidence.significance.c1,confidence.significance.c2);
 summary.conflict.confidence = confidence;
 
 clearvars confidence sigconf;

@@ -65,17 +65,17 @@ for a = 1:3
     ypos1 = (y_lim(1)+((y_lim(2)-y_lim(1))*0.96));
     ypos2 = (y_lim(1)+((y_lim(2)-y_lim(1))*0.98));
     ypos3 = (y_lim(1)+((y_lim(2)-y_lim(1))*0.94));
-    [h,p] = ttest(summary.conflict.significance.c0,...
-        summary.conflict.significance.c1);
+    [h,p] = ttest(summary.conflict.(analysis).significance.c0,...
+        summary.conflict.(analysis).significance.c1);
     p01 = p;
-    [h,p] = ttest(summary.conflict.significance.c1,...
-        summary.conflict.significance.c2);
+    [h,p] = ttest(summary.conflict.(analysis).significance.c1,...
+        summary.conflict.(analysis).significance.c2);
     p12 = p;
-    [h,p] = ttest(summary.conflict.significance.c0,...
-        summary.conflict.significance.c2);
+    [h,p] = ttest(summary.conflict.(analysis).significance.c0,...
+        summary.conflict.(analysis).significance.c2);
     p02 = p;
-    plot_data = transpose(summary.conflict.plot.mean);
-    ci_data = summary.conflict.ci.within(1,5);
+    plot_data = transpose(summary.conflict.(analysis).plot.mean);
+    ci_data = summary.conflict.(analysis).ci.within(1,5);
     ci = [ci_data ci_data ci_data];
     
     if p01 < 1e-3
@@ -112,7 +112,7 @@ for a = 1:3
     hold on;
     
     for b = 1:3
-        c = bar(c,plot_data(:,b),'FaceColor', colors(b,:));
+        b = bar(b,plot_data(:,b),'FaceColor', colors(b,:));
     end
     
     set(gca,'xtick',[1 2 3],...

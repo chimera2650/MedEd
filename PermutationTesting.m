@@ -6,20 +6,20 @@ clc;
 close all;
 
 %% Load Variables
-file_name = 'med_ed_wav.mat';
+file_name = 'med_ed_twav.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 pval = 0.05;
 min_freq = 1;
 max_freq = 15;
 num_frex = 29;
-min_time = -1996;
-max_time = 0;
+min_time = 0;
+max_time = 1996;
 num_time = 500;
 n_permutes = 1000;
 c_lim = [-1.5 1.5];
-x_lim = [-1996 0];
-y_lim = [1 15];
+x_lim = [min_time max_time];
+y_lim = [min_freq max_freq];
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -48,8 +48,8 @@ for a = 1:62
     end
 end
 
-freq_points = linspace(min_freq,max_freq,num_frex);
-time_points = linspace(min_time,max_time,num_time);
+freq_points = linspace(1,15,29);
+time_points = linspace(0,1996,500);
 max_cluster_sizes = zeros(1,n_permutes);
 max_val = zeros(n_permutes,2);
 cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));
@@ -65,7 +65,7 @@ for y = 1:2
     end
     
     c_index = find(chan_loc == y);
-    WAV_data = squeeze(summary.WAV.raw(c_index,1:29,:,[1,3],:));
+    WAV_data = squeeze(summary.raw(c_index,1:29,:,[1,3],:));
     WAV_data1 = permute(squeeze(WAV_data(:,:,1,:)),[3,1,2]);
     WAV_data2 = permute(squeeze(WAV_data(:,:,2,:)),[3,1,2]);
     temp_dist = cat(3,WAV_data1,WAV_data2);

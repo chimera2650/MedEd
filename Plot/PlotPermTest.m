@@ -16,10 +16,10 @@ comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
     master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_wav.m';
+    save_dir = 'C:\Users\chime\Documents\MATLAB\MedEd\Export';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_wav.m';
+    save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
 end
 
 clear comp
@@ -64,7 +64,7 @@ for a = 1:2
             chan_name = chan_name1;
             plot_num = 0;
             freq_points = linspace(4,6,5);
-            y_lim = [4 6];
+            y_lim = [4 8];
             y_index = [7 11];
         else
             chan_name = chan_name2;
@@ -74,9 +74,9 @@ for a = 1:2
         end
         
         c_index = find(chan_loc == b);
-        plot_data(:,:) = squeeze(perm.data(c_index,y_index(1):y_index(2),:));
-        zmap_clust(:,:) = squeeze(perm.cluster(c_index,y_index(1):y_index(2),:));
-        zmap_tcorr(:,:) = squeeze(perm.maximum(c_index,y_index(1):y_index(2),:));
+        plot_data(:,:) = squeeze(perm.data(c_index,:,:));
+        zmap_clust(:,:) = squeeze(perm.cluster(c_index,:,:));
+        zmap_tcorr(:,:) = squeeze(perm.maximum(c_index,:,:));
         
         subplot(2,3,plot_num + 1)
         s = surf(perm.time,perm.freq,plot_data);
@@ -88,14 +88,14 @@ for a = 1:2
         s.EdgeColor = 'none';
         s.FaceColor = 'interp';
         
-        subplot(2,3,plot_num+2)
+        subplot(2,3,plot_num + 2)
         imagesc(perm.time,perm.freq,zmap_clust);
         xlabel('Time (ms)'), ylabel('Frequency (Hz)');
         set(gca,'clim',[-zval zval],'xlim',x_lim,'ylim',y_lim,'ydir','nor');
         title('Significance based on cluster size');
         colormap(colors);
         
-        subplot(2,3,plot_num+3)
+        subplot(2,3,plot_num + 3)
         imagesc(perm.time,perm.freq,zmap_tcorr);
         xlabel('Time (ms)'), ylabel('Frequency (Hz)');
         set(gca,'clim',[-zval zval],'xlim',x_lim,'ylim',y_lim,'ydir','nor');
@@ -104,9 +104,16 @@ for a = 1:2
         
         clearvars plot_data zmap_clust zmap_tcorr;
     end
+    
+    %% Save Data
+    cd(save_dir);
+    
+    if a == 1
+        export_fig(f1,save_name,'-png');
+    elseif a == 2
+        export_fig(f2,save_name,'-png');
+    end
 end
-
-%% Save Data
 
 %% Clear Workspace
 clearvars -except perm;
