@@ -47,7 +47,7 @@ for a = 1:2
         load('med_ed_tperm.mat');
         analysis = 'template';
         save_name = 'Perm_Template';
-        f1 = figure('Name','Template','NumberTitle','off');
+        f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,2400,800]);
         x_lim = [0 2000];
         x_tick = [0 500 1000 1500 2000];
     elseif a == 2
@@ -55,7 +55,7 @@ for a = 1:2
         load('med_ed_dperm.mat');
         analysis = 'decision';
         save_name = 'Perm_Decision';
-        f2 = figure('Name','Decision','NumberTitle','off');
+        f2 = figure('Name','Decision','NumberTitle','off','Position',[0,0,2400,800]);
         x_lim = [-2000 0];
     end
     

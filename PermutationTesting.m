@@ -6,20 +6,18 @@ clc;
 close all;
 
 %% Load Variables
-file_name = 'med_ed_twav.mat';
+file_name = 'med_ed_dwav.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-pval = 0.05;
+pval = 0.1;
 min_freq = 1;
 max_freq = 15;
 num_frex = 29;
-min_time = 0;
-max_time = 1996;
+min_time = -1996;
+max_time = 0;
 num_time = 500;
 n_permutes = 1000;
 c_lim = [-1.5 1.5];
-x_lim = [min_time max_time];
-y_lim = [min_freq max_freq];
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -48,8 +46,10 @@ for a = 1:62
     end
 end
 
+x_lim = [min_time max_time];
+y_lim = [min_freq max_freq];
 freq_points = linspace(1,15,29);
-time_points = linspace(0,1996,500);
+time_points = linspace(min_time,max_time,num_time);
 max_cluster_sizes = zeros(1,n_permutes);
 max_val = zeros(n_permutes,2);
 cluster_thresh = prctile(max_cluster_sizes,100 - (100 * pval));

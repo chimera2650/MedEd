@@ -7,9 +7,10 @@ close all;
 %% Set Variables
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-d_name = 'med_ed_wav.mat'; % Name of master data file
+t_name = 'med_ed_twav.mat'; % Name of master data file
+d_name = 'med_ed_dwav.mat'; % Name of master data file
 significance = 0.05;
-wav_limits = [-2 2];
+wav_limits = [-1.5 1.5];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
@@ -30,13 +31,13 @@ clear comp
 
 %% Load Variables
 cd(master_dir);
-load(d_name);
+load('chanlocs.mat');
 sig_label = strcat('p > ',num2str(significance));
 
 for b = 1:62
-    if strcmp(summary.chanlocs(b).labels,chan_name1) == 1
+    if strcmp(chanlocs(b).labels,chan_name1) == 1
         chan_loc(b) = 1;
-    elseif strcmp(summary.chanlocs(b).labels,chan_name2) == 1
+    elseif strcmp(chanlocs(b).labels,chan_name2) == 1
         chan_loc(b) = 2;
     end
 end
@@ -48,38 +49,42 @@ disp('Plotting Cohens d');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-for a = 2:2
+for a = 1:2
+    if a == 1
+        cd(master_dir);
+        load(t_name);
+        analysis = 'template';
+        save_name = 'Cohen_Template';
+        f1 = figure('Name','Template','NumberTitle','off');
+        x_tick = [0 500 1000 1500 2000];
+        x_lim = [0 2000];
+    elseif a == 2
+        cd(master_dir);
+        load(d_name);
+        analysis = 'decision';
+        save_name = 'Cohen_Decision';
+        f2 = figure('Name','Decision','NumberTitle','off');
+        x_tick = [-2000 -1500 -1000 -500 0];
+        x_lim = [-2000 0];
+    end
+        
     for b = 1:2
-        if a == 1
-            analysis = 'template';
-            save_name = 'Cohen_Template';
-            f1 = figure('Name','Cohens d','NumberTitle','off');
-        elseif a == 2
-            analysis = 'decision';
-            save_name = 'Cohen_Decision';
-            f2 = figure('Name','Cohens d','NumberTitle','off');
-        end
-        
         if b == 1
-            c_index = find(chan_loc == 2);
+            c_index = find(chan_loc == 1);
             chan_name = chan_name1;
-            y_lim = [4 6];
-            y_tick = [4 5 6];
-            plotdata = squeeze(summary.(analysis).cohen(c_index,7:11,1:499));
-            freq = summary.(analysis).freq(1,7:11);
+            y_lim = [1 30];
+            y_tick = [0 5 10 15 20 25 30];
         elseif b == 2
-            c_index = find(chan_loc == 3);
+            c_index = find(chan_loc == 2);
             chan_name = chan_name2;
-            y_lim = [8 12];
-            y_tick = [8 9 10 11 12];
-            plotdata = squeeze(summary.(analysis).cohen(c_index,15:23,1:499));
-            freq = summary.(analysis).freq(1,15:23);
+            y_lim = [1 30];
+            y_tick = [0 5 10 15 20 25 30];
         end
         
-        time = summary.(analysis).time;
+        plotdata = squeeze(summary.cohen(c_index,:,:));
         
         subplot(2,1,b);
-        s = surf(time,freq,plotdata);
+        s = surf(summary.time,summary.freq,plotdata);
         
         title(['Cohens d of wavelet at ' chan_name ' during ' analysis]);
         set(gca,'ydir','normal');
@@ -88,7 +93,7 @@ for a = 2:2
         c.TickDirection = 'out';
         c.Box = 'off';
         c.Label.String = 'Cohens d';
-        c.Limits = [-2 2];
+        c.Limits = wav_limits;
         drawnow;
         
         axpos = get(gca,'Position');
@@ -101,7 +106,7 @@ for a = 2:2
         drawnow;
         
         ax = gca;
-        ax.CLim = [-2 2];
+        ax.CLim = wav_limits;
         ax.FontSize = 12;
         ax.FontName = 'Arial';
         ax.LineWidth = 1.5;
@@ -109,8 +114,8 @@ for a = 2:2
         ax.YTick = y_tick;
         ax.YLim = y_lim;
         ax.XLabel.String = 'Time (ms)';
-        ax.XTick = [-2000 -1500 -1000 -500 0];
-        ax.XLim = [-2000 0];
+        ax.XTick = x_tick;
+        ax.XLim = x_lim;
         ax.ZLabel.String = 'Cohens d';
         ax.ZTick = [-2 -1.5 -1 -0.5 0 0.5 1 1.5 2];
         ax.ZLim = [-2 2];
