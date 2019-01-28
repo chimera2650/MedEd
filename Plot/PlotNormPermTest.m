@@ -6,8 +6,7 @@ clc;
 close all;
 
 %% Load Variables
-t_name = 'med_ed_tperm.mat';
-d_name = 'med_ed_dperm.mat';
+d_name = 'med_ed_nperm.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 c_lim = [-.75 .75];
@@ -26,6 +25,7 @@ clear comp
 
 %% Load Data
 cd(master_dir);
+load(d_name);
 load('chanlocs.mat');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
@@ -44,15 +44,12 @@ clearvars a chanlocs;
 %% Generate Plots
 for a = 1:2
     if a == 1
-        load('med_ed_tperm.mat');
         analysis = 'template';
         save_name = 'Perm_Template';
         f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,2400,800]);
         x_lim = [0 2000];
         x_tick = [0 500 1000 1500 2000];
     elseif a == 2
-        cd(master_dir);
-        load('med_ed_dperm.mat');
         analysis = 'decision';
         save_name = 'Perm_Decision';
         f2 = figure('Name','Decision','NumberTitle','off','Position',[0,0,2400,800]);
@@ -74,12 +71,12 @@ for a = 1:2
         end
         
         c_index = find(chan_loc == b);
-        plot_data(:,:) = squeeze(perm.data(c_index,:,:));
-        zmap_clust(:,:) = squeeze(perm.cluster(c_index,:,:));
-        zmap_tcorr(:,:) = squeeze(perm.maximum(c_index,:,:));
+        plot_data(:,:) = squeeze(perm.(analysis).data(c_index,:,:));
+        zmap_clust(:,:) = squeeze(perm.(analysis).cluster(c_index,:,:));
+        zmap_tcorr(:,:) = squeeze(perm.(analysis).maximum(c_index,:,:));
         
         subplot(2,3,plot_num + 1)
-        s = surf(perm.time,perm.freq,plot_data);
+        s = surf(perm.(analysis).time,perm.(analysis).freq,plot_data);
         xlabel('Time (ms)'), ylabel('Frequency (Hz)');
         set(gca,'clim',c_lim,'xlim',x_lim,'ylim',y_lim,'ydir','nor');
         title(['Wavelet transform at ' chan_name ' for ' analysis]);
@@ -89,14 +86,14 @@ for a = 1:2
         s.FaceColor = 'interp';
         
         subplot(2,3,plot_num + 2)
-        imagesc(perm.time,perm.freq,zmap_clust);
+        imagesc(perm.(analysis).time,perm.(analysis).freq,zmap_clust);
         xlabel('Time (ms)'), ylabel('Frequency (Hz)');
         set(gca,'clim',[-zval zval],'xlim',x_lim,'ylim',y_lim,'ydir','nor');
         title('Significance based on cluster size');
         colormap(colors);
         
         subplot(2,3,plot_num + 3)
-        imagesc(perm.time,perm.freq,zmap_tcorr);
+        imagesc(perm.(analysis).time,perm.(analysis).freq,zmap_tcorr);
         xlabel('Time (ms)'), ylabel('Frequency (Hz)');
         set(gca,'clim',[-zval zval],'xlim',x_lim,'ylim',y_lim,'ydir','nor');
         title('Significance based on cluster max');
