@@ -43,18 +43,14 @@ for a = 1:2
     if a == 1
         cd(master_dir);
         load(t_name);
-    elseif a == 2
-        cd(master_dir);
-        load(d_name);
-    end
-    
-    if a == 1
         cd(temp_dir);
         analysis = 'template';
         time_points = time_points1;
         time_count = time_count1;
         save_dir = tsave_dir;
     elseif a == 2
+        cd(master_dir);
+        load(d_name);
         cd(dec_dir);
         analysis = 'decision';
         time_points = time_points2;
@@ -104,7 +100,7 @@ for a = 1:2
         artifacts(b,2) = mean(cell2mat(sub_data.WAV.nRejected));
     end
     
-    dispstat('Finished.','keepprev');
+    dispstat('Finished','keepprev');
     summary.artifacts = artifacts;
     
     clearvars artifacts b c c_index chan_loc d e sub_data;
@@ -117,30 +113,38 @@ for a = 1:2
         end
     end
     
-    summary.raw = raw_data;
+    clearvars b c temp_data;
     
-    clearvars b c raw_data;
-    
-    disp(['Combining ' analysis ' wavelet data by condition']);
-    
-    for b = 1:cond_count
-        % Data is collapsed between subjects to create condition averages
-        for c = 1:chan_count
-            for d = 1:file_num
-                temp_sum(d,:,:) = temp_data{d}{b}(c,:,:);
+    for b = 1:size(raw_data,1)        
+        for c = 1:size(raw_data,2)
+            for d = 1:size(raw_data,4)                
+                for e = 1:size(raw_data,5)
+                    temp_data = squeeze(raw_data(b,c,:,d,e));
+                    temp_stdev = std(squeeze(temp_data));
+                    temp_mean = mean(squeeze(temp_data));
+                    temp_z = (temp_data - temp_mean) ./ temp_stdev;
+                    norm_data(b,c,:,d,e) = temp_z;
+                end
             end
-            sum_data{b}(c,:,:) = nanmean(temp_sum(:,:,:));
         end
     end
     
-    summary.data = sum_data;
+    summary.raw = norm_data;
     
-    clearvars b c d temp_sum;
+    clearvars b c d e raw_data temp_data temp_mean temp_std temp_z;
+    
+    disp(['Combining ' analysis ' wavelet data by condition']);
+    
+    mean_data = squeeze(mean(summary.raw,5));
+    
+    summary.data = mean_data;
+    
+    clearvars mean_data;
     
     dispstat('','init');
     dispstat(sprintf(['Calculating Cohens d between no conflict and high conflict ' analysis ' conditions. Please wait...']),'keepthis');
     
-    for b = 1:chan_count
+    for b = 1:size(summary.raw,1)
         if b == 1
             perc_last = 0;
             dispstat(sprintf('Progress %d%%',0))
@@ -154,24 +158,22 @@ for a = 1:2
         
         perc_last = perc_stat;
         
-        for c = 1:freq_count
-            for d = 1:time_count
-                for e = 1:file_num
-                    t_data(1,e) = temp_data{e}{1}(b,c,d);
-                    t_data(2,e) = temp_data{e}{3}(b,c,d);
-                end
-                
-                stdev(1) = std(t_data(1,:));
-                stdev(2) = std(t_data(2,:));
-                m_data(1) = mean(t_data(1,:));
-                m_data(2) = mean(t_data(2,:));
-                pool_stdev = sqrt(((stdev(1)^2)+(stdev(2)^2))/(file_num-2));
-                cohen(b,c,d) = (m_data(2)-m_data(1))/pool_stdev;
+        for c = 1:size(summary.raw,2)
+            for d = 1:size(summary.raw,3)
+                temp_data(1,:) = squeeze(summary.raw(b,c,d,1,:));
+                temp_data(2,:) = squeeze(summary.raw(b,c,d,3,:));
+                stdev(1) = std(temp_data(1,:));
+                stdev(2) = std(temp_data(2,:));
+                m_data(1) = mean(temp_data(1,:));
+                m_data(2) = mean(temp_data(2,:));
+                pool_stdev = sqrt(((stdev(1)^2) + (stdev(2)^2)) /...
+                    (size(summary.raw,5) - 2));
+                cohen(b,c,d) = (m_data(2) - m_data(1)) / pool_stdev;
             end
         end
     end
     
-    dispstat('Finished.','keepprev');
+    dispstat('Finished','keepprev');
     summary.cohen = cohen;
     
     clearvars b c cohen d e m_data num pool_stdev std t_data temp_data;

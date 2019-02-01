@@ -10,7 +10,7 @@ chan_name2 = 'Pz';
 t_name = 'med_ed_twav.mat'; % Name of master data file
 d_name = 'med_ed_dwav.mat'; % Name of master data file
 significance = 0.05;
-wav_limits = [-1.5 1.5];
+wav_limits = [-3 3];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
@@ -82,6 +82,7 @@ for a = 1:2
         end
         
         plotdata = squeeze(summary.cohen(c_index,:,:));
+        
         
         subplot(2,1,b);
         s = surf(summary.time,summary.freq,plotdata);

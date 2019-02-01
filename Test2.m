@@ -109,11 +109,11 @@ analysis = 'decision';
 if analysis == 'template'
     x_lim = [0 1996];
     x_tick = [0 500 1000 1500 2000];
-    index = 2;
+    index = 3;
 elseif analysis == 'decision'
     x_lim = [-1996 0];
     x_tick = [-2000 -1500 -1000 -500 0];
-    index = 4;
+    index = 3;
 end
 
 [theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == index);

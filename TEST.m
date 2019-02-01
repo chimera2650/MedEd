@@ -57,19 +57,13 @@ for a = 1:2
             c_index = find(chan_loc == 2);
         end
         
-        chan_data(:,:) = diff_data(c_index,:,:);
-        
-        for c = 1:size(chan_data,1)
-            freq_data = transpose(chan_data(c,:));
-            
-            [idx,C] = kmeans(freq_data,clust_count,...
-                'Distance','sqeuclidean',...
-                'MaxIter',100);
-            
-            freq_clust(c,:) = transpose(idx);
-        end
-        
-        chan_clust(b,:,:) = freq_clust(:,:);
+        chan_data(:,:) = transpose(squeeze(diff_data(c_index,:,:)));
+        [idx,C] = kmeans(chan_data,clust_count,...
+            'Distance','cityblock',...
+            'Display','final',...
+            'Replicates',100,...
+            'MaxIter',100);
+        chan_clust(b,:,:) = idx;
     end
     
     clusters.(analysis) = chan_clust;
@@ -82,3 +76,34 @@ clearvars a analysis b c C c_index chan_clust chan_data data freq_clust freq_dat
 
 %% Plot data
 colors = cbrewer('qual','Dark2',clust_count);
+figure;
+
+for a = 1:2
+    if a == 1
+        analysis = 'template';
+        c = 0;
+    elseif a == 2
+        analysis = 'decision';
+        c = 2;
+    end
+    
+    for b = 1:2
+        if b == 1
+            chan_name = 'Fz';
+            c_index = find(chan_loc == 1);
+        elseif b == 2
+            chan_name = 'Pz';
+            c_index = find(chan_loc == 2);
+        end
+        
+        plotdata = transpose(squeeze(mean(summary.(analysis).data(c_index,1:29,:,2,:),5)-mean(summary.template.data(c_index,1:29,:,1,:),5)));
+        kdata = squeeze(clusters.(analysis)(b,:));
+        
+        subplot(2,2,b+c)
+        [silh3,h] = silhouette(plotdata,kdata,'cityblock');
+        
+        avgsil = mean(silh3);
+        disp(avgsil);
+    end
+end
+

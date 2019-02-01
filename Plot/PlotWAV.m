@@ -9,7 +9,7 @@ prefix = 'MedEdFlynn_';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 d_name = 'med_ed_wav.mat'; % Name of master data file
-wav_limits = [-1.5 1.5];
+wav_limits = [-1 1];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
@@ -47,7 +47,7 @@ disp('Plotting wavelets');
 colors = cbrewer('div','RdBu',64,'PCHIP');
 colors = flipud(colors);
 
-for a = 2:2
+for a = 1:2
     if a == 1
         cd(master_dir);
         load('med_ed_twav.mat');
@@ -75,41 +75,41 @@ for a = 2:2
     end
     
     % Theta highlight
-    wav_wind1 = [min(t_wind1) min(f_wind1) 2;...
-        max(t_wind1) min(f_wind1) 2;...
-        max(t_wind1) max(f_wind1) 2;...
-        min(t_wind1) max(f_wind1) 2];
-    
-    % Alpha highlight
-    wav_wind2 = [min(t_wind2) min(f_wind2) 2;...
-        max(t_wind2) min(f_wind2) 2;...
-        max(t_wind2) max(f_wind2) 2;...
-        min(t_wind2) max(f_wind2) 2];
+%     wav_wind1 = [min(t_wind1) min(f_wind1) 2;...
+%         max(t_wind1) min(f_wind1) 2;...
+%         max(t_wind1) max(f_wind1) 2;...
+%         min(t_wind1) max(f_wind1) 2];
+%     
+%     % Alpha highlight
+%     wav_wind2 = [min(t_wind2) min(f_wind2) 2;...
+%         max(t_wind2) min(f_wind2) 2;...
+%         max(t_wind2) max(f_wind2) 2;...
+%         min(t_wind2) max(f_wind2) 2];
     
     for b = 1:2
         if b == 1
             c_index = find(chan_loc == 1);
-            shade_x = [wav_wind1(1,1) wav_wind1(2,1) wav_wind1(3,1) wav_wind1(4,1)];
-            shade_y = [wav_wind1(1,2) wav_wind1(2,2) wav_wind1(3,2) wav_wind1(4,2)];
-            shade_z = [wav_wind1(1,3) wav_wind1(2,3) wav_wind1(3,3) wav_wind1(4,3)];
+%             shade_x = [wav_wind1(1,1) wav_wind1(2,1) wav_wind1(3,1) wav_wind1(4,1)];
+%             shade_y = [wav_wind1(1,2) wav_wind1(2,2) wav_wind1(3,2) wav_wind1(4,2)];
+%             shade_z = [wav_wind1(1,3) wav_wind1(2,3) wav_wind1(3,3) wav_wind1(4,3)];
             chan_name = chan_name1;
         elseif b == 2
             c_index = find(chan_loc == 2);
-            shade_x = [wav_wind2(1,1) wav_wind2(2,1) wav_wind2(3,1) wav_wind2(4,1)];
-            shade_y = [wav_wind2(1,2) wav_wind2(2,2) wav_wind2(3,2) wav_wind2(4,2)];
-            shade_z = [wav_wind2(1,3) wav_wind2(2,3) wav_wind2(3,3) wav_wind2(4,3)];
+%             shade_x = [wav_wind2(1,1) wav_wind2(2,1) wav_wind2(3,1) wav_wind2(4,1)];
+%             shade_y = [wav_wind2(1,2) wav_wind2(2,2) wav_wind2(3,2) wav_wind2(4,2)];
+%             shade_z = [wav_wind2(1,3) wav_wind2(2,3) wav_wind2(3,3) wav_wind2(4,3)];
             chan_name = chan_name2;
         end
         
-        plotdata = squeeze(summary.data{cond2}(c_index,:,:)) - squeeze(summary.data{cond1}(c_index,:,:));
+        plotdata = squeeze(summary.data(c_index,:,:,3)) - squeeze(summary.data(c_index,:,:,1));
         freq = summary.freq;
         time = summary.time;
         
         subplot(2,1,b);
         s = surf(time,freq,plotdata);
-        hold on
-        shade = fill3(shade_x,shade_y,shade_z,0);
-        hold off
+%         hold on
+%         shade = fill3(shade_x,shade_y,shade_z,0);
+%         hold off
         
         title(['Difference wavelet for ' chan_name ' during ' analysis]);
         set(gca,'ydir','normal');

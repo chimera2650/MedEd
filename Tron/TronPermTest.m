@@ -44,7 +44,7 @@ for a = 1:2
    
     freq_point = linspace(1,15,29);
     
-    for b = 1:62
+    for b = [28,53]
         %% Statistics via permutation testing
         WAV_data = squeeze(summary.raw(b,1:29,:,[1,3],:));
         WAV_data1 = permute(squeeze(WAV_data(:,:,1,:)),[3,1,2]);

@@ -74,8 +74,8 @@ for a = 1:2
             chan_name = chan_name2;
         end
         
-        tempdata1 = squeeze(summary.data{cond1}(c_index,:,:));
-        tempdata2 = squeeze(summary.data{cond2}(c_index,:,:));
+        tempdata1 = squeeze(summary.data(c_index,:,:,1));
+        tempdata2 = squeeze(summary.data(c_index,:,:,3));
         diffdata = tempdata2 - tempdata1;
         freq = summary.freq;
         time = summary.time;
