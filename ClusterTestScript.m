@@ -47,8 +47,23 @@ for a = 1:2
         analysis = 'decision';
     end
     
-    data = squeeze(mean(summary.(analysis).data(:,7:15,:,:,:),5));
+    data = squeeze(mean(summary.(analysis).data(:,:,:,:,:),5));
+    p_data = squeeze(summary.(analysis).data(:,:,:,:,:));
     diff_data = squeeze(data(:,:,:,2) - data(:,:,:,1));
+    
+        
+        for c = 1:size(p_data,2)
+            for d = 1:size(p_data,3)
+                temp_data(1,:) = squeeze(p_data(28,c,d,1,:));
+                temp_data(2,:) = squeeze(p_data(28,c,d,2,:));
+                [h,p] = ttest(temp_data(1,:),temp_data(2,:));
+                sig_data(c,d,:) = p;
+            end
+        end
+        sig_data(sig_data <= sig) = 1;
+        sig_data(sig_data < 1) = 0;
+            
+
     
     for b = 1:2
         if b == 1
@@ -79,7 +94,7 @@ for a = 1:2
         t_start = 1;
         t_end = 500;
         
-        for c = 1:9
+        for c = 1:59
             clust_data(c,:) = freq_data(1,t_start:t_end);
             clust_index(c,:) = freq_clust(1,t_start:t_end);
             t_start = t_start + 500;
@@ -95,7 +110,7 @@ for a = 1:2
 end
 
 
-clearvars a analysis b c C c_index chan_clust chan_data chan_index clust_data clust_index data diff_data freq_clust freq_data idx t_start t_end;
+% clearvars a analysis b c C c_index chan_clust chan_data chan_index clust_data clust_index data diff_data freq_clust freq_data idx t_start t_end;
 
 %% Plot data
 colors1 = cbrewer('div','RdBu',64,'PCHIP');
@@ -105,28 +120,27 @@ colors2 = flipud(colors2);
 
 %analysis = 'template';
 analysis = 'decision';
+index = 1;
 
 if analysis == 'template'
     x_lim = [0 1996];
     x_tick = [0 500 1000 1500 2000];
-    index = 3;
 elseif analysis == 'decision'
     x_lim = [-1996 0];
     x_tick = [-2000 -1500 -1000 -500 0];
-    index = 3;
 end
 
 [theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == index);
 
-new_theta(1:9,1:500) = 0;
+new_theta(1:59,1:500) = 0;
 for counter = 1:length(theta_row)
     new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(1,theta_row(counter),theta_col(counter)));
 end
 
 figure;
-s = pcolor(summary.(analysis).time,summary.(analysis).freq(1,7:15),squeeze(clusters.(analysis).data(1,:,:)));
+s = pcolor(summary.(analysis).time,summary.(analysis).freq(1,:),squeeze(clusters.(analysis).data(1,:,:)));
 hold on
-contour(summary.(analysis).time,summary.(analysis).freq(1,7:15),new_theta(1:9,:),1,'-k','LineWidth',2);
+contour(summary.(analysis).time,summary.(analysis).freq(1,:),sig_data,1,'-k','LineWidth',2);
 c = colorbar;
 c.TickDirection = 'out';
 c.Box = 'off';
@@ -145,8 +159,8 @@ ax.FontSize = 12;
 ax.FontName = 'Arial';
 ax.LineWidth = 1.5;
 ax.YLabel.String = 'Frequency (Hz)';
-ax.YTick = [4 5 6 7 8];
-ax.YLim = [4 8];
+ax.YTick = [0 5 10 15 20 25 30];
+ax.YLim = [0 30];
 ax.XLabel.String = 'Time (ms)';
 ax.XTick = x_tick;
 ax.XLim = x_lim;
@@ -164,7 +178,7 @@ drawnow;
 hold off
 
 figure;
-s = surf(summary.(analysis).time,summary.(analysis).freq(1,7:15),squeeze(clusters.(analysis).index(1,:,:)));
+s = surf(summary.(analysis).time,summary.(analysis).freq(1,:),squeeze(clusters.(analysis).index(1,:,:)));
 c = colorbar;
 c.TickDirection = 'out';
 c.Box = 'off';
@@ -203,12 +217,12 @@ drawnow;
 
 [theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == 4);
 
-new_theta(1:9,1:500) = 0;
+new_theta(1:59,1:500) = 0;
 for counter = 1:length(theta_row)
     new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(1,theta_row(counter),theta_col(counter)));
 end
 
-figure;
-pcolor((squeeze(clusters.(analysis).data(1,:,:))));shading interp;
-hold on
-contour((new_theta(1:9,:)),1,'k');
+% figure;
+% pcolor((squeeze(clusters.(analysis).data(1,:,:))));shading interp;
+% hold on
+% contour((new_theta(1:59,:)),1,'k');

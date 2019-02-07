@@ -101,7 +101,7 @@ for a = 1:2
             chan_name = chan_name2;
         end
         
-        plotdata = squeeze(summary.data(c_index,:,:,3)) - squeeze(summary.data(c_index,:,:,1));
+        plotdata = squeeze(mean(summary.data(c_index,:,:,3,:),5) - mean(summary.data(c_index,:,:,1),5));
         freq = summary.freq;
         time = summary.time;
         

@@ -7,10 +7,10 @@ close all;
 %% Set Variables
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-t_name = 'med_ed_twav.mat'; % Name of master data file
-d_name = 'med_ed_dwav.mat'; % Name of master data file
+t_name = 'med_ed_tnorm.mat'; % Name of master data file
+d_name = 'med_ed_dnorm.mat'; % Name of master data file
 significance = 0.05;
-wav_limits = [-3 3];
+wav_limits = [-2 2];
 cond1 = 1;
 cond2 = 3;
 comp = getenv('computername');
@@ -54,7 +54,7 @@ for a = 1:2
         cd(master_dir);
         load(t_name);
         analysis = 'template';
-        save_name = 'Cohen_Template';
+        save_name = 'Cohen_Template_Norm';
         f1 = figure('Name','Template','NumberTitle','off');
         x_tick = [0 500 1000 1500 2000];
         x_lim = [0 2000];
@@ -62,7 +62,7 @@ for a = 1:2
         cd(master_dir);
         load(d_name);
         analysis = 'decision';
-        save_name = 'Cohen_Decision';
+        save_name = 'Cohen_Decision_Norm';
         f2 = figure('Name','Decision','NumberTitle','off');
         x_tick = [-2000 -1500 -1000 -500 0];
         x_lim = [-2000 0];

@@ -1,11 +1,11 @@
 "C:\Users\Jordan\Documents\Experiments\MedEd\Export\Decision\MedEd_"
 "001,002,003,005,008,009,011,012,013,014,022,024,025,027,029,030,031,035,037,041,043,044,047,048,049,050,051,054,056,057" % File suffixes (participant); Run num2str(1:20,'%02i,') or similar to make this easier
-"[]" % Baseline correction (use [] for no baseline)
+"-2200,196" % Baseline correction (use [] for no baseline)
 "15,150" % Artifact parameters (gradient, amplitude)
 "C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision\MedEdFlynn_"
 "FFT,Decision (No Conflict),-996,0,0CD" % FFT Template analysis, marker, start time, end time, condition name
 "FFT,Decision (One Conflict),-996,0,1CD"
 "FFT,Decision (Two Conflict),-996,0,2CD"
-"WAV,Decision (No Conflict),-2196,200,[],[],1,30,59,6,0CD"
-"WAV,Decision (One Conflict),-2196,200,[],[],1,30,59,6,1CD"
-"WAV,Decision (Two Conflict),-2196,200,[],[],1,30,59,6,2CD"
+"WAV,Decision (No Conflict),-2200,196,-2200,196,1,30,59,6,0CD"
+"WAV,Decision (One Conflict),-2200,196,-2200,196,1,30,59,6,1CD"
+"WAV,Decision (Two Conflict),-2200,196,-2200,196,1,30,59,6,2CD"

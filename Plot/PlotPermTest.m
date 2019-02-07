@@ -6,8 +6,8 @@ clc;
 close all;
 
 %% Load Variables
-t_name = 'med_ed_tperm.mat';
-d_name = 'med_ed_dperm.mat';
+t_name = 'med_ed_tnperm.mat';
+d_name = 'med_ed_dnperm.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 c_lim = [-.75 .75];
@@ -44,17 +44,17 @@ clearvars a chanlocs;
 %% Generate Plots
 for a = 1:2
     if a == 1
-        load('med_ed_tperm.mat');
+        load(t_name);
         analysis = 'template';
-        save_name = 'Perm_Template';
+        save_name = 'Perm_Norm_Template';
         f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,2400,800]);
         x_lim = [0 2000];
         x_tick = [0 500 1000 1500 2000];
     elseif a == 2
         cd(master_dir);
-        load('med_ed_dperm.mat');
+        load(d_name);
         analysis = 'decision';
-        save_name = 'Perm_Decision';
+        save_name = 'Perm_Norm_Decision';
         f2 = figure('Name','Decision','NumberTitle','off','Position',[0,0,2400,800]);
         x_lim = [-2000 0];
     end

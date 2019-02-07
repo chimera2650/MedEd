@@ -3,7 +3,7 @@ clear;
 
 cd('C:\Users\Jordan\Documents\MATLAB\flynn');
 
-for a = 3:4
+for a = 4:4
     if a == 1
         FLYNN('C:\Users\Jordan\Documents\MATLAB\MedEd\Config\FeedbackConfig.txt',...
             'Standard-10-20-NEL-62.locs');

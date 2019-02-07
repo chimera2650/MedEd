@@ -6,8 +6,8 @@ clc;
 close all;
 
 %% Load Variables
-t_name = 'med_ed_twav.mat';
-d_name = 'med_ed_dwav.mat';
+t_name = 'med_ed_tnorm.mat';
+d_name = 'med_ed_dnorm.mat';
 pval = 0.05;
 n_permutes = 1000;
 comp = getenv('computername');
@@ -18,8 +18,8 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     dsave_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_dperm.mat';
 elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_tperm.mat';
-    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dperm.mat';
+    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_tnperm.mat';
+    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dnperm.mat';
 end
 
 clearvars comp

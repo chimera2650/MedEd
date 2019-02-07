@@ -26,8 +26,8 @@ elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     temp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Template';
     dec_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
-    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_twav.mat';
-    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dwav.mat';
+    tsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_tnorm.mat';
+    dsave_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_dnorm.mat';
 end
 
 clearvars comp
@@ -115,21 +115,23 @@ for a = 1:2
     
     clearvars b c temp_data;
     
-    for b = 1:size(raw_data,1)        
-        for c = 1:size(raw_data,2)
-            for d = 1:size(raw_data,4)                
-                for e = 1:size(raw_data,5)
-                    temp_data = squeeze(raw_data(b,c,:,d,e));
-                    temp_stdev = std(squeeze(temp_data));
-                    temp_mean = mean(squeeze(temp_data));
-                    temp_z = (temp_data - temp_mean) ./ temp_stdev;
-                    norm_data(b,c,:,d,e) = temp_z;
-                end
-            end
-        end
-    end
+%     for b = 1:size(raw_data,1)
+%         for c = 1:size(raw_data,2)
+%             for d = 1:size(raw_data,3)
+%                 for e = 1:size(raw_data,4)
+%                     temp_data = squeeze(raw_data(b,c,d,e,:));
+%                     temp_stdev = std(squeeze(temp_data));
+%                     temp_mean = mean(squeeze(temp_data));
+%                     temp_z = (temp_data - temp_mean) ./ temp_stdev;
+%                     norm_data(b,c,d,e,:) = temp_z;
+%                     
+%                    t_mean =  
+%                 end
+%             end
+%         end
+%     end
     
-    summary.raw = norm_data;
+    summary.raw = raw_data;
     
     clearvars b c d e raw_data temp_data temp_mean temp_std temp_z;
     
@@ -177,6 +179,38 @@ for a = 1:2
     summary.cohen = cohen;
     
     clearvars b c cohen d e m_data num pool_stdev std t_data temp_data;
+    
+    dispstat('','init');
+    dispstat(sprintf(['Calculating t scores between no conflict and high conflict ' analysis ' conditions. Please wait...']),'keepthis');
+    
+    for b = 1:size(summary.raw,1)
+        if b == 1
+            perc_last = 0;
+            dispstat(sprintf('Progress %d%%',0))
+        end
+        
+        perc_stat = round((b/chan_count)*100);
+        
+        if perc_stat ~= perc_last
+            dispstat(sprintf('Progress %d%%',perc_stat));
+        end
+        
+        perc_last = perc_stat;
+        
+        for c = 1:size(summary.raw,2)
+            for d = 1:size(summary.raw,3)
+                temp_data(1,:) = squeeze(summary.raw(b,c,d,1,:));
+                temp_data(2,:) = squeeze(summary.raw(b,c,d,3,:));
+                [h,p] = ttest(temp_data(1,:),temp_data(2,:));
+                sig_data(b,c,d,:) = p;
+            end
+        end
+    end
+    
+    dispstat('Finished','keepprev');
+    summary.ttest = sig_data;
+    
+    clearvars b c d h p sig_data temp_data;
     
     %% Create frequency and time points for plots
     disp(['Creating ' analysis ' frequency and time points']);

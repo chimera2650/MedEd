@@ -5,12 +5,11 @@ clear;
 close all;
 
 %% Set Variables
-prefix = 'MedEdFlynn_';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-d_name = 'med_ed_wav.mat'; % Name of master data file
-cond1 = 1;
-cond2 = 3;
+t_name = 'med_ed_tnorm.mat';
+d_name = 'med_ed_dnorm.mat';
+s_name = 'WAV_Cond_Norm_';
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -22,7 +21,6 @@ elseif strcmp(comp,'OLAV-PATTY') == 1
     master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     wav_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
     save_dir = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Export';
-    set(0,'DefaultFigurePosition',[1921,45,1280,907]);
 end
 
 clear comp
@@ -52,15 +50,17 @@ for a = 1:2
         analysis = 'template';
         x_lim = [0 1996];
         x_tick = [0 500 1000 1500 2000];
-        load('med_ed_twav.mat');
+        load(t_name);
         f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,2400,800]);
+        save_name = [s_name 'Template'];
     elseif a == 2
         cd(master_dir);
         analysis = 'decision';
         x_lim = [-1996 0];
         x_tick = [-2000 -1500 -1000 -500 0];
-        load('med_ed_dwav.mat');
+        load(d_name);
         f1 = figure('Name','Decision','NumberTitle','off','Position',[0,0,2400,800]);
+        save_name = [s_name 'Decision'];
     end
     
     for b = 1:2
@@ -74,38 +74,34 @@ for a = 1:2
             chan_name = chan_name2;
         end
         
-        tempdata1 = squeeze(summary.data(c_index,:,:,1));
-        tempdata2 = squeeze(summary.data(c_index,:,:,3));
-        diffdata = tempdata2 - tempdata1;
-        freq = summary.freq;
+        plotdata1 = squeeze(mean(summary.data(c_index,:,:,1),5));
+        plotdata2 = squeeze(mean(summary.data(c_index,:,:,3),5));
+        diffdata = plotdata2 - plotdata1;
         time = summary.time;
-        freqdata1 = zeros(59,1);
-        freqdata2 = zeros(59,1);
-        
-        for d = 1:59
-            freqdata1(d) = squeeze(mean(tempdata1(:,d),1));
-            freqdata2(d) = squeeze(mean(tempdata2(:,d),1));
-        end
-        
-        basedata1 = mean(freqdata1);
-        basedata2 = mean(freqdata2);
-        plotdata1 = tempdata1 - basedata1;
-        plotdata2 = tempdata2 - basedata2;
-        
+        freq = summary.freq;
+                
         for c = 1:3
             if c == 1
                 data = diffdata;
                 t_lab = ['Difference wavelet for ' chan_name];
-                wav_limits = [-1.5 1.5];
+                wav_limits = [-1 1];
             elseif c == 2
                 data = plotdata1;
                 t_lab = ['Wavelet for ' chan_name ' during no conflict'];
-                wav_limits = [-2 2];
+                wav_limits = [-1 1];
             elseif c == 3
                 data = plotdata2;
                 t_lab = ['Wavelet for ' chan_name ' during high conflict'];
-                wav_limits = [-2 2];
+                wav_limits = [-1 1];
             end
+            
+            for d = 1:size(data,1)
+                temp_data = squeeze(mean(data,1));
+            end
+            
+            temp_mean = squeeze(mean(temp_data));
+            
+            data = data - temp_mean;
             
             subplot(2,3,c+e);
             s = surf(time,freq,data);
@@ -156,7 +152,6 @@ for a = 1:2
     end
     
     cd(save_dir);
-    save_name = ['WAV_cond_' analysis];
     export_fig(f1,save_name,'-png');
 end
 
