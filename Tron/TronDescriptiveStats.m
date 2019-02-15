@@ -4,11 +4,13 @@ clear;
 clc;
 
 %% Define Variables
-t_name = 'med_ed_twav.mat'; % Name of master data file
-d_name = 'med_ed_dwav.mat'; % Name of master data file
+t_name = 'med_ed_tnorm.mat'; % Name of master data file
+d_name = 'med_ed_dnorm.mat'; % Name of master data file
 c_name = 'chanlocs.mat';
-theta = [4 8];
-alpha = [8 12];
+theta_freq = [6 7];
+theta_time = [200 272];
+alpha_freq = [13 19];
+alpha_time = [202 274];
 chan_theta = 'Fz';
 chan_alpha = 'Pz';
 
@@ -62,11 +64,13 @@ for a = 1:2
 
     for b = 1:2
         if b == 1
-            freq_range = [find(freq == theta(1)) find(freq == theta(2))];
+            freq_range = theta_freq;
+            time_range = theta_time;
             c_index = find(chan_loc == 1);
             band = 'theta';
         elseif b == 2
-            freq_range = [find(freq == alpha(1)) find(freq == alpha(2))];
+            freq_range = alpha_freq;
+            time_range = alpha_time;
             c_index = find(chan_loc == 2);
             band = 'alpha';
         end
@@ -75,7 +79,7 @@ for a = 1:2
         
         for c = 1:size(data,4)
             for d = 1:size(data,3)
-                temp_data = squeeze(data(freq_range(1):freq_range(2),:,d,c));
+                temp_data = squeeze(data(freq_range(1):freq_range(2),time_range(1):time_range(2),d,c));
                 temp_mean = squeeze(mean(temp_data,1));
                 temp_mean = squeeze(mean(temp_mean));
                 sub_mean(c,d) = squeeze(mean(temp_mean));

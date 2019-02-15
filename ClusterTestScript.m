@@ -5,11 +5,13 @@ clc;
 close all;
 
 %% Load Variables
-d_name = 'med_ed_norm.mat';
+t_name = 'med_ed_tnorm.mat';
+d_name = 'med_ed_dnorm.mat';
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
 clust_count = 5;
 freq_count = 29;
+sig = 0.05;
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
@@ -24,7 +26,6 @@ clearvars comp
 
 %% Load Data
 cd(master_dir);
-load(d_name);
 load('chanlocs.mat');
 
 chan_loc = zeros(1,62);
@@ -43,27 +44,27 @@ clust_count = 5;
 for a = 1:2
     if a == 1
         analysis = 'template';
+        load(t_name);
     elseif a == 2
         analysis = 'decision';
+        load(d_name);
     end
     
-    data = squeeze(mean(summary.(analysis).data(:,:,:,:,:),5));
-    p_data = squeeze(summary.(analysis).data(:,:,:,:,:));
+    data = squeeze(mean(summary.data(:,:,:,:,:),5));
+    p_data = squeeze(summary.data(:,:,:,:,:));
     diff_data = squeeze(data(:,:,:,2) - data(:,:,:,1));
     
-        
-        for c = 1:size(p_data,2)
-            for d = 1:size(p_data,3)
-                temp_data(1,:) = squeeze(p_data(28,c,d,1,:));
-                temp_data(2,:) = squeeze(p_data(28,c,d,2,:));
-                [h,p] = ttest(temp_data(1,:),temp_data(2,:));
-                sig_data(c,d,:) = p;
-            end
+    for c = 1:size(p_data,2)
+        for d = 1:size(p_data,3)
+            temp_data(1,:) = squeeze(p_data(28,c,d,1,:));
+            temp_data(2,:) = squeeze(p_data(28,c,d,2,:));
+            [h,p] = ttest(temp_data(1,:),temp_data(2,:));
+            sig_data(c,d,:) = p;
         end
-        sig_data(sig_data <= sig) = 1;
-        sig_data(sig_data < 1) = 0;
-            
-
+    end
+    
+    sig_data(sig_data <= sig) = 1;
+    sig_data(sig_data < 1) = 0;
     
     for b = 1:2
         if b == 1
@@ -107,6 +108,8 @@ for a = 1:2
     
     clusters.(analysis).index = chan_index;
     clusters.(analysis).data = chan_clust;
+    clusters.(analysis).time = summary.time;
+    clusters.(analysis).freq = summary.freq;
 end
 
 
@@ -118,9 +121,11 @@ colors1 = flipud(colors1);
 colors2 = cbrewer('qual','Set1',5);
 colors2 = flipud(colors2);
 
-%analysis = 'template';
-analysis = 'decision';
-index = 1;
+analysis = 'template';
+%analysis = 'decision';
+%chan_name = 'Fz';
+chan_name = 'Pz';
+index = 4;
 
 if analysis == 'template'
     x_lim = [0 1996];
@@ -130,17 +135,23 @@ elseif analysis == 'decision'
     x_tick = [-2000 -1500 -1000 -500 0];
 end
 
-[theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == index);
+if chan_name == 'Fz'
+    c_index = 1;
+elseif chan_name == 'Pz'
+    c_index = 2;
+end
+
+[theta_row, theta_col] = find(squeeze(clusters.(analysis).index(c_index,:,:)) == index);
 
 new_theta(1:59,1:500) = 0;
 for counter = 1:length(theta_row)
-    new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(1,theta_row(counter),theta_col(counter)));
+    new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(c_index,theta_row(counter),theta_col(counter)));
 end
 
 figure;
-s = pcolor(summary.(analysis).time,summary.(analysis).freq(1,:),squeeze(clusters.(analysis).data(1,:,:)));
+s = pcolor(clusters.(analysis).time,clusters.(analysis).freq,squeeze(clusters.(analysis).data(c_index,:,:)));
 hold on
-contour(summary.(analysis).time,summary.(analysis).freq(1,:),sig_data,1,'-k','LineWidth',2);
+contour(clusters.(analysis).time,clusters.(analysis).freq,new_theta,1,'-k','LineWidth',2);
 c = colorbar;
 c.TickDirection = 'out';
 c.Box = 'off';
@@ -177,50 +188,50 @@ colormap(colors1);
 drawnow;
 hold off
 
-figure;
-s = surf(summary.(analysis).time,summary.(analysis).freq(1,:),squeeze(clusters.(analysis).index(1,:,:)));
-c = colorbar;
-c.TickDirection = 'out';
-c.Box = 'off';
-c.Label.String = 'Power (dB)';
-c.Limits = [0 5];
-c.Ticks = [0 1 2 3 4 5];
-axpos = get(gca,'Position');
-cpos = c.Position;
-cpos(3) = 0.5*cpos(3);
-c.Position = cpos;
-drawnow;
-set(gca,'position',axpos);
-drawnow;
-ax = gca;
-ax.CLim = [0 5];
-ax.FontSize = 12;
-ax.FontName = 'Arial';
-ax.LineWidth = 1.5;
-ax.YLabel.String = 'Frequency (Hz)';
-ax.YTick = [4 5 6 7 8];
-ax.YLim = [4 8];
-ax.XLabel.String = 'Time (ms)';
-ax.XTick = x_tick;
-ax.XLim = x_lim;
-ax.TickDir = 'out';
-ax.FontWeight = 'bold';
-ax.Box = 'off';
-s.EdgeColor = 'none';
-s.FaceColor = 'interp';
-shade.FaceColor = 'none';
-shade.EdgeColor = [0 0 0];
-shade.LineWidth = 2;
-view([0,0,90]);
-colormap(colors2);
-drawnow;
-
-[theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == 4);
-
-new_theta(1:59,1:500) = 0;
-for counter = 1:length(theta_row)
-    new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(1,theta_row(counter),theta_col(counter)));
-end
+% figure;
+% s = surf(summary.(analysis).time,summary.(analysis).freq(1,:),squeeze(clusters.(analysis).index(1,:,:)));
+% c = colorbar;
+% c.TickDirection = 'out';
+% c.Box = 'off';
+% c.Label.String = 'Power (dB)';
+% c.Limits = [0 5];
+% c.Ticks = [0 1 2 3 4 5];
+% axpos = get(gca,'Position');
+% cpos = c.Position;
+% cpos(3) = 0.5*cpos(3);
+% c.Position = cpos;
+% drawnow;
+% set(gca,'position',axpos);
+% drawnow;
+% ax = gca;
+% ax.CLim = [0 5];
+% ax.FontSize = 12;
+% ax.FontName = 'Arial';
+% ax.LineWidth = 1.5;
+% ax.YLabel.String = 'Frequency (Hz)';
+% ax.YTick = [4 5 6 7 8];
+% ax.YLim = [4 8];
+% ax.XLabel.String = 'Time (ms)';
+% ax.XTick = x_tick;
+% ax.XLim = x_lim;
+% ax.TickDir = 'out';
+% ax.FontWeight = 'bold';
+% ax.Box = 'off';
+% s.EdgeColor = 'none';
+% s.FaceColor = 'interp';
+% shade.FaceColor = 'none';
+% shade.EdgeColor = [0 0 0];
+% shade.LineWidth = 2;
+% view([0,0,90]);
+% colormap(colors2);
+% drawnow;
+% 
+% [theta_row, theta_col] = find(squeeze(clusters.(analysis).index(1,:,:)) == 4);
+% 
+% new_theta(1:59,1:500) = 0;
+% for counter = 1:length(theta_row)
+%     new_theta(theta_row(counter),theta_col(counter)) = squeeze(clusters.(analysis).data(1,theta_row(counter),theta_col(counter)));
+% end
 
 % figure;
 % pcolor((squeeze(clusters.(analysis).data(1,:,:))));shading interp;
