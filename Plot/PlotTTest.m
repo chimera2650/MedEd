@@ -7,8 +7,8 @@ close all;
 %% Set Variables
 chan_name1 = 'Fz';
 chan_name2 = 'Pz';
-t_name = 'med_ed_twav.mat'; % Name of master data file
-d_name = 'med_ed_dwav.mat'; % Name of master data file
+t_name = 'med_ed_tnorm.mat'; % Name of master data file
+d_name = 'med_ed_dnorm.mat'; % Name of master data file
 significance = 0.05;
 wav_limits = [-1 1];
 cond1 = 1;
@@ -55,7 +55,7 @@ for a = 1:2
         load(t_name);
         analysis = 'template';
         save_name = 'TTest_Template';
-        f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,2400,800]);
+        f1 = figure('Name','Template','NumberTitle','off','Position',[0,0,1024,768]);
         x_tick = [0 500 1000 1500 2000];
         x_lim = [0 2000];
         time = summary.time;
@@ -64,7 +64,7 @@ for a = 1:2
         load(d_name);
         analysis = 'decision';
         save_name = 'TTest_Decision';
-        f2 = figure('Name','Decision','NumberTitle','off','Position',[0,0,2400,800]);
+        f2 = figure('Name','Decision','NumberTitle','off','Position',[0,0,1024,768]);
         x_tick = [-2000 -1500 -1000 -500 0];
         x_lim = [-2000 0];
         time = summary.time;
@@ -85,71 +85,63 @@ for a = 1:2
             d = 3;
         end
         
-        for c = 1:3
-            if c == 1
-                sig = 0.1;
-            elseif c == 2
-                sig = 0.05;
-            elseif c == 3
-                sig = 0.01;
-            end
-            
-            sigdata = squeeze(summary.ttest(c_index,:,:));
-            plotdata = sigdata;
-            freq = summary.freq;
-            
-            plotdata(abs(sigdata) > sig) = 0;
-            plotdata(abs(sigdata) <= sig) = 1;
-                        
-            subplot(2,3,c+d);
-            s = surf(time,freq,plotdata);
-            
-            title(['TTest of wavelet at ' chan_name ' during ' analysis ' at ' num2str(sig)]);
-            set(gca,'ydir','normal');
-            
-            c = colorbar;
-            c.TickDirection = 'out';
-            c.Box = 'off';
-            c.Label.String = 'Cohens d';
-            c.Limits = wav_limits;
-            drawnow;
-            
-            axpos = get(gca,'Position');
-            cpos = c.Position;
-            cpos(3) = 0.5*cpos(3);
-            c.Position = cpos;
-            drawnow;
-            
-            set(gca,'position',axpos);
-            drawnow;
-            
-            ax = gca;
-            ax.CLim = wav_limits;
-            ax.FontSize = 12;
-            ax.FontName = 'Arial';
-            ax.LineWidth = 1.5;
-            ax.YLabel.String = 'Frequency (Hz)';
-            ax.YTick = y_tick;
-            ax.YLim = y_lim;
-            ax.XLabel.String = 'Time (ms)';
-            ax.XTick = x_tick;
-            ax.XLim = x_lim;
-            ax.ZLabel.String = 'Cohens d';
-            ax.ZTick = [-2 -1.5 -1 -0.5 0 0.5 1 1.5 2];
-            ax.ZLim = [-2 2];
-            ax.TickDir = 'out';
-            ax.FontWeight = 'bold';
-            ax.Box = 'off';
-            
-            s.EdgeColor = 'none';
-            s.FaceColor = 'interp';
-            shade.FaceColor = 'none';
-            shade.EdgeColor = [0 0 0];
-            shade.LineWidth = 2;
-            
-            view([0,0,90]);
-            colormap(colors);
-        end
+        sig = 0.05;
+        sigdata = squeeze(summary.ttest(c_index,:,:));
+        plotdata = sigdata;
+        freq = summary.freq;
+        
+        plotdata(abs(sigdata) > sig) = 0;
+        plotdata(abs(sigdata) <= sig) = 1;
+        
+        subplot(2,1,b);
+        s = surf(time,freq,plotdata);
+        
+        title(['TTest of wavelet at ' chan_name ' during ' analysis ' at ' num2str(sig)]);
+        set(gca,'ydir','normal');
+        
+        c = colorbar;
+        c.TickDirection = 'out';
+        c.Box = 'off';
+        c.Label.String = 'Cohens d';
+        c.Limits = wav_limits;
+        drawnow;
+        
+        axpos = get(gca,'Position');
+        cpos = c.Position;
+        cpos(3) = 0.5*cpos(3);
+        c.Position = cpos;
+        drawnow;
+        
+        set(gca,'position',axpos);
+        drawnow;
+        
+        ax = gca;
+        ax.CLim = wav_limits;
+        ax.FontSize = 12;
+        ax.FontName = 'Arial';
+        ax.LineWidth = 1.5;
+        ax.YLabel.String = 'Frequency (Hz)';
+        ax.YTick = y_tick;
+        ax.YLim = y_lim;
+        ax.XLabel.String = 'Time (ms)';
+        ax.XTick = x_tick;
+        ax.XLim = x_lim;
+        ax.ZLabel.String = 'Cohens d';
+        ax.ZTick = [-2 -1.5 -1 -0.5 0 0.5 1 1.5 2];
+        ax.ZLim = [-2 2];
+        ax.TickDir = 'out';
+        ax.FontWeight = 'bold';
+        ax.Box = 'off';
+        
+        s.EdgeColor = 'none';
+        s.FaceColor = 'interp';
+        shade.FaceColor = 'none';
+        shade.EdgeColor = [0 0 0];
+        shade.LineWidth = 2;
+        
+        view([0,0,90]);
+        colormap(colors);
+        
     end
     
     cd(save_dir);

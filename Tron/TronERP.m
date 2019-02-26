@@ -165,6 +165,28 @@ summary.ERP.ttest = erp_ttest;
 clearvars a b c c_index chan_loc ci_data cond1 d erp_ci erp_ttest h num p ...
     sub_data sum_data t_data1 t_data2 tbl temp_data ts;
 
+test_data = squeeze(nanmean(summary.ERP.raw(35,:,1,:),4)) -...
+    squeeze(nanmean(summary.ERP.raw(35,:,2,:),4));
+[val,peak_idx] = max(test_data);
+
+for a = 1:size(summary.ERP.raw,3)
+    for b = 1:size(summary.ERP.raw,4)
+        temp_data = squeeze(summary.ERP.raw(35,:,a,b));
+        temp_data(isnan(temp_data)) = 0;
+        peak(b,a) = mean(temp_data(peak_idx-25:peak_idx+25));
+    end
+end
+
+std_peak = [std(peak(:,1)) std(peak(:,2))];
+[h,sig_peak] = ttest(peak(:,1),peak(:,2));
+ci_peak = [(1.96*(std_peak(1)/sqrt(size(summary.ERP.raw,4)))) ...
+    (1.96*(std_peak(2)/sqrt(size(summary.ERP.raw,4))))];
+summary.ERP.peak.mean = val;
+summary.ERP.peak.stdev = std_peak;
+summary.ERP.peak.ci = ci_peak;
+summary.ERP.peak.sig = sig_peak;
+summary.ERP.peak.latency = peak_idx;
+
 % Create a table for time points; used in plotting data
 disp('Creating timepoints for ERP');
 
@@ -309,6 +331,28 @@ summary.ERP_NL.ttest = erp_ttest;
 
 clearvars a b c c_index chan_loc ci_data cond1 d erp_ci erp_ttest h num p ...
     sub_data sum_data t_data1 t_data2 tbl temp_data ts;
+
+test_data = squeeze(nanmean(summary.ERP_NL.raw(35,:,1,:),4)) -...
+    squeeze(nanmean(summary.ERP_NL.raw(35,:,2,:),4));
+[val,peak_idx] = max(test_data);
+
+for a = 1:size(summary.ERP_NL.raw,3)
+    for b = 1:size(summary.ERP_NL.raw,4)
+        temp_data = squeeze(summary.ERP_NL.raw(35,:,a,b));
+        temp_data(isnan(temp_data)) = 0;
+        peak(b,a) = mean(temp_data(peak_idx-25:peak_idx+25));
+    end
+end
+
+std_peak = [std(peak(:,1)) std(peak(:,2))];
+[h,sig_peak] = ttest(peak(:,1),peak(:,2));
+ci_peak = [(1.96*(std_peak(1)/sqrt(size(summary.ERP_NL.raw,4)))) ...
+    (1.96*(std_peak(2)/sqrt(size(summary.ERP_NL.raw,4))))];
+summary.ERP_NL.peak.mean = val;
+summary.ERP_NL.peak.stdev = std_peak;
+summary.ERP_NL.peak.ci = ci_peak;
+summary.ERP_NL.peak.sig = sig_peak;
+summary.ERP_NL.peak.latency = peak_idx;
 
 % Create a table for time points; used in plotting data
 disp('Creating timepoints for ERP NL');
