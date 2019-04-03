@@ -5,7 +5,7 @@
 % [prefix = string of file name prefix to identify files to acquire data
 % from].
 
-function output = combineSubjectsERP(directory,channelFile,prefix)
+function raw = summarizeERP(directory,channelFile,prefix)
 
 % Change directory to desired location
 cd(directory);
@@ -49,5 +49,5 @@ for fileCounter = 1:fileNumber
     end
 end
 
-output = tempData;
+raw = tempData;
 end
