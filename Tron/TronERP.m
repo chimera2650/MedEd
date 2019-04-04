@@ -20,11 +20,13 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     learnerDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Learners';
     nonlearnerDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Nonlearners';
     saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdERP.mat';
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
     masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     learnerDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Learners';
     nonlearnerDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Nonlearners';
     saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdERP.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
 end
 
 clearvars comp;
@@ -43,17 +45,17 @@ clearvars chanlocs masterDirectory masterName;
 
 %% Summarize ERP data (learners)
 % Call function to create initial summary table
-raw = summarizeERP(learnerDirectory,channelReference,filePrefix);
+raw = summarizeEEG(learnerDirectory,channelReference,filePrefix,'ERP');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsERP(learnerDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(learnerDirectory,channelReference,filePrefix,'ERP');
 % Call function to calculate standard deviations between subjects
-stdev = stdevERP(raw);
+stdev = stdevEEG(raw,'ERP');
 % Call function to calculate confidence intervals within subjects
-ci = ciERP(raw);
+ci = ciEEG(raw,'ERP');
 % Call function to calculate ttest scores between subjects
-tScore = ttestERP(raw);
+tScore = ttestEEG(raw,'ERP');
 % Call function to calculate peak value, latency, and significance
-peak = peakERP(raw);
+peak = peakEEG(raw);
 % Call a function to generate a linear dataset to represent time points
 time = timePoints(-200,600,4);
 
@@ -71,17 +73,17 @@ clearvars artifacts ci learnerDirectory peak raw stdev timePoints tScore;
 
 %% Summarize ERP data (non-learners)
 % Call function to create initial summary table
-raw = summarizeERP(nonlearnerDirectory,channelReference,filePrefix);
+raw = summarizeEEG(nonlearnerDirectory,channelReference,filePrefix,'ERP');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsERP(nonlearnerDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(nonlearnerDirectory,channelReference,filePrefix,'ERP');
 % Call function to calculate standard deviations between subjects
-stdev = stdevERP(raw);
+stdev = stdevEEG(raw,'ERP');
 % Call function to calculate confidence intervals within subjects
-ci = ciERP(raw);
+ci = ciEEG(raw,'ERP');
 % Call function to calculate ttest scores between subjects
-tScore = ttestERP(raw);
+tScore = ttestEEG(raw,'ERP');
 % Call function to calculate peak value, latency, and significance
-peak = peakERP(raw);
+peak = peakEEG(raw);
 % Call a function to generate a linear dataset to represent time points
 time = timePoints(-200,600,4);
 

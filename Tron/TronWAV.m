@@ -22,19 +22,22 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     responseDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Response';
     saveStimulusDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdStimulusWAV.mat';
     saveResponseDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdResponseWAV.mat';
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
     masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     stimulusDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Stimulus';
     responseDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Response';
     saveStimulusDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdStimulusWAV.mat';
     saveResponseDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdResponseWAV.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
 end
 
 clearvars comp;
 
 %% Load Data
 % Temporarily add functions folder to path
-addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 % Change directory to where master data file is located, if at all, as well
 % as cannel reference file
 cd(masterDirectory);
@@ -47,13 +50,13 @@ clearvars chanlocs;
 cd(masterDirectory);
 load(stimulusName);
 % Call function to create initial summary table
-raw = summarizeWAV(stimulusDirectory,channelReference,filePrefix);
+raw = summarizeEEG(stimulusDirectory,channelReference,filePrefix,'WAV');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsWAV(stimulusDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(stimulusDirectory,channelReference,filePrefix,'WAV');
 % Call function to calculate Cohen's D effect size between subjects
-cohen = cohenWAV(raw);
+cohen = cohenEEG(raw);
 % Call function to calculate ttest scores between subjects
-tScore = ttestWAV(raw);
+tScore = ttestEEG(raw,'WAV');
 % Call a function to generate a linear dataset to represent frequency points
 frequency = frequencyPoints(1,30,0.5);
 % Call a function to generate a linear dataset to represent time points
@@ -77,13 +80,13 @@ clearvars artifacts ci cohen frequency raw saveStimulusDirectory stimulusDirecto
 cd(masterDirectory);
 load(responseName);
 % Call function to create initial summary table
-raw = summarizeWAV(responseDirectory,channelReference,filePrefix);
+raw = summarizeEEG(responseDirectory,channelReference,filePrefix,'WAV');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsWAV(responseDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(responseDirectory,channelReference,filePrefix,'WAV');
 % Call function to calculate Cohen's D effect size between subjects
-cohen = cohenWAV(raw);
+cohen = cohenEEG(raw);
 % Call function to calculate ttest scores between subjects
-tScore = ttestWAV(raw);
+tScore = ttestEEG(raw,'WAV');
 % Call a function to generate a linear dataset to represent frequency points
 frequency = frequencyPoints(1,30,0.5);
 % Call a function to generate a linear dataset to represent time points

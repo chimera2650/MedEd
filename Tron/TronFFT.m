@@ -20,11 +20,13 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     stimulusDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Stimulus';
     responseDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Response';
     saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdFFT.mat';
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
     masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     stimulusDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Stimulus';
     responseDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Response';
     saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdFFT.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
 end
 
 clearvars comp;
@@ -43,15 +45,15 @@ clearvars chanlocs masterDirectory masterName;
 
 %% Summarize FFT data for stimulus
 % Call function to create initial summary table
-raw = summarizeFFT(stimulusDirectory,channelReference,filePrefix);
+raw = summarizeEEG(stimulusDirectory,channelReference,filePrefix,'FFT');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsFFT(stimulusDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(stimulusDirectory,channelReference,filePrefix,'FFT');
 % Call function to calculate standard deviations between subjects
-stdev = stdevFFT(raw);
+stdev = stdevEEG(raw,'FFT');
 % Call function to calculate confidence intervals within subjects
-ci = ciFFT(raw);
+ci = ciEEG(raw,'FFT');
 % Call function to calculate ttest scores between subjects
-tScore = ttestFFT(raw);
+tScore = ttestEEG(raw,'FFT');
 % Call a function to generate a linear dataset to represent frequency points
 frequency = frequencyPoints(1,30,0.5);
 
@@ -68,15 +70,15 @@ clearvars artifacts ci frequencyPoints peak raw stdev stimulusDirectory tScore;
 
 %% Summarize FFT data for response
 % Call function to create initial summary table
-raw = summarizeFFT(responseDirectory,channelReference,filePrefix);
+raw = summarizeEEG(responseDirectory,channelReference,filePrefix,'FFT');
 % Call function to compile total artifact counts by subject
-artifacts = artifactsFFT(responseDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(responseDirectory,channelReference,filePrefix,'FFT');
 % Call function to calculate standard deviations between subjects
-stdev = stdevFFT(raw);
+stdev = stdevEEG(raw,'FFT');
 % Call function to calculate confidence intervals within subjects
-ci = ciFFT(raw);
+ci = ciEEG(raw,'FFT');
 % Call function to calculate ttest scores between subjects
-tScore = ttestFFT(raw);
+tScore = ttestEEG(raw,'FFT');
 % Call a function to generate a linear dataset to represent frequency points
 frequency = frequencyPoints(1,30,0.5);
 

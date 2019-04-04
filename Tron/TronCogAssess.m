@@ -20,11 +20,13 @@ if strcmp(comp,'JORDAN-SURFACE') == 1
     doorsDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\Doors';
     oddballDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\Oddball';
     saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\CogAssess.mat';
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess';
-    doorsDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\Doors';
+    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess';
+    doorsDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\Doors';
     oddballDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Oddball';
-    saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\CogAssess.mat';
+    saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\CogAssess.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
 end
 
 clearvars comp;
@@ -43,17 +45,17 @@ clearvars chanlocs masterDirectory masterName;
 
 %% Summarize data for Doors task
 % Call function to create initial summary table
-raw = summarizeERP(doorsDirectory,channelReference,filePrefix);
+raw = summarizeEEG(doorsDirectory,channelReference,filePrefix);
 % Call function to compile total artifact counts by subject
-artifacts = artifactsERP(doorsDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(doorsDirectory,channelReference,filePrefix);
 % Call function to calculate standard deviations between subjects
-stdev = stdevERP(raw);
+stdev = stdevEEG(raw);
 % Call function to calculate confidence intervals within subjects
-ci = ciERP(raw);
+ci = ciEEG(raw);
 % Call function to calculate ttest scores between subjects
-tScore = ttestERP(raw);
+tScore = ttestEEG(raw);
 % Call function to calculate peak value, latency, and significance
-peak = peakERP(raw);
+peak = peakEEG(raw);
 % Call a function to generate a linear dataset to represent time points
 timePoints = timepointsERP(-200,600,4);
 
@@ -71,17 +73,17 @@ clearvars artifacts ci learnerDirectory peak raw stdev timePoints tScore;
 
 %% Summarize data for Oddball task
 % Call function to create initial summary table
-raw = summarizeERP(oddballDirectory,channelReference,filePrefix);
+raw = summarizeEEG(oddballDirectory,channelReference,filePrefix);
 % Call function to compile total artifact counts by subject
-artifacts = artifactsERP(oddballDirectory,channelReference,filePrefix);
+artifacts = artifactsEEG(oddballDirectory,channelReference,filePrefix);
 % Call function to calculate standard deviations between subjects
-stdev = stdevERP(raw);
+stdev = stdevEEG(raw);
 % Call function to calculate confidence intervals within subjects
-ci = ciERP(raw);
+ci = ciEEG(raw);
 % Call function to calculate ttest scores between subjects
-tScore = ttestERP(raw);
+tScore = ttestEEG(raw);
 % Call function to calculate peak value, latency, and significance
-peak = peakERP(raw);
+peak = peakEEG(raw);
 % Call a function to generate a linear dataset to represent time points
 timePoints = timepointsERP(-200,600,4);
 
