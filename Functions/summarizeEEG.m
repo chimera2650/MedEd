@@ -44,7 +44,7 @@ for fileCounter = 1:fileNumber
             % the reference file to standardize row order
             channelIndex = find(channelLocation == 1);
             
-            if analysis == 'WAV'
+            if strcmp(analysis,'WAV') == 1
                 tempData(channelCounter,:,:,conditionCounter,fileCounter) =...
                     subjectData.(analysis).data{conditionCounter}(channelIndex,:,:);
             else
