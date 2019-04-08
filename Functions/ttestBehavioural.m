@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function tScore = ttestBehavioural(dataFile)
 subjectData = dataFile;
 subjectCount = size(unique(subjectData.subject),1);

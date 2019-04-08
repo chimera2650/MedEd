@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function ci = ciEEG(dataFile)
 
 dispstat('','init');

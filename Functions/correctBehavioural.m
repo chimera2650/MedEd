@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 % This function just corrects for a data labelling oversight when
 % programming the experiment. The conflict scores were not labelled
 % intuitively, so this function reorders them.

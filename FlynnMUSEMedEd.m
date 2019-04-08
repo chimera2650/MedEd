@@ -1,18 +1,20 @@
+% Copyright (C) 2019 Jordan Middleton
 clc;
 clear;
 
-cd('C:\Users\Jordan\Documents\MATLAB\flynn');
+addpath(genpath('C:\Users\Jordan\Documents\MATLAB\flynn'));
+cd('C:\Users\Jordan\Documents\MATLAB\MedEd\Config');
 
-for a = 1:3
-    if a == 1
-        analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEThetaConfig.txt';
-    elseif a == 2
-        analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEAlphaConfig.txt';
-    elseif a == 3
-        analysis = 'C:\Users\Jordan\Documents\MATLAB\MedEd\Config\MUSEFeedbackConfig.txt';
+for analysisCounter = 1:3
+    if analysisCounter == 1
+        analysis = 'MUSEThetaConfig.txt';
+    elseif analysisCounter == 2
+        analysis = 'MUSEAlphaConfig.txt';
+    elseif analysisCounter == 3
+        analysis = 'MUSEFeedbackConfig.txt';
     end
     
-    FLYNN(analysis,'C:\Users\Jordan\Documents\MATLAB\flynn\Standard-10-20-NEL-62.locs');
+    FLYNN(analysis,'Standard-10-20-NEL-62.locs');
 end
 
 clear a;

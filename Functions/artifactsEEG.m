@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 % This function takes a directory of Flynn output files and extracts the
 % artifact rejection counts for each condition into a single array.
 

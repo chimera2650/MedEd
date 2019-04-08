@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function outputData = summarizeBehavioural(dataFile,condition)
 behaviouralData = dataFile;
 subjectCount = max(behaviouralData.subject);

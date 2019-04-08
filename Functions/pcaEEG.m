@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function pcaOutput = pcaEEG(dataFile,timeData,frequencyData,channelName,channelReference,analysis)
 channelCount = size(dataFile,1);
 frequencyCount = size(dataFile,2);

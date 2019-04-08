@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 % This function takes a directory of Flynn output files and combines them
 % into a single array with dimensions [channels,time,condition,subject].
 % Inputs are [directory = path to file directory as a string], [channelFile

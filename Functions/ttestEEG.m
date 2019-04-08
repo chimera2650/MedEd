@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function tScore = ttestEEG(dataFile,analysis)
 dispstat('','init');
 dispstat(sprintf(['Calculating ' analysis ' ttest scores. Please wait...']),'keepthis');

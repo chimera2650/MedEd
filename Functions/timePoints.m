@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 % This function will create a linear dataset for use when plotting data. It
 % requires a minimum and maximum time, as well as a sampling rate to
 % produce the dataset

@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function stdev = stdevEEG(dataFile,analysis)
 
 % Standard Deviation

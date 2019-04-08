@@ -1,5 +1,5 @@
 %% Code Info
-% Written by Jordan Middleton 2018
+% Copyright (C) 2019 Jordan Middleton
 clear;
 clc;
 
@@ -18,10 +18,12 @@ comp = getenv('computername');
 if strcmp(comp,'JORDAN-SURFACE') == 1
     masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
     saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdPCA.mat';
+    addpath(genpath('C:\Users\chime\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
     addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
     masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
     saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdPCA.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
     addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
 end
 

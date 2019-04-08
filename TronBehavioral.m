@@ -1,5 +1,5 @@
 %% Code Info
-% Written by Jordan Middleton 2018
+% Copyright (C) 2019 Jordan Middleton
 clear;
 clc;
 

@@ -1,3 +1,5 @@
+% Copyright (C) 2019 Jordan Middleton
+
 function peak = peakEEG(dataFile)
 
 channelCount = size(dataFile,1);

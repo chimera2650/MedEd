@@ -1,16 +1,16 @@
+% Copyright (C) 2019 Jordan Middleton
 clc;
 clear;
 
-cd('C:\Users\Jordan\Documents\MATLAB\flynn');
+addpath(genpath('C:\Users\Jordan\Documents\MATLAB\flynn'));
+cd('C:\Users\Jordan\Documents\MATLAB\MedEd\Config');
 
-for a = 1:2
-    if a == 1
-        FLYNN('C:\Users\Jordan\Documents\MATLAB\MedEd\Config\RewPConfig.txt',...
-            'Standard-10-20-NEL-62.locs');
-    elseif a == 2
-        FLYNN('C:\Users\Jordan\Documents\MATLAB\MedEd\Config\P300Config.txt',...
-            'Standard-10-20-NEL-62.locs');
+for analysisCounter = 1:2
+    if analysisCounter == 1
+        analysis = 'RewPConfig.txt';
+    elseif analysisCounter == 2
+        analysis = 'P300Config.txt';
     end
+    
+    FLYNN(analysis,'Standard-10-20-NEL-62.locs');
 end
-
-clear a;
