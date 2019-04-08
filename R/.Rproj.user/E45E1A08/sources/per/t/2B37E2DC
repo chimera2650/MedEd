@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1553885440508.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "92|115|97|0|\n",
+    "hash" : "2033015571",
+    "id" : "2B37E2DC",
+    "lastKnownWriteTime" : 1550709229,
+    "last_content_update" : 1553885488265,
+    "path" : "~/R/MedEd-R/erp_plot.R",
+    "project_path" : "erp_plot.R",
+    "properties" : {
+        "cursorPosition" : "77,3",
+        "scrollLine" : "61"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

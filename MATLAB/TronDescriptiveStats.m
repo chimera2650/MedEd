@@ -17,15 +17,17 @@ chan_alpha = 'Pz';
 comp = getenv('computername');
 
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    master_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    temp_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Template';
-    dec_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Decision';
-    save_dir = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\med_ed_stats.mat';
+    master_dir = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    temp_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\Template';
+    dec_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\Decision';
+    save_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\med_ed_stats.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    master_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    temp_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Template';
-    dec_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Decision';
-    save_dir = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\med_ed_stats.mat';
+    master_dir = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    temp_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\Template';
+    dec_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\Decision';
+    save_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\med_ed_stats.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions'));
 end
 
 clearvars comp

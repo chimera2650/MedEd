@@ -16,17 +16,17 @@ comp = getenv('computername');
 % computers with difference file structures. If you are using only one
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess';
-    doorsDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\Doors';
-    oddballDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\Oddball';
-    saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\Cog Assess\CogAssess.mat';
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\Cog Assess';
+    doorsDirectory = 'C:\Users\chime\Documents\Github\Data\Cog Assess\Doors';
+    oddballDirectory = 'C:\Users\chime\Documents\Github\Data\Cog Assess\Oddball';
+    saveDirectory = 'C:\Users\chime\Documents\Github\Data\Cog Assess\CogAssess.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess';
-    doorsDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\Doors';
-    oddballDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Oddball';
-    saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\Cog Assess\CogAssess.mat';
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\Cog Assess';
+    doorsDirectory = 'C:\Users\Jordan\Documents\Github\Data\Cog Assess\Doors';
+    oddballDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Oddball';
+    saveDirectory = 'C:\Users\Jordan\Documents\Github\Data\Cog Assess\CogAssess.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions'));
 end
 
 clearvars comp;

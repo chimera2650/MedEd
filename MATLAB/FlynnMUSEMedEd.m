@@ -2,8 +2,8 @@
 clc;
 clear;
 
-addpath(genpath('C:\Users\Jordan\Documents\MATLAB\flynn'));
-cd('C:\Users\Jordan\Documents\MATLAB\MedEd\Config');
+addpath(genpath('C:\Users\Jordan\Documents\Github\flynn'));
+cd('C:\Users\Jordan\Documents\Github\MedEd\MATLAB\MedEd\Config');
 
 for analysisCounter = 1:3
     if analysisCounter == 1

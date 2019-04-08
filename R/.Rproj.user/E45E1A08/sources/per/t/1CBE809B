@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1552613404857.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "426935447",
+    "id" : "1CBE809B",
+    "lastKnownWriteTime" : 1552683626,
+    "last_content_update" : 1553885427220,
+    "path" : "~/R/MedEd-R/summmaryPlot.R",
+    "project_path" : "summmaryPlot.R",
+    "properties" : {
+        "cursorPosition" : "0,12",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

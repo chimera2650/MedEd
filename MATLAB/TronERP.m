@@ -16,17 +16,17 @@ comp = getenv('computername');
 % computers with difference file structures. If you are using only one
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    learnerDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Learners';
-    nonlearnerDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Nonlearners';
-    saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdERP.mat';
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    learnerDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Learners';
+    nonlearnerDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Nonlearners';
+    saveDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\MedEdERP.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    learnerDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Learners';
-    nonlearnerDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Nonlearners';
-    saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdERP.mat';
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    learnerDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Learners';
+    nonlearnerDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Nonlearners';
+    saveDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\MedEdERP.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions\'));
 end
 
 clearvars comp;

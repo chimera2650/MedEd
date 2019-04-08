@@ -17,21 +17,19 @@ comp = getenv('computername');
 % computers with difference file structures. If you are using only one
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    stimulusDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Stimulus';
-    responseDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Response';
-    saveStimulusDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdStimulusWAV.mat';
-    saveResponseDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdResponseWAV.mat';
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    stimulusDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Stimulus';
+    responseDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Response';
+    saveStimulusDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\MedEdStimulusWAV.mat';
+    saveResponseDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\MedEdResponseWAV.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    stimulusDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Stimulus';
-    responseDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Response';
-    saveStimulusDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdStimulusWAV.mat';
-    saveResponseDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdResponseWAV.mat';
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MATLAB-EEG-PCA-Toolbox'));
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    stimulusDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Stimulus';
+    responseDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Response';
+    saveStimulusDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\MedEdStimulusWAV.mat';
+    saveResponseDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\MedEdResponseWAV.mat';
+    addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions'));
 end
 
 clearvars comp;

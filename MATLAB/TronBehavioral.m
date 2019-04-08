@@ -18,25 +18,24 @@ comp = getenv('computername');
 % computers with difference file structures. If you are using only one
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    behaviouralDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral';
-    rawDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
-    saveDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd\MedEdBehavioural.mat';
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    behaviouralDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Behavioral';
+    rawDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\Behavioral\Raw\';
+    saveDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\MedEdBehavioural.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    behaviouralDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral';
-    rawDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\Behavioral\Raw\';
-    saveDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd\MedEdBehavioural.mat';
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    behaviouralDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Behavioral';
+    rawDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\Behavioral\Raw\';
+    saveDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\MedEdBehavioural.mat';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 end
 
 clearvars comp;
 
 %% Analyze feedback data
-addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 cd(masterDirectory);
-%load(masterName);
+load(masterName);
 % Call a function to load summary file for conflict condition
 subjectData = loadBehavioural(behaviouralDirectory,'MedEdFeedback.txt');
 % Call function to correct conflict scores due to programming oversight

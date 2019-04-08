@@ -19,21 +19,21 @@ comp = getenv('computername');
 % computers with difference file structures. If you are using only one
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    masterDirectory = 'C:\Users\chime\Documents\MATLAB\Data\MedEd';
-    erpDirectory = 'C:\Users\chime\Documents\R\Data\MedEd\ERP Data';
-    fftDirectory = 'C:\Users\chime\Documents\R\Data\MedEd\FFT Data';
-    wavDirectory = 'C:\Users\chime\Documents\R\Data\MedEd\WAV Data';
-    pcaDirectory = 'C:\Users\chime\Documents\R\Data\MedEd\PCA Data';
-    behaviouralDirectory = 'C:\Users\chime\Documents\R\Data\MedEd\Behavioural Data';
-    addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    erpDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\ERP Data';
+    fftDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\FFT Data';
+    wavDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\WAV Data';
+    pcaDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\PCA Data';
+    behaviouralDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\Behavioural Data';
+    addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    masterDirectory = 'C:\Users\Jordan\Documents\MATLAB\Data\MedEd';
-    erpDirectory = 'C:\Users\Jordan\Documents\R\Data\MedEd\ERP Data';
-    fftDirectory = 'C:\Users\Jordan\Documents\R\Data\MedEd\FFT Data';
-    wavDirectory = 'C:\Users\Jordan\Documents\R\Data\MedEd\WAV Data';
-    pcaDirectory = 'C:\Users\Jordan\Documents\R\Data\MedEd\PCA Data';
-    behaviouralDirectory = 'C:\Users\Jordan\Documents\R\Data\MedEd\Behavioural Data';
-    addpath(genpath('C:\Users\Jordan\Documents\MATLAB\MedEd\Functions\'));
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    erpDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\ERP Data';
+    fftDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\FFT Data';
+    wavDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\WAV Data';
+    pcaDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\PCA Data';
+    behaviouralDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\Behavioural Data';
+    addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions\'));
 end
 
 clearvars comp;

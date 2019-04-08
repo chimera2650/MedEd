@@ -1,0 +1,482 @@
+#####
+# WORKSPACE
+
+# Load libraries
+{
+  library(car)
+  library(plyr)
+  library(dplyr)
+  library(tidyr)
+  library(rlang)
+  library(extrafont)
+  library(ggplot2)
+  library(scales)
+  library(ez)
+  loadfonts(device = "win")
+}
+
+# Create variables
+{
+  conflict_data = NA
+  subject_RT = NA
+  subject_acc = NA
+  subject_conf = NA
+  plot_RT = NA
+  plot_acc = NA
+  plot_conf = NA
+  my_theme = NA
+  barplot_RT = NA
+  barplot_acc = NA
+  barplot_conf = NA
+  sig_data = NA
+  sig_RT = NA
+  sig_acc = NA
+  sig_conf = NA
+  sig_summary = NA
+  RT_anova = NA
+  acc_anova = NA
+  conf_anova = NA
+  ttest_RT01 = NA
+  ttest_RT12 = NA
+  ttest_RT02 = NA
+  ttest_acc01 = NA
+  ttest_acc12 = NA
+  ttest_acc02 = NA
+  ttest_conf01 = NA
+  ttest_conf12 = NA
+  ttest_conf02 = NA
+}
+
+# Load data table
+conflict_data = read.table(file.choose())
+
+# Name data columns
+names(conflict_data) = c(
+  "subject",
+  "phase",
+  "block_count",
+  "block_total",
+  "trial_count",
+  "trial_total",
+  "RT",
+  "accuracy",
+  "disease",
+  "conflict",
+  "winloss",
+  "confidence",
+  "ALT",
+  "AST"
+)
+
+# Replace missing data with null cells
+conflict_data$ALT = ifelse(conflict_data$ALT != 0,
+                           conflict_data$ALT,
+                           NA)
+conflict_data$AST = ifelse(conflict_data$AST != 0,
+                           conflict_data$AST,
+                           NA)
+conflict_data$conflict = ifelse(conflict_data$conflict != 0,
+                                conflict_data$conflict,
+                                NA)
+conflict_data$conflict[conflict_data$conflict == 1] = 2
+conflict_data$conflict[conflict_data$conflict == 4] = 1
+
+#####
+# BASIC ANALYSIS
+
+# Conflict Score
+{
+  # Normalize conflict score
+  conflict_data$cfscore = 1 - (((abs(
+    conflict_data$ALT - 70
+  ) / 60) +
+    (abs(
+      conflict_data$AST - 275
+    ) / 225)) * 0.5)
+  
+  # Correlate conflict score to win/loss
+  cor_acc = cor(x = conflict_data$cfscore,
+                y = conflict_data$winloss,
+                use = "pairwise.complete.obs") %>%
+    round(digits = 3)
+  
+  # Correlate conflict score to reation time
+  cor_RT = cor(x = conflict_data$cfscore,
+               y = conflict_data$RT,
+               use = "pairwise.complete.obs") %>%
+    round(digits = 3)
+  
+  # Correlate conflict score to confidence score
+  cor_conf = cor(x = conflict_data$cfscore,
+                 y = conflict_data$confidence,
+                 use = "pairwise.complete.obs") %>%
+    round(digits = 3)
+}
+
+# Functions
+{
+  conflict_summary <- function(data_name, col_name) {
+    require(dplyr)
+    require(rlang)
+    
+    col_name <- enquo(col_name)
+    
+    data_name %>%
+      group_by(subject,
+               conflict) %>%
+      summarise(mean := mean(!!col_name),
+                stdev := sd(!!col_name),
+                n = n()) %>%
+      mutate(se = stdev / sqrt(n),
+             ci = (qt(0.05, n) * se))
+  }
+  
+  plot_summary <- function(data_name) {
+    data_name %>%
+      group_by(conflict) %>%
+      subset(select = -c(subject)) %>%
+      summarise(mean = mean(mean),
+                stdev = sd(mean),
+                n = n()) %>%
+      mutate(se = stdev / sqrt(n),
+             ci = (qt(0.05, n) * se))
+  }
+}
+
+# Generate data tables
+{
+  subject_RT <- conflict_summary(conflict_data, RT)
+  plot_RT <- plot_summary(subject_RT)
+  
+  subject_acc <- conflict_summary(conflict_data, accuracy)
+  plot_acc <- plot_summary(subject_acc)
+  
+  subject_conf <- conflict_summary(conflict_data, confidence)
+  plot_conf <- plot_summary(subject_conf)
+}
+
+#####
+# PLOTS
+
+# Create theme
+my_theme = theme_classic() +
+  theme(
+    plot.title = element_text(
+      size = 16,
+      family = "Arial",
+      hjust = 0.5
+    ),
+    
+    text = element_text(
+      size = 12,
+      family = "Arial",
+      hjust = 0.5
+    )
+  )
+
+# Reaction time bar plot
+{
+  # create bar plot
+  barplot_RT = ggplot(plot_RT,
+                      aes(x = factor(conflict),
+                          y = mean)) +
+    geom_bar(stat = 'identity',
+             width = 0.5,
+             fill = "grey50") +
+    
+    # define scale and labels for x-axis
+    scale_x_discrete(labels = c("No Conflict", "One Conflict", "Two Conflict")) +
+    
+    # define scale for y-axis
+    coord_cartesian(ylim =  range(4, 8)) +
+    scale_y_continuous(breaks = c(4, 5, 6, 7, 8)) +
+    
+    # define labels for title and axes
+    labs(title = "Reaction Time",
+         x = NULL,
+         y = "Reaction Time (s)") +
+    
+    # apply error bars
+    geom_errorbar(aes(ymin = mean - ci,
+                      ymax = mean + ci),
+                  width = .1) +
+    
+    # apply theme
+    my_theme
+  
+  # print plot
+  barplot_RT
+  }
+
+# Accuracy bar plot
+{
+  # create bar plot
+  barplot_acc = ggplot(plot_acc,
+                       aes(x = factor(conflict),
+                           y = mean)) +
+    geom_bar(stat = 'identity',
+             width = 0.5,
+             fill = "grey50") +
+    
+    # define scale and labels for x-axis
+    scale_x_discrete(labels = c("No Conflict", "One Conflict", "Two Conflict")) +
+    
+    # define scale for y-axis
+    coord_cartesian(ylim =  range(70, 90)) +
+    scale_y_continuous(breaks = c(70, 75, 80, 85, 90)) +
+    
+    # define labels for title and axes
+    labs(title = "Accuracy",
+         x = NULL,
+         y = "Accuracy (%)") +
+    
+    # apply error bars
+    geom_errorbar(aes(ymin = mean - ci,
+                      ymax = mean + ci),
+                  width = .1) +
+    
+    # apply theme
+    my_theme
+  
+  # print plot
+  barplot_acc
+}
+
+# Confidence bar plot
+{
+  # create bar plot
+  barplot_conf = ggplot(plot_conf,
+                        aes(x = factor(conflict),
+                            y = mean)) +
+    geom_bar(stat = 'identity',
+             width = 0.5,
+             fill = "grey50") +
+    
+    # define scale and labels for x-axis
+    scale_x_discrete(labels = c("No Conflict", "One Conflict", "Two Conflict")) +
+    
+    # define scale for y-axis
+    coord_cartesian(ylim =  range(6, 10)) +
+    scale_y_continuous(breaks = c(6, 7, 8, 9, 10)) +
+    
+    # define labels for title and axes
+    labs(title = "Self-Reported Confidence",
+         x = NULL,
+         y = "Confidence") +
+    
+    # apply error bars
+    geom_errorbar(aes(ymin = mean - ci,
+                      ymax = mean + ci),
+                  width = .1) +
+    
+    # apply theme
+    my_theme
+  
+  # print plot
+  barplot_conf
+}
+#####
+# SIGNIFICANCE TESTING
+
+# Create Summary Tables
+{
+  sig_data = conflict_data %>%
+    select(subject,
+           conflict,
+           RT,
+           accuracy,
+           winloss,
+           confidence,
+           cfscore) %>%
+    group_by(subject, conflict) %>%
+    summarise(
+      meanRT = mean(RT),
+      stdevRT = sd(RT),
+      meanacc = mean(accuracy),
+      stdevacc = sd(accuracy),
+      meanconf = mean(confidence),
+      stdevconf = sd(confidence),
+      meancfscore = mean(cfscore),
+      stdevcfscore = sd(cfscore),
+      n = n()
+    ) %>%
+    ungroup() %>%
+    select(-subject)
+  
+  sub_count = length(which(sig_data$conflict == 1))
+}
+
+# Functions
+{
+  # Create Condition Tables
+  sig_RT = as.data.frame(split(sig_data$meanRT, sig_data$conflict))
+  names(sig_RT) = c("C0", "C1", "C2")
+  
+  sig_acc = as.data.frame(split(sig_data$meanacc, sig_data$conflict))
+  names(sig_acc) = c("C0", "C1", "C2")
+  
+  sig_conf = as.data.frame(split(sig_data$meanconf, sig_data$conflict))
+  names(sig_conf) = c("C0", "C1", "C2")
+  
+  # t-test
+  sig_summary = setNames(data.frame(matrix(ncol = 4, nrow = 4)),
+                         c("Condition", "RT", "Accuracy", "Confidence"))
+  sig_summary[1, 1] = "0-1"
+  sig_summary[2, 1] = "1-2"
+  sig_summary[3, 1] = "0-2"
+  sig_summary[4, 1] = "anova"
+}
+
+# Run RM-ANOVA with post-hoc tests
+{
+  # accuracy
+  acc_anova = ezANOVA(
+    data = sig_data,
+    dv = meanacc,
+    wid = subject,
+    within = conflict,
+    detailed = TRUE,
+    type = 3
+  )
+  sig_summary[4, 2] = acc_anova[["ANOVA"]][["p"]]
+  
+  # reaction time
+  RT_anova = ezANOVA(
+    data = sig_data,
+    dv = meanRT,
+    wid = subject,
+    within = conflict,
+    detailed = TRUE,
+    type = 3
+  )
+  sig_summary[4, 3] = RT_anova[["ANOVA"]][["p"]]
+  
+  # confidence
+  conf_anova = ezANOVA(
+    data = sig_data,
+    dv = meanconf,
+    wid = subject,
+    within = conflict,
+    detailed = TRUE,
+    type = 3
+  )
+  sig_summary[4, 4] = conf_anova[["ANOVA"]][["p"]]
+}
+
+# Condition t-tests
+{
+  # reaction time
+  ttest_RT01 = t.test(sig_RT$C0, sig_RT$C1, paired = TRUE)
+  sig_summary[1, 2] = p.adjust(ttest_RT01[["p.value"]], method = "BH", n = 9)
+  ttest_RT12 = t.test(sig_RT$C1, sig_RT$C2, paired = TRUE)
+  sig_summary[2, 2] = p.adjust(ttest_RT12[["p.value"]], method = "BH", n = 9)
+  ttest_RT02 = t.test(sig_RT$C0, sig_RT$C2, paired = TRUE)
+  sig_summary[3, 2] = p.adjust(ttest_RT02[["p.value"]], method = "BH", n = 9)
+  
+  # accuracy
+  ttest_acc01 = t.test(sig_acc$C0, sig_acc$C1, paired = TRUE)
+  sig_summary[1, 3] = p.adjust(ttest_acc01[["p.value"]], method = "BH", n = 3)
+  ttest_acc12 = t.test(sig_acc$C1, sig_acc$C2, paired = TRUE)
+  sig_summary[2, 3] = p.adjust(ttest_acc12[["p.value"]], method = "BH", n = 3)
+  ttest_acc02 = t.test(sig_acc$C0, sig_acc$C2, paired = TRUE)
+  sig_summary[3, 3] = p.adjust(ttest_acc02[["p.value"]], method = "BH", n = 3)
+  
+  # confidence
+  ttest_conf01 = t.test(sig_conf$C0, sig_conf$C1, paired = TRUE)
+  sig_summary[1, 4] = p.adjust(ttest_conf01[["p.value"]], method = "BH", n = 9)
+  ttest_conf12 = t.test(sig_conf$C1, sig_conf$C2, paired = TRUE)
+  sig_summary[2, 4] = p.adjust(ttest_conf12[["p.value"]], method = "BH", n = 9)
+  ttest_conf02 = t.test(sig_conf$C0, sig_conf$C2, paired = TRUE)
+  sig_summary[3, 4] = p.adjust(ttest_conf02[["p.value"]], method = "BH", n = 9)
+}
+
+
+sig_summary = setNames(data.frame(matrix(ncol = 4, nrow = 4)),
+                       c("Condition", "RT", "Accuracy", "Confidence"))
+sig_summary[1, 1] = "0-1"
+sig_summary[2, 1] = "1-2"
+sig_summary[3, 1] = "0-2"
+sig_summary[4, 1] = "ANOVA"
+
+ttest_summary <- function(data_name, col) {
+  for (x in 1:3) {
+    if (x == 1) {
+      var1 <- "C0"
+      var2 <- "C1"
+    }
+    else if (x == 2) {
+      var1 <- "C1"
+      var2 <- "C2"
+    }
+    else if (x == 3) {
+      var1 <- "C0"
+      var2 <- "C2"
+    }
+    var_name1 <- paste0(data_name, "$", var1)
+    var_name2 <- paste0(data_name, "$", var2)
+    
+    sig_summary[x, col] = t.test(as.name(var_name1), as.name(var_name2), paired = TRUE) %>%
+      p.adjust("p.value", method = "BH", n = 9)
+  }
+}
+
+ttest_summary(sig_RT, 2)
+# 
+# for (x in 1:3)
+# {
+#   for (y in 1:4)
+#   {
+#     col_number <- as.double(x + 1)
+#     row_number <- as.double(y)
+#     
+#     if (col_number == 2)
+#     {
+#       var1 = as.name("RT")
+#     } else if (col_number == 3)
+#     {
+#       var1 = as.name("acc")
+#     } else if (col_number == 4)
+#     {
+#       var1 = as.name("conf")
+#     }
+#     
+#     if (row_number != 4)
+#     {
+#       if (row_number == 1)
+#       {
+#         var2 = as.name("C0")
+#         var3 = as.name("C1")
+#       } else if (row_number == 2)
+#       {
+#         var2 = as.name("C1")
+#         var3 = as.name("C2")
+#       } else if (row_number == 3)
+#       {
+#         var2 = as.name("C0")
+#         var3 = as.name("C2")
+#       }
+#       
+#       ttest.data = select_(var1, var2, var3)
+#       
+#       ttest_result <- t.test(ttest_data[,1], ttest.data[,2], paired = TRUE)
+#       sig_summary[row_number, col_number] <- p.adjust(ttest_result[["p.value"]], method = "BH", n = 9)
+#       
+#       ttest_data = NA
+#       ttest_result = NA
+#     } 
+#     # else if (y == 4)
+#     # {
+#     #   var4 = eval(parse(text = paste("mean", var1, sep = "")))
+#     #   
+#     #   anova_data = ezANOVA(
+#     #     data = sig_data,
+#     #     dv = var4,
+#     #     wid = subject,
+#     #     within = conflict,
+#     #     detailed = TRUE,
+#     #     type = 3
+#     #   )
+#     #   sig_summary[x, y] = anova_data[["ANOVA"]][["p"]]
+#     #}
+#   }
+# }
