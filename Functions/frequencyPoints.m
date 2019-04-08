@@ -8,8 +8,8 @@ function frequency = frequencyPoints(frequencyMin,frequencyMax,sampleRate)
 disp('Creating timepoints for FFT');
 % First, determine the number of datapoints necessary to represent the
 % desired range
-frequencyCount = (abs(frequencyMax - frequencyMin))/sampleRate;
+frequencyCount = (abs(frequencyMax - frequencyMin)+1)/sampleRate;
 % Then generate the dataset using a linear progression
-frequencyData = linspace(frequencyMin,frequencyMax,frequencyCount);
+frequencyData = linspace(frequencyMin+sampleRate,frequencyMax,frequencyCount);
 frequency = frequencyData;
 end

@@ -10,6 +10,6 @@ disp('Creating timepoints for ERP');
 % desired range
 timeCount = (abs(timeMax - timeMin))/sampleRate;
 % Then generate the dataset using a linear progression
-timeData = linspace(timeMin,timeMax,timeCount);
+timeData = linspace(timeMin+sampleRate,timeMax,timeCount);
 time = timeData;
 end

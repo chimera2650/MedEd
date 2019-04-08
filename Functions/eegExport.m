@@ -28,8 +28,10 @@ if strcmp(analysis,'ERP') || strcmp(analysis,'FFT') == 1
     channelIndex = find(channelLocation == 1);
     % Average the two conditions across participants and generate a
     % difference wave (conflict - control) for export
-    tempData = squeeze(mean(dataFile(channelIndex,:,conditionCount,:),4) -...
-        mean(dataFile(channelIndex,:,1,:),4));
+    tempData(1,:) = squeeze(nanmean(dataFile(channelIndex,:,conditionCount,:),4));
+    tempData(2,:) = squeeze(nanmean(dataFile(channelIndex,:,1,:),4));
+    tempData(3,:) = squeeze(nanmean(dataFile(channelIndex,:,conditionCount,:),4) -...
+        nanmean(dataFile(channelIndex,:,1,:),4));
     
 % This section handles the wavelet data. It is almost identical to the
 % ERP/FFT data, except has one additional dimension

@@ -1,9 +1,9 @@
 % Copyright (C) 2019 Jordan Middleton
 
-function ci = ciEEG(dataFile)
+function ci = ciEEG(dataFile,analysis)
 
 dispstat('','init');
-dispstat(sprintf('Calculating ERP confidence intervals. Please wait...'),'keepthis');
+dispstat(sprintf(['Calculating ' analysis ' confidence intervals. Please wait...']),'keepthis');
 channelCount = size(dataFile,1);
 timeCount = size(dataFile,2);
 conditionCount = size(dataFile,3);
