@@ -4,106 +4,58 @@ clear;
 clc;
 
 %% Define Variables
-t_name = 'med_ed_tnorm.mat'; % Name of master data file
-d_name = 'med_ed_dnorm.mat'; % Name of master data file
-c_name = 'chanlocs.mat';
-theta_freq = [6 7];
-theta_time = [200 272];
-alpha_freq = [13 19];
-alpha_time = [202 274];
-chan_theta = 'Fz';
-chan_alpha = 'Pz';
+% Name of master data files
+masterName = 'MedEdFFT.mat';
+% Define frequency band windows
+delta = [1 4];
+theta = [4 8];
+alpha = [8 12];
+beta = [13 30];
+% Define channels of interest
+channelFrontal = 'Fz';
+channelParietal = 'Pz';
 
+% Find the name of the current computer
 comp = getenv('computername');
 
+% This section is just to make life easier when working on different
+% computers with difference file structures. If you are using only one
+% computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
-    master_dir = 'C:\Users\chime\Documents\Github\Data\MedEd';
-    temp_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\Template';
-    dec_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\Decision';
-    save_dir = 'C:\Users\chime\Documents\Github\Data\MedEd\med_ed_stats.mat';
+    masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
+    saveDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\MedEdStats.mat';
     addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
-    master_dir = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
-    temp_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\Template';
-    dec_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\Decision';
-    save_dir = 'C:\Users\chime\Jordan\Github\Data\MedEd\med_ed_stats.mat';
+    masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
+    saveDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\MedEdStats.mat';
     addpath(genpath('C:\Users\Jordan\Documents\Github\MedEd\Functions'));
 end
 
 clearvars comp
 
 %% Load Data
-cd(master_dir)
-load(c_name);
+% Temporarily add functions folder to path
+% Change directory to where master data file is located, if at all, as well
+% as cannel reference file
+cd(masterDirectory);
+load('chanlocs.mat');
+channelReference = chanlocs;
+windows = table(delta,theta,alpha,beta);
 
-for a = 1:62
-    if strcmp(chanlocs(a).labels,chan_theta) == 1
-        chan_loc(a) = 1;
-    elseif strcmp(chanlocs(a).labels,chan_alpha) == 1
-        chan_loc(a) = 2;
-    end
-end
-
-clear a;
+clear alpha beta chanlocs delta theta;
 
 %% Statistics Analysis
-for a = 1:2
-    disp('Loading data');
-    
-    if a == 1
-        cd(master_dir);
-        load(t_name);
-        analysis = 'template';
-        freq = summary.freq;
-    elseif a == 2
-        cd(master_dir);
-        load(d_name);
-        analysis = 'decision';
-        freq = summary.freq;
-    end
-    
-    disp(['Analyzing ' analysis ' data']);
-
-    for b = 1:2
-        if b == 1
-            freq_range = theta_freq;
-            time_range = theta_time;
-            c_index = find(chan_loc == 1);
-            band = 'theta';
-        elseif b == 2
-            freq_range = alpha_freq;
-            time_range = alpha_time;
-            c_index = find(chan_loc == 2);
-            band = 'alpha';
-        end
-        
-        data = squeeze(summary.raw(c_index,:,:,:,:));
-        
-        for c = 1:size(data,4)
-            for d = 1:size(data,3)
-                temp_data = squeeze(data(freq_range(1):freq_range(2),time_range(1):time_range(2),d,c));
-                temp_mean = squeeze(mean(temp_data,1));
-                temp_mean = squeeze(mean(temp_mean));
-                sub_mean(c,d) = squeeze(mean(temp_mean));
-            end
-        end
-        
-        clearvars c d temp_data temp_mean;
-        
-        cond_mean(b,:) = squeeze(mean(sub_mean,1));
-        cond_stdev(b,:) = squeeze(std(sub_mean,1));   
-        [h,p] = ttest(sub_mean(:,1),sub_mean(:,3));
-        pval(b,:) = p;
-    end
-    
-    stats.(analysis) = table(cond_mean,cond_stdev,pval,'VariableNames',{'mean','stdev','pval'},'RowNames',{'theta','alpha'});
-    
-    clearvars b band c_index cond_mean cond_stdev freq_range p pval sub_mean;
-end
+load(masterName);
+stimulusFz = statsEEG(summary.stimulus.raw,windows,channelReference,channelFrontal);
+stimulusPz = statsEEG(summary.stimulus.raw,windows,channelReference,channelParietal);
+responseFz = statsEEG(summary.response.raw,windows,channelReference,channelFrontal);
+responsePz = statsEEG(summary.response.raw,windows,channelReference,channelParietal);
+stats = vertcat(stimulusFz,stimulusPz,responseFz,responsePz);
+stats.Row = {'Fz Stimulus';'Pz Stimulus';'Fz Response';'Pz Response'};
 
 %% Save Data
 disp('Saving data');
-save(save_dir,'stats');
+save(saveDirectory,'stats');
 %% Final Cleanup
 disp('Analysis complete');
 

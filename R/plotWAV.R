@@ -1,30 +1,52 @@
+# Copyright (C) 2019 Jordan Middleton
+
 # Load Libraries
 {
   library(RColorBrewer)
   library(ggplot2)
   library(dplyr)
-  library(akima)
   library(reshape2)
 }
 
 # Functions
 {
-  loadWAV <- function(dataFile) {
-    output = read.csv(dataFile, header = FALSE)
-    colnames(output) = c("x", "y", "z", "sig")
+  loadWAV <- function(dataName,
+                      sigName,
+                      frequencyData,
+                      timeData) {
+    dataFile = read.csv(dataName, header = FALSE)
+    dataFile = as.matrix(dataFile)
+    rownames(dataFile) = frequencyData
+    colnames(dataFile) = timeData
+    names(attributes(dataFile)$dimnames) <- c("frequency", "time")
+    dataFile = melt(dataFile, id = c("frequency", "time"))
+    dataFile = dataFile[c("time", "frequency", "value")]
+    colnames(dataFile) = c("x", "y", "z")
+    
+    sigFile = read.csv(sigName, header = FALSE)
+    sigFile = as.matrix(sigFile)
+    rownames(sigFile) = frequencyData
+    colnames(sigFile) = timeData
+    names(attributes(sigFile)$dimnames) <- c("frequency", "time")
+    sigFile = melt(sigFile, id = c("frequency", "time"))
+    sigFile = sigFile[c("time", "frequency", "value")]
+    colnames(sigFile) = c("x", "y", "sig")
+    
+    sigFile = sigFile[c("sig")]
+    output = cbind(dataFile, sigFile)
     return(output)
   }
   plotWAV <- function(dataFile, index) {
-    if (index == "template") {
-      linxlim = range(0, 2000)
-    } else if (index == "decision") {
-      linxlim = range(-2000, 0)
+    if (index == "stimulus") {
+      xLimits = c(0, 2000)
+    } else if (index == "response") {
+      xLimits = c(-2000, 0)
     }
     
     output <- ggplot(dataFile, aes(x, y)) +
       geom_raster(aes(fill = z),
                   interpolate = TRUE) +
-      coord_cartesian(xlim = linxlim,
+      coord_cartesian(xlim = xLimits,
                       ylim = c(1, 30)) +
       scale_fill_gradientn(
         colors = c("#FF0000FF", "#FFFFFFFF", "#0000FFFF"),
@@ -49,40 +71,138 @@
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        panel.border = element_blank()
+        panel.border = element_blank(),
+        legend.position = "none"
       )
-
+    
     output = last_plot() +
-      stat_contour(data = dataFile,
-                   aes(x = x,
-                       y = y,
-                       z = sig),
-                   colour = "black",
-                   size = 1,
-                   bins = 1,
-                   show.legend = FALSE)
+      stat_contour(
+        data = dataFile,
+        aes(x = x,
+            y = y,
+            z = sig),
+        colour = "black",
+        size = 1,
+        bins = 1,
+        show.legend = FALSE
+      )
     
     return(output)
   }
 }
 
-# Load Variables
+# Set Variables
 {
+  # First, change your working directory to the folder with your data
+  # Data must be laid out as Time, Condition1, Condition2
+  # Filenames
+  stimulusFzName = "../../Data/MedEd/R/WAV Data/stimulusFz.csv"
+  stimulusSigFzName = "../../Data/MedEd/R/WAV Data/stimulusSigFz.csv"
+  stimulusPzName = "../../Data/MedEd/R/WAV Data/stimulusPz.csv"
+  stimulusSigPzName = "../../Data/MedEd/R/WAV Data/stimulusSigPz.csv"
+  responseFzName = "../../Data/MedEd/R/WAV Data/responseFz.csv"
+  responseSigFzName = "../../Data/MedEd/R/WAV Data/responseSigFz.csv"
+  responsePzName = "../../Data/MedEd/R/WAV Data/responsePz.csv"
+  responseSigPzName = "../../Data/MedEd/R/WAV Data/responseSigPz.csv"
+  stimulusSave = "../../Data/MedEd/Plots/stimulusWAV.jpeg"
+  responseSave = "../../Data/MedEd/Plots/responseWAV.jpeg"
   color = rev(brewer.pal(8, "RdBu"))
 }
 
-# Load Data tables
+# Load Data
 {
-  dataFT = loadWAV("./Data/WAV Data/FT.txt")
-  dataPT = loadWAV("./Data/WAV Data/PT.txt")
-  dataFD = loadWAV("./Data/WAV Data/FD.txt")
-  dataPD = loadWAV("./Data/WAV Data/PD.txt")
+  frequency = seq(1, 30, 0.5)
+  stimulusTime = seq(0, 1996, 4)
+  responseTime = seq(-1996, 0, 4)
+  stimulusFzFile = loadWAV(stimulusFzName, stimulusSigFzName, frequency, stimulusTime)
+  stimulusPzFile = loadWAV(stimulusPzName, stimulusSigPzName, frequency, stimulusTime)
+  responseFzFile = loadWAV(responseFzName, responseSigFzName, frequency, responseTime)
+  responsePzFile = loadWAV(responsePzName, responseSigPzName, frequency, responseTime)
+  
+  rm(
+    stimulusFzName,
+    stimulusSigFzName,
+    stimulusPzName,
+    stimulusSigPzName,
+    responseFzName,
+    responseSigFzName,
+    responsePzName,
+    responseSigPzName
+  )
 }
 
 # Generate plots
 {
-  plotFT = plotWAV(dataFT, "template")
-  plotPT = plotWAV(dataPT, "template")
-  plotFD = plotWAV(dataFD, "decision")
-  plotPD = plotWAV(dataPD, "decision")
+  stimulusFzPlot = plotWAV(stimulusFzFile, "stimulus")
+  stimulusPzPlot = plotWAV(stimulusPzFile, "stimulus")
+  responseFzPlot = plotWAV(responseFzFile, "response")
+  responsePzPlot = plotWAV(responsePzFile, "response")
+}
+
+# Combine plots
+{
+  stimulusPlot = plot_grid(
+    stimulusFzPlot,
+    stimulusPzPlot,
+    nrow = 1,
+    ncol = 2,
+    labels = c("Fz", "Pz")
+  )
+  responsePlot = plot_grid(
+    responseFzPlot,
+    responsePzPlot,
+    nrow = 1,
+    ncol = 2,
+    labels = c("Fz", "Pz")
+  )
+  wavPlot = plot_grid(stimulusPlot,
+                      responsePlot,
+                      nrow = 2,
+                      ncol = 1) +
+    draw_line(
+      x = c(0, 1),
+      y = c(0.5, 0.5),
+      size = 2,
+      colour = "black",
+      linetype = 2
+    ) +
+    draw_line(
+      x = c(0.505, 0.505),
+      y = c(0, 1),
+      size = 2,
+      colour = "black",
+      linetype = 2
+    )
+  plotLegend = get_legend(stimulusFzPlot +
+                            theme(
+                              legend.position = "right",
+                              legend.text = element_text(size = 24)
+                            ))
+  plotSum = plot_grid(
+    wavPlot,
+    plotLegend,
+    ncol = 2,
+    rel_widths = c(1, 0.08),
+    rel_heights = c(1, 1)
+  )
+}
+
+# Save Plot - Here, we can save the plot as an image. This will save the current plot in your R plot tab.
+# Output name was determined at the top of the script
+{
+  ggsave(
+    filename = stimulusSave,
+    plot = stimulusPlot,
+    width = 13.08,
+    height = 4.36,
+    dpi = 600
+  )
+  
+  ggsave(
+    filename = responseSave,
+    plot = responsePlot,
+    width = 13.08,
+    height = 4.36,
+    dpi = 600
+  )
 }

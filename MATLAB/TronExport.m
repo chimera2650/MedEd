@@ -20,11 +20,11 @@ comp = getenv('computername');
 % computer, remove the IF statements and redefine directories
 if strcmp(comp,'JORDAN-SURFACE') == 1
     masterDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd';
-    erpDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\ERP Data';
-    fftDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\FFT Data';
-    wavDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\WAV Data';
-    pcaDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\PCA Data';
-    behaviouralDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd\R\Behavioural Data';
+    erpDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\R\ERP Data';
+    fftDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\R\FFT Data';
+    wavDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\R\WAV Data';
+    pcaDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\R\PCA Data';
+    behaviouralDirectory = 'C:\Users\chime\Documents\Github\Data\MedEd\R\Behavioural Data';
     addpath(genpath('C:\Users\chime\Documents\Github\MedEd\Functions\'));
 elseif strcmp(comp,'OLAV-PATTY') == 1
     masterDirectory = 'C:\Users\Jordan\Documents\Github\Data\MedEd';
@@ -64,14 +64,14 @@ clearvars erpDirectory erpName exportLearner exportNonlearner exportTime summary
 %% Export FFT data
 cd(masterDirectory);
 load(fftName);
-exportStimulusFz = eegExport(summary.stimulus.raw,'Fz',channelReference,'FFT');
+exportStimulusFz = eegExport(summary.stimulus.raw(:,1:59,:,30),'Fz',channelReference,'FFT');
 cd(fftDirectory);
 csvwrite('stimulusFz.csv',exportStimulusFz);
-exportStimulusPz = eegExport(summary.stimulus.raw,'Pz',channelReference,'FFT');
+exportStimulusPz = eegExport(summary.stimulus.raw(:,1:59,:,30),'Pz',channelReference,'FFT');
 csvwrite('stimulusPz.csv',exportStimulusPz);
-exportResponseFz = eegExport(summary.response.raw,'Fz',channelReference,'FFT');
+exportResponseFz = eegExport(summary.response.raw(:,1:59,:,30),'Fz',channelReference,'FFT');
 csvwrite('responseFz.csv',exportResponseFz);
-exportResponsePz = eegExport(summary.response.raw,'Pz',channelReference,'FFT');
+exportResponsePz = eegExport(summary.response.raw(:,1:59,:,30),'Pz',channelReference,'FFT');
 csvwrite('responsePz.csv',exportResponsePz);
 exportFrequency = summary.stimulus.frequency;
 csvwrite('frequency.csv',exportFrequency);
@@ -85,8 +85,12 @@ load(stimulusName);
 exportStimulusFz = eegExport(summary.raw,'Fz',channelReference,'WAV');
 cd(wavDirectory);
 csvwrite('stimulusFz.csv',exportStimulusFz);
+exportStimulusSigFz = eegExport(summary.ttest,'Fz',channelReference,'WAV');
+csvwrite('stimulusSigFz.csv',exportStimulusSigFz);
 exportStimulusPz = eegExport(summary.raw,'Pz',channelReference,'WAV');
 csvwrite('stimulusPz.csv',exportStimulusPz);
+exportStimulusSigPz = eegExport(summary.ttest,'Pz',channelReference,'WAV');
+csvwrite('stimulusSigPz.csv',exportStimulusSigPz);
 exportStimulusTime = summary.time;
 csvwrite('stimulusTime.csv',exportStimulusTime);
 cd(masterDirectory);
@@ -94,11 +98,15 @@ load(responseName);
 exportResponseFz = eegExport(summary.raw,'Fz',channelReference,'WAV');
 cd(wavDirectory);
 csvwrite('responseFz.csv',exportResponseFz);
+exportResponseSigFz = eegExport(summary.ttest,'Fz',channelReference,'WAV');
+csvwrite('responseSigFz.csv',exportResponseSigFz);
 exportResponsePz = eegExport(summary.raw,'Pz',channelReference,'WAV');
 csvwrite('responsePz.csv',exportResponsePz);
+exportResponseSigPz = eegExport(summary.ttest,'Pz',channelReference,'WAV');
+csvwrite('responseSigPz.csv',exportResponseSigPz);
 exportResponseTime = summary.time;
 csvwrite('responseTime.csv',exportResponseTime);
-exportFrequency = summary.time;
+exportFrequency = summary.frequency;
 csvwrite('frequency.csv',exportFrequency);
 
 clearvars exportFrequency exportResponseFz exportResponsePz exportResponseTime...

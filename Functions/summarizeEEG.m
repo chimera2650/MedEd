@@ -47,11 +47,17 @@ for fileCounter = 1:fileNumber
             channelIndex = find(channelLocation == 1);
             
             if strcmp(analysis,'WAV') == 1
-                tempData(channelCounter,:,:,conditionCounter,fileCounter) =...
-                    subjectData.(analysis).data{conditionCounter}(channelIndex,:,:);
+                % For the wavelet condition, the 200 ms before and after
+                % the desired window are removed to minimize edge artifacts
+                frequencyCount = size(subjectData.(analysis).data{1},2);
+                
+                for frequencyCounter = 1:frequencyCount
+                    tempData(channelCounter,frequencyCounter,:,conditionCounter,fileCounter) =...
+                        squeeze(subjectData.(analysis).data{conditionCounter}(channelIndex,frequencyCounter,51:550));
+                end
             else
                 tempData(channelCounter,:,conditionCounter,fileCounter) =...
-                    subjectData.(analysis).data{conditionCounter}(channelIndex,:);
+                    squeeze(subjectData.(analysis).data{conditionCounter}(channelIndex,:));
             end
         end
     end

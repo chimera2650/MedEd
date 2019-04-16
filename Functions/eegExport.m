@@ -51,8 +51,8 @@ elseif strcmp(analysis,'WAV') == 1
     channelIndex = find(channelLocation == 1);
     % Average the two conditions across participants and generate a
     % difference wave (conflict - control) for export
-    tempData = squeeze(mean(dataFile(channelIndex,:,:,conditionCount,:),4) -...
-        mean(dataFile(channelIndex,:,1,:),4));
+    tempData = squeeze(mean(dataFile(channelIndex,:,:,conditionCount,:),5) -...
+        mean(dataFile(channelIndex,:,:,1,:),5));
     
 % The data format for PCA analysis is much simpler, so no averaging is
 % required. Just simple export

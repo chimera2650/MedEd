@@ -32,8 +32,6 @@ end
 clearvars comp;
 
 %% Load Data
-% Temporarily add functions folder to path
-addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 % Change directory to where master data file is located, if at all, as well
 % as cannel reference file
 cd(masterDirectory);
@@ -55,7 +53,7 @@ ci = ciEEG(raw,'FFT');
 % Call function to calculate ttest scores between subjects
 tScore = ttestEEG(raw,'FFT');
 % Call a function to generate a linear dataset to represent frequency points
-frequency = frequencyPoints(1,30,0.5);
+frequency = frequencyPoints(0.5,30,0.5);
 
 % Combine all data into summary file structure for later export
 summary.stimulus.raw = raw;
@@ -80,7 +78,7 @@ ci = ciEEG(raw,'FFT');
 % Call function to calculate ttest scores between subjects
 tScore = ttestEEG(raw,'FFT');
 % Call a function to generate a linear dataset to represent frequency points
-frequency = frequencyPoints(1,30,0.5);
+frequency = frequencyPoints(0.5,30,0.5);
 
 % Combine all data into summary file structure for later export
 summary.response.raw = raw;

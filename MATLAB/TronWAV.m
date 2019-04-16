@@ -51,19 +51,19 @@ load(stimulusName);
 raw = summarizeEEG(stimulusDirectory,channelReference,filePrefix,'WAV');
 % Call function to compile total artifact counts by subject
 artifacts = artifactsEEG(stimulusDirectory,channelReference,filePrefix,'WAV');
-% Call function to calculate Cohen's D effect size between subjects
-cohen = cohenEEG(raw);
+% % Call function to calculate Cohen's D effect size between subjects
+% cohen = cohenEEG(raw);
 % Call function to calculate ttest scores between subjects
 tScore = ttestEEG(raw,'WAV');
 % Call a function to generate a linear dataset to represent frequency points
-frequency = frequencyPoints(1,30,0.5);
+frequency = frequencyPoints(0.5,30,0.5);
 % Call a function to generate a linear dataset to represent time points
-time = timePoints(0,2000,4);
+time = timePoints(0,2000,4) - 4;
 
 % Combine all data into summary file structure for later export
 summary.raw = raw;
 summary.artifacts = artifacts;
-summary.cohen = cohen;
+% summary.cohen = cohen;
 summary.ttest = tScore;
 summary.frequency = frequency;
 summary.time = time;
@@ -81,19 +81,19 @@ load(responseName);
 raw = summarizeEEG(responseDirectory,channelReference,filePrefix,'WAV');
 % Call function to compile total artifact counts by subject
 artifacts = artifactsEEG(responseDirectory,channelReference,filePrefix,'WAV');
-% Call function to calculate Cohen's D effect size between subjects
-cohen = cohenEEG(raw);
+% % Call function to calculate Cohen's D effect size between subjects
+% cohen = cohenEEG(raw);
 % Call function to calculate ttest scores between subjects
 tScore = ttestEEG(raw,'WAV');
 % Call a function to generate a linear dataset to represent frequency points
-frequency = frequencyPoints(1,30,0.5);
+frequency = frequencyPoints(0.5,30,0.5);
 % Call a function to generate a linear dataset to represent time points
 time = timePoints(-2000,0,4);
 
 % Combine all data into summary file structure for later export
 summary.raw = raw;
 summary.artifacts = artifacts;
-summary.cohen = cohen;
+% summary.cohen = cohen;
 summary.ttest = tScore;
 summary.frequency = frequency;
 summary.time = time;

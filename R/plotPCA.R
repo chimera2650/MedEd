@@ -1,13 +1,15 @@
-# Load libraries
+# Copyright (C) 2019 Jordan Middleton
+
+# Load Libraries
 {
-  library(ggplot2)
   library(reshape2)
+  library(ggplot2)
   library(dplyr)
   library(RColorBrewer)
   library(cowplot)
 }
 
-# Define variables
+# Define Variables
 {
   colourCount = 10
   getPalette <- colorRampPalette(brewer.pal(n = 8,
@@ -16,10 +18,23 @@
 
 # Functions
 {
-  loadData <- function(dataFile, varFile, dataIndex) {
+  loadData <- function(dataFile, varFile, window) {
     tempData = read.csv(dataFile,
                         header = FALSE)
-    colnames(tempData) = c(dataIndex,
+    if (window == "frequency") {
+      frequency = seq(1, 30, 0.5)
+      tempData = cbind(frequency, tempData)
+      dataType = "frequency"
+    } else if (window == "stimulus") {
+      time = seq(0, 1996, 4)
+      tempData = cbind(time, tempData)
+      dataType = "time"
+    } else if (window == "response") {
+      time = seq(-1996, 0, 4)
+      tempData = cbind(time, tempData)
+      dataType = "time"
+    }
+    colnames(tempData) = c(dataType,
                            "v1",
                            "v2",
                            "v3",
@@ -30,7 +45,7 @@
                            "v8",
                            "v9",
                            "v10")
-    tempData = tempData[, c(dataIndex,
+    tempData = tempData[, c(dataType,
                             "v1",
                             "v2",
                             "v3",
@@ -43,7 +58,7 @@
                             "v10")]
     tempData = melt(
       tempData,
-      id = dataIndex,
+      id = dataType,
       measured = c("v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10")
     )
     label = read.csv(varFile,
@@ -54,22 +69,22 @@
       group_by(variable) %>%
       slice(which.max(value)) %>%
       ungroup() %>%
-      select(dataIndex)
-    tempVar = cbind(x, label)
-    colnames(tempVar) = c("x", "label")
-    output = list(data = tempData, var = tempVar)
+      select(dataType)
+    tempVariance = cbind(x, label)
+    colnames(tempVariance) = c("x", "label")
+    output = list(data = tempData, variance = tempVariance)
     return(output)
   }
   plotPCA <- function(plotData, varData, window) {
-    if (window == "template") {
+    if (window == "stimulus") {
       xRange = seq(0, 2000, 500)
       index = "time"
-    } else if (window == "decision") {
+    } else if (window == "response") {
       xRange = seq(-2000, 0, 500)
       index = "time"
     } else if (window == "frequency") {
       xRange = seq(0, 30, 5)
-      index = "freq"
+      index = "frequency"
     }
     
     tempLabels = varData
@@ -114,86 +129,86 @@
   }
 }
 
-# Load data
+# Load Data
 {
   frequency = list(
-    FTF = loadData(
-      "./Data/PCA Data/FTF.txt",
-      "./Data/PCA Data/FTFvar.txt",
-      "freq"
+    frontalStimulus = loadData(
+      "../../Data/MedEd/R/PCA Data/Frontal/stimulusFrequencyPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Frontal/stimulusFrequencyVariance.csv",
+      "frequency"
     ),
-    FDF = loadData(
-      "./Data/PCA Data/FDF.txt",
-      "./Data/PCA Data/FDFvar.txt",
-      "freq"
+    frontalResponse = loadData(
+      "../../Data/MedEd/R/PCA Data/Frontal/responseFrequencyPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Frontal/responseFrequencyVariance.csv",
+      "frequency"
     ),
-    PTF = loadData(
-      "./Data/PCA Data/PTF.txt",
-      "./Data/PCA Data/PTFvar.txt",
-      "freq"
+    parietalStimulus = loadData(
+      "../../Data/MedEd/R/PCA Data/Parietal/stimulusFrequencyPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Parietal/stimulusFrequencyVariance.csv",
+      "frequency"
     ),
-    PDF = loadData(
-      "./Data/PCA Data/PDF.txt",
-      "./Data/PCA Data/PDFvar.txt",
-      "freq"
+    parietalResponse = loadData(
+      "../../Data/MedEd/R/PCA Data/Parietal/responseFrequencyPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Parietal/responseFrequencyVariance.csv",
+      "frequency"
     )
   )
   
   temporal = list(
-    FTT = loadData(
-      "./Data/PCA Data/FTT.txt",
-      "./Data/PCA Data/FTTvar.txt",
-      "time"
+    frontalStimulus = loadData(
+      "../../Data/MedEd/R/PCA Data/Frontal/stimulusTemporalPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Frontal/stimulusTemporalVariance.csv",
+      "stimulus"
     ),
-    FDT = loadData(
-      "./Data/PCA Data/FDT.txt",
-      "./Data/PCA Data/FDTvar.txt",
-      "time"
+    frontalResponse = loadData(
+      "../../Data/MedEd/R/PCA Data/Frontal/responseTemporalPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Frontal/responseTemporalVariance.csv",
+      "response"
     ),
-    PTT = loadData(
-      "./Data/PCA Data/PTT.txt",
-      "./Data/PCA Data/PTTvar.txt",
-      "time"
+    parietalStimulus = loadData(
+      "../../Data/MedEd/R/PCA Data/Parietal/stimulusTemporalPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Parietal/stimulusTemporalVariance.csv",
+      "stimulus"
     ),
-    PDT = loadData(
-      "./Data/PCA Data/PDT.txt",
-      "./Data/PCA Data/PDTvar.txt",
-      "time"
+    parietalResponse = loadData(
+      "../../Data/MedEd/R/PCA Data/Parietal/responseTemporalPlot.csv",
+      "../../Data/MedEd/R/PCA Data/Parietal/responseTemporalVariance.csv",
+      "response"
     )
   )
   
-  freq = seq(1, 30, 59)
-  ttime = seq(0, 1996, 500)
-  dtime = seq(-1996, 0, 500)
+  frequency = seq(1, 30, 59)
+  stimulusTime = seq(0, 1996, 500)
+  responseTime = seq(-1996, 0, 500)
 }
 
-# Generate plots
+# Generate Plots
 {
-  plotFDT <-
-    plotPCA(temporal[["FDT"]][["data"]], temporal[["FDT"]][["var"]], "decision")
-  plotFTT <-
-    plotPCA(temporal[["FTT"]][["data"]], temporal[["FTT"]][["var"]], "template")
-  plotPDT <-
-    plotPCA(temporal[["PDT"]][["data"]], temporal[["PDT"]][["var"]], "decision")
-  plotPTT <-
-    plotPCA(temporal[["PTT"]][["data"]], temporal[["PTT"]][["var"]], "template")
-  plotFDF <-
-    plotPCA(frequency[["FDF"]][["data"]], frequency[["FDF"]][["var"]], "frequency")
-  plotFTF <-
-    plotPCA(frequency[["FTF"]][["data"]], frequency[["FTF"]][["var"]], "frequency")
-  plotPDF <-
-    plotPCA(frequency[["PDF"]][["data"]], frequency[["PDF"]][["var"]], "frequency")
-  plotPTF <-
-    plotPCA(frequency[["PTF"]][["data"]], frequency[["PTF"]][["var"]], "frequency")
+  plotFrontRespTemp <-
+    plotPCA(temporal[["frontalResponse"]][["data"]], temporal[["frontalResponse"]][["variance"]], "response")
+  plotFrontStimTemp <-
+    plotPCA(temporal[["frontalStimulus"]][["data"]], temporal[["frontalStimulus"]][["variance"]], "stimulus")
+  plotParRespTemp <-
+    plotPCA(temporal[["parietalResponse"]][["data"]], temporal[["parietalResponse"]][["variance"]], "response")
+  plotParStimTemp <-
+    plotPCA(temporal[["parietalStimulus"]][["data"]], temporal[["parietalStimulus"]][["variance"]], "stimulus")
+  plotFrontRespFreq <-
+    plotPCA(frequency[["frontalResponse"]][["data"]], frequency[["frontalResponse"]][["variance"]], "frequency")
+  plotFrontStimFreq <-
+    plotPCA(frequency[["frontalStimulus"]][["data"]], frequency[["frontalStimulus"]][["variance"]], "frequency")
+  plotParRespFreq <-
+    plotPCA(frequency[["parietalResponse"]][["data"]], frequency[["parietalResponse"]][["variance"]], "frequency")
+  plotParStimFreq <-
+    plotPCA(frequency[["parietalStimulus"]][["data"]], frequency[["parietalStimulus"]][["variance"]], "frequency")
 }
 
 # Combine plots
 {
-  plotTemp = plot_grid(
-    plotFTT,
-    plotPTT,
-    plotFDT,
-    plotPDT,
+  plotTemporal = plot_grid(
+    plotFrontStimTemp,
+    plotParStimTemp,
+    plotFrontRespTemp,
+    plotParRespTemp,
     labels = c("Fz", "Pz", "Fz", "Pz"),
     label_size = 12,
     hjust = -0.15,
@@ -221,11 +236,11 @@
       colour = "black"
     )
   
-  plotFreq = plot_grid(
-    plotFTF,
-    plotPTF,
-    plotFDF,
-    plotPDF,
+  plotFrequency = plot_grid(
+    plotFrontStimFreq,
+    plotParStimFreq,
+    plotFrontRespFreq,
+    plotParRespFreq,
     labels = c("Fz", "Pz", "Fz", "Pz"),
     label_size = 12,
     hjust = -0.15,
@@ -254,26 +269,33 @@
       colour = "black"
     )
   
-  plotSum = plot_grid(plotTemp,
-                      plotFreq,
-                      ncol = 2,
-                      align = "h") +
-    draw_line(x = c(0,1),
-              y = c(0.515,0.515),
-              size = 1,
-              colour = "black",
-              linetype = 2)
-  
-  plotSum
+  plotSummary = plot_grid(plotTemporal,
+                          plotFrequency,
+                          ncol = 2,
+                          align = "h") +
+    draw_line(
+      x = c(0, 1),
+      y = c(0.505, 0.505),
+      size = 1,
+      colour = "black",
+      linetype = 2
+    ) +
+    draw_line(
+      x = c(0.495, 0.495),
+      y = c(0, 1),
+      size = 1,
+      colour = "black",
+      linetype = 2
+    )
 }
 
-# Save plot
+# Save Plot
 {
   ggsave(
-    "./Plots/PCA_plot.png",
-    width = 8,
-    height = 8,
-    units = "in",
+    filename = "../../Data/MedEd/Plots/PCA_Plot.png",
+    plot = plotSummary,
+    width = 13.08,
+    height = 13.08,
     dpi = 600
   )
 }

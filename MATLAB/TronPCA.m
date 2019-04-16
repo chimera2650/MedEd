@@ -8,7 +8,7 @@ clc;
 stimulusName = 'MedEdStimulusWAV.mat';
 responseName = 'MedEdResponseWAV.mat';
 % Name of the channel to be analyzed
-channelName = 'Fz';
+channelName = 'Pz';
 % Find the name of the current computer
 comp = getenv('computername');
 

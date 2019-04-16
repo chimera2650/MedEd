@@ -19,11 +19,11 @@ time = timeData;
 frequency = frequencyData;
 pcaCounter = 1;
 
-if strcmp(analysis,'temporal') == 1
+if strcmp(analysis,'frequency') == 1
     for subjectCounter = 1:subjectCount
         for conditionCounter = 1:conditionCount
             for timeCounter = 1:timeCount
-                pcaTable(pcaCounter,1:frequencyCount) = pcaData(:,timeCounter,conditionCounter,subjectCounter);
+                pcaTable(pcaCounter,:) = squeeze(pcaData(:,timeCounter,conditionCounter,subjectCounter));
                 pcaCounter = pcaCounter + 1;
             end
         end
@@ -31,11 +31,11 @@ if strcmp(analysis,'temporal') == 1
     
     [PCAResults] = temporalPCA(pcaTable,time,'VMAX',5);
     
-elseif strcmp(analysis,'frequency') == 1
+elseif strcmp(analysis,'temporal') == 1
     for subjectCounter = 1:subjectCount
         for conditionCounter = 1:conditionCount
             for frequencyCounter = 1:frequencyCount
-                pcaTable(pcaCounter,1:timeCount) = pcaData(frequencyCounter,:,conditionCounter,subjectCounter);
+                pcaTable(pcaCounter,:) = squeeze(pcaData(frequencyCounter,:,conditionCounter,subjectCounter));
                 pcaCounter = pcaCounter + 1;
             end
         end
