@@ -54,6 +54,26 @@ elseif strcmp(analysis,'WAV') == 1
     tempData = squeeze(mean(dataFile(channelIndex,:,:,conditionCount,:),5) -...
         mean(dataFile(channelIndex,:,:,1,:),5));
     
+elseif strcmp(analysis,'STAT') == 1
+    % Identify the number of channels
+    channelCount = size(dataFile,1);
+    
+    % This loop finds the row index of the desired channel for exporting
+    for channelCounter = 1:channelCount
+        if strcmp(channelReference(channelCounter).labels,channelName) == 1
+            channelLocation(channelCounter) = 1;
+        end
+    end
+    
+    channelIndex = find(channelLocation == 1);
+    % Average the two conditions across participants and generate a
+    % difference wave (conflict - control) for export
+    tempData = squeeze(dataFile(channelIndex,:,:));
+    
+    % Set all significant points to 1, and all insignificant points to 0
+    tempData(tempData > 0.05) = 0;
+    tempData(tempData > 0) = 1;
+    
 % The data format for PCA analysis is much simpler, so no averaging is
 % required. Just simple export
 elseif strcmp(analysis,'PCA') == 1
