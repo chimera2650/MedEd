@@ -7,9 +7,9 @@ clc;
 % Name of master data files
 masterName = 'MedEdFFT.mat';
 % Define frequency band windows
-delta = [1 4];
-theta = [4 8];
-alpha = [8 12];
+delta = [1 3.5];
+theta = [4 7.5];
+alpha = [8 12.5];
 beta = [13 30];
 % Define channels of interest
 channelFrontal = 'Fz';

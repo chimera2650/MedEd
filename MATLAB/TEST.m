@@ -1,0 +1,16 @@
+test(:,1) = squeeze(mean(summary.response.raw(28,1:6,1,:),2));
+test(:,2) = squeeze(mean(summary.response.raw(28,1:6,3,:),2));
+test(:,3) = squeeze(mean(summary.response.raw(53,1:6,1,:),2));
+test(:,4) = squeeze(mean(summary.response.raw(53,1:6,3,:),2));
+test(:,5) = squeeze(mean(summary.response.raw(28,7:14,1,:),2));
+test(:,6) = squeeze(mean(summary.response.raw(28,7:14,3,:),2));
+test(:,7) = squeeze(mean(summary.response.raw(53,7:14,1,:),2));
+test(:,8) = squeeze(mean(summary.response.raw(53,7:14,3,:),2));
+test(:,9) = squeeze(mean(summary.response.raw(28,15:24,1,:),2));
+test(:,10) = squeeze(mean(summary.response.raw(28,15:24,3,:),2));
+test(:,11) = squeeze(mean(summary.response.raw(53,15:24,1,:),2));
+test(:,12) = squeeze(mean(summary.response.raw(53,15:24,3,:),2));
+test(:,13) = squeeze(mean(summary.response.raw(28,25:59,1,:),2));
+test(:,14) = squeeze(mean(summary.response.raw(28,25:59,3,:),2));
+test(:,15) = squeeze(mean(summary.response.raw(53,25:59,1,:),2));
+test(:,16) = squeeze(mean(summary.response.raw(53,25:59,3,:),2));

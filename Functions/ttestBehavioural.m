@@ -12,7 +12,7 @@ for conflictCounter = 1:conflictCount
     significanceData(:,conflictCounter) = tempData;
 end
 
-significanceData = array2table(significanceData,'VariableNames',{'noConflict','highConflict'});
+significanceData = array2table(significanceData,'VariableNames',{'feedback','noConflict','highConflict'});
 [h,p] = ttest(significanceData.noConflict,significanceData.highConflict);
 tScore = p;
 end

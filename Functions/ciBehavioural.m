@@ -13,9 +13,9 @@ for conflictCounter = 1:conflictCount
     anovaData = [anovaData tempData];
 end
 
-anovaData = array2table(anovaData,'VariableNames',{'subject','noConflict','highConflict'});
-measures = table([1 2]','VariableNames',{'Measurements'});
-repeatedMeasures = fitrm(anovaData,'noConflict-highConflict~subject','WithinDesign',measures);
+anovaData = array2table(anovaData,'VariableNames',{'subject','meas1','meas2','meas3'});
+measures = table([1 2 3]','VariableNames',{'Measurements'});
+repeatedMeasures = fitrm(anovaData,'meas1-meas3~subject','WithinDesign',measures);
 anovaOutput = ranova(repeatedMeasures);
 
 % Within Confidence Intervals

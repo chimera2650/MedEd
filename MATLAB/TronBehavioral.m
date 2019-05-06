@@ -33,52 +33,12 @@ end
 
 clearvars comp;
 
-%% Analyze feedback data
-cd(masterDirectory);
-load(masterName);
-% Call a function to load summary file for conflict condition
-subjectData = loadBehavioural(behaviouralDirectory,'MedEdFeedback.txt');
-% Call function to correct conflict scores due to programming oversight
-subjectData = correctBehavioural(subjectData);
-
-% Generate a table to report ttest results
-ttestData = table('Size',[1 3],'VariableTypes',{'double','double','double'},...
-    'VariableNames',{'accuracy','reactionTime','confidence'});
-
-% Call function to generate a table of summarized correlation scores
-correlation = correlateBehavioural(subjectData);
-
-% Call function to generate a summary tables by both subject and conflict
-accuracy.summary = summarizeBehavioural(subjectData,'winloss');
-reactionTime.summary = summarizeBehavioural(subjectData,'RT');
-confidence.summary = summarizeBehavioural(subjectData,'confidence');
-
-% Call function to calculate within subject confidence intervals
-accuracy.ci = ciBehavioural(accuracy.summary);
-reactionTime.ci = ciBehavioural(reactionTime.summary);
-confidence.ci = ciBehavioural(confidence.summary);
-
-% Call function to run a two-tailed ttest to determine significance between
-% conditions
-ttestData.accuracy = ttestBehavioural(accuracy.summary);
-ttestData.reactionTime = ttestBehavioural(reactionTime.summary);
-ttestData.confidence = ttestBehavioural(confidence.summary);
-
-% Combine all data into one structure for saving
-feedback.accuracy = accuracy;
-feedback.reactionTime = reactionTime;
-feedback.confidence = confidence;
-feedback.correlation = correlation;
-feedback.ttestData = ttestData;
-
-clearvars accuracy confidence correlation reactionTime ttestData;
-
 %% Analyze conflict data
 addpath(genpath('C:\Users\chime\Documents\MATLAB\MedEd\Functions\'));
 cd(masterDirectory);
-%load(masterName);
+load(masterName);
 % Call a function to load summary file for conflict condition
-subjectData = loadBehavioural(behaviouralDirectory,'MedEdConflict.txt');
+subjectData = loadBehavioural(behaviouralDirectory,'MedEdTest.txt');
 % Call function to correct conflict scores due to programming oversight
 subjectData = correctBehavioural(subjectData);
 
@@ -90,9 +50,9 @@ ttestData = table('Size',[1 3],'VariableTypes',{'double','double','double'},...
 correlation = correlateBehavioural(subjectData);
 
 % Call function to generate a summary tables by both subject and conflict
-accuracy.summary = summarizeBehavioural(subjectData,'winloss');
-reactionTime.summary = summarizeBehavioural(subjectData,'RT');
-confidence.summary = summarizeBehavioural(subjectData,'confidence');
+accuracy.summary = summarizeBehavioural(subjectData,'winloss','conflict');
+reactionTime.summary = summarizeBehavioural(subjectData,'RT','conflict');
+confidence.summary = summarizeBehavioural(subjectData,'confidence','conflict');
 
 % Call function to calculate within subject confidence intervals
 accuracy.ci = ciBehavioural(accuracy.summary);
@@ -104,25 +64,19 @@ confidence.ci = ciBehavioural(confidence.summary);
 ttestData.accuracy = ttestBehavioural(accuracy.summary);
 ttestData.reactionTime = ttestBehavioural(reactionTime.summary);
 ttestData.confidence = ttestBehavioural(confidence.summary);
-
-% Combine all data into one structure for saving
-conflict.accuracy = accuracy;
-conflict.reactionTime = reactionTime;
-conflict.confidence = confidence;
-conflict.correlation = correlation;
-conflict.ttestData = ttestData;
-
-clearvars accuracy confidence correlation reactionTime ttestData;
 
 %% Consolidate important values identified by participants
 values = importantValues(rawDirectory,filePrefix,fileKeep);
 
-% Combine all data into one final structure
-behavioural.feedback = feedback;
-behavioural.conflict = conflict;
+% Combine all data into one structure for saving
+behavioural.accuracy = accuracy;
+behavioural.reactionTime = reactionTime;
+behavioural.confidence = confidence;
+behavioural.correlation = correlation;
+behavioural.ttestData = ttestData;
 behavioural.values = values;
 
-clearvars conflict feedback values;
+clearvars accuracy confidence conflict correlation feedback reactionTime ttestData values;
 
 %% Save data
 save(saveDirectory,'behavioural');

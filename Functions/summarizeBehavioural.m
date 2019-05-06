@@ -1,6 +1,6 @@
 % Copyright (C) 2019 Jordan Middleton
 
-function outputData = summarizeBehavioural(dataFile,condition)
+function outputData = summarizeBehavioural(dataFile,condition,window)
 behaviouralData = dataFile;
 subjectCount = max(behaviouralData.subject);
 conflictCount = max(behaviouralData.conflict);
@@ -22,6 +22,27 @@ for subjectCounter = 1:subjectCount
     
     tempData = table(subject,conflict,mean,stdev,count);
     
+%     if strcmp(window,'feedback') == 1
+%         subject = subjectCounter;
+%         mean = nanmean(subjectData.(condition));
+%         stdev = nanstd(subjectData.(condition));
+%         count = length(subjectData.(condition));
+%         
+%         tempData = table(subject,mean,stdev,count);
+%     elseif strcmp(window,'conflict') == 1
+%         for conflictCounter = 1:conflictCount
+%             conditionConflict = subjectData.conflict == conflictCounter;
+%             conflictData = subjectData(conditionConflict,:);
+%             subject(conflictCounter,1) = subjectCounter;
+%             conflict(conflictCounter,1) = conflictCounter;
+%             mean(conflictCounter,1) = nanmean(conflictData.(condition));
+%             stdev(conflictCounter,1) = nanstd(conflictData.(condition));
+%             count(conflictCounter,1) = length(conflictData.(condition));
+%         end
+%         
+%         tempData = table(subject,conflict,mean,stdev,count);
+%     end
+    
     if subjectCounter == 1
         summaryData = tempData;
     else
@@ -34,9 +55,13 @@ summaryData(conditionNan,:) = [];
 summaryData.error = (summaryData.stdev./sqrt(summaryData.count));
 tStat = tinv(0.95,(summaryData.count)-1);
 summaryData.ci = summaryData.mean+(tStat.*summaryData.error);
-conditionRemove = summaryData.conflict == 2;
-summaryData(conditionRemove,:) = [];
-conditionCorrection = summaryData.conflict == 3;
-summaryData.conflict(conditionCorrection) = 2;
+
+% if strcmp(window,'conflict') == 1
+%     conditionRemove = summaryData.conflict == 2;
+%     summaryData(conditionRemove,:) = [];
+%     conditionCorrection = summaryData.conflict == 3;
+%     summaryData.conflict(conditionCorrection) = 2;
+% end
+
 outputData = summaryData;
 end

@@ -10,11 +10,20 @@ trialCount = size(tempData,1);
 
 for trialCounter = 1:trialCount
     if tempData.conflict(trialCounter) == 1
-        tempData.conflict(trialCounter) = 2;
-    elseif tempData.conflict(trialCounter) == 4
+        tempData.conflict(trialCounter) = 7;
+    elseif tempData.conflict(trialCounter) == 2
+        tempData.conflict(trialCounter) = 8;
+    elseif tempData.conflict(trialCounter) == 0
         tempData.conflict(trialCounter) = 1;
+    elseif tempData.conflict(trialCounter) == 4
+        tempData.conflict(trialCounter) = 2;
     end
 end
+
+conditionRemove = tempData.conflict == 7;
+tempData(conditionRemove,:) = [];
+conditionRemove = tempData.conflict == 8;
+tempData(conditionRemove,:) = [];
 
 subjectData = tempData;
 end

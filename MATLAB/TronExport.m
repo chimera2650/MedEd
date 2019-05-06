@@ -148,12 +148,12 @@ clearvars exportFrequency exportResponseFrequencyPlot exportResponseFrequencyVar
 %% Export Behavioural Data
 cd(masterDirectory);
 load(behaviouralName);
-exportAccuracy = eegExport(behavioural.conflict.accuracy.summary,[],[],'behavioural');
+exportAccuracy = eegExport(behavioural.accuracy.summary,[],[],'behavioural');
 cd(behaviouralDirectory);
 csvwrite('accuracy.csv',exportAccuracy);
-exportReactionTime = eegExport(behavioural.conflict.reactionTime.summary,[],[],'behavioural');
+exportReactionTime = eegExport(behavioural.reactionTime.summary,[],[],'behavioural');
 csvwrite('reactionTime.csv',exportReactionTime);
-exportConfidence = eegExport(behavioural.conflict.confidence.summary,[],[],'behavioural');
+exportConfidence = eegExport(behavioural.confidence.summary,[],[],'behavioural');
 csvwrite('confidence.csv',exportConfidence);
 
 clearvars behavioural behaviouralDirectory behaviouralName exportAccuracy exportConfidence ...
