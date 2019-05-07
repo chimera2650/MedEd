@@ -5,39 +5,28 @@
 {
   library(reshape2)
   library(ggplot2)
+  library(cowplot)
 }
 
 # Functions
 {
-  loadData <-
-    function(dataFile1,
-             dataFile2,
-             condition1,
-             condition2,
-             condition3) {
+  loadData <- function(dataPath1, dataPath2) {
       # Load Data
+      dataFile1 = t(read.csv(dataPath1, header = FALSE))
+      dataFile2 = t(read.csv(dataPath2, header = FALSE))
       dataFile = cbind(dataFile2, dataFile1)
       # Change column names - This is important because it will be what appears in the legend
-      colnames(dataFile) = c("Time", condition1, condition2, condition3)
+      colnames(dataFile) = c("Time", "Win", "Loss", "Difference")
       # The melt function transforms the columns in the measured variable from your data frame. Look over the new
       # data frame and compare it to your original table to ensure you understand what the function did.
-      output = as.data.frame(dataFile[, c("Time", condition1, condition2, condition3)])
+      output = as.data.frame(dataFile[, c("Time", "Win", "Loss", "Difference")])
       output = melt(output,
                     id = "Time",
-                    measure = c(condition1, condition2, condition3))
+                    measure = c("Win", "Loss", "Difference"))
       return(output)
     }
-  plotERP <-
-    function(dataFile,
-             lineColours,
-             lineTypes,
-             xLabels,
-             yLabels,
-             yRange) {
-      # Plot Data CW
+  plotERP <- function(dataFile, index) {
       # Creates your variable, designating the x and y column from your data frame, and the levels of your factor
-      yBreaks = c(-5, 0, 5, 10, 15)
-      xBreaks = round(seq(-200, 600, by = 100))
       output = ggplot(dataFile,
                       aes(
                         x = Time,
@@ -56,39 +45,38 @@
         
         # Waveform Colours and Type
         # Colours of your lines. This variable is defined above
-        scale_color_manual(values = lineColours) +
+        scale_color_manual(values = c("#505050", "#909090", "#000000")) +
         # The line type. Here, they are both solid but other options include dashed, dotted, and so forth
-        scale_linetype_manual(values = lineTypes) +
+        scale_linetype_manual(values = c("solid", "solid", "twodash")) +
         
         # Axis Scales
         # This is a way to control the x axis labels. It ranges from min to max and puts a label every 5 datapoints
-        scale_y_continuous(limits = yRange,
-                           breaks = yBreaks,
+        coord_cartesian(xlim = c(-200, 600),
+                        ylim = c(-8, 16)) +
+        scale_y_continuous(breaks = c(-5, 0, 5, 10, 15),
                            # Expand is so that the lines touch the y axis
                            expand = c(0, 0)) +
         # This is a way to control the x axis labels. It ranges from min to max and puts a label every 100 datapoints
-        scale_x_continuous(breaks = xBreaks,
+        scale_x_continuous(breaks = c(-200, 0, 200, 400, 600),
                            # Expand is so that the lines touch the y axis
                            expand = c(0, 0)) +
         
         # Labels
         # X axis label
-        xlab(xLabels) +
+        xlab("Time (ms)") +
         # Y axis label
-        ylab(yLabels) +
+        ylab(expression("Amplitude"~"("*mu*"V)")) +
         
         #Legend
         # ggplot has several themes. You can look up different one's to see what it has to offer
         theme_bw() +
         # Position of a legend
         theme(
-          legend.position = c(0.12, 0.8),
+          legend.position = c(0.9, 0.9),
           # Text size within the legend
-          legend.text = element_text(size = 13),
-          # Size of legend box colour
-          legend.key.size = unit(.6, "cm"),
-          # Remove borders around colours
-          legend.key = element_rect(colour = FALSE),
+          legend.text = element_text(size = 16),
+          # Remove borders around legend
+          legend.key = element_blank(),
           # Removed title of legend
           legend.title = element_blank()
         ) +
@@ -96,11 +84,18 @@
         # Background and border
         # Adds white space around your plot
         theme(
-          plot.margin = unit(c(.5, .5, .5, .5), "cm"),
+          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
           # This adds a x axis line
           axis.line.x = element_line(color = "black", size = 0.5),
           # This adds a y axis line
           axis.line.y = element_line(color = "black", size = 0.5),
+          axis.text = element_text(color = "black",
+                                   size = 14),
+          axis.title = element_text(
+            color = "black",
+            size = 16,
+            face = "bold"
+          ),
           # Removes grid
           panel.grid.major = element_blank(),
           # Removes more grid
@@ -111,70 +106,55 @@
           panel.border = element_blank()
         )
       
+      if (index == "NL") {
+        output = last_plot() +
+          theme(axis.title.y = element_blank(),
+                axis.line.x = element_line(color = "black", size = 0.5),
+                axis.line.y = element_line(color = "black", size = 0.5)
+                )
+      } else {
+        output = last_plot() +
+          theme(legend.position = "none",
+                axis.title.y = element_text(face = "bold"),
+                axis.line.x = element_line(color = "black", size = 0.5),
+                axis.line.y = element_line(color = "black", size = 0.5))
+      }
+      
       return(output)
     }
 }
 
-# Set Variables
-{
-  # First, change your working directory to the folder with your data
-  # Data must be laid out as Time, Condition1, Condition2
-  # Filenames
-  learnerName = "../../Data/MedEd/R/ERP Data/learner.csv"
-  nonlearnerName = "../../Data/MedEd/R/ERP Data/nonlearner.csv"
-  referenceName = "../../Data/MedEd/R/ERP Data/time.csv"
-  learnerSave = "../../Data/MedEd/Plots/learners.jpeg"
-  nonlearnerSave = "../../Data/MedEd/Plots/nonlearners.jpeg"
-  # Condition Names
-  condition1 = "Win"
-  condition2 = "Loss"
-  condition3 = "Difference"
-  # Colours of your lines
-  lineColours = c("#505050", "#909090", "#000000")
-  # Type of line
-  lineTypes = c("solid", "solid", "dotted")
-  # Y Axis label
-  yLabels = expression(paste("Amplitude (", mu, "V)", sep = ""))
-  # Y Axis Range
-  yRange = c(-8, 16)
-  # X Axis label
-  xLabels = "Time (ms)"
-}
-
 # Load Data
 {
-  learnerFile = t(read.csv(learnerName, header = FALSE))
-  nonlearnerFile = t(read.csv(nonlearnerName, header = FALSE))
-  referenceFile = t(read.csv(referenceName, header = FALSE))
-  learnerData = loadData(learnerFile, referenceFile, condition1, condition2, condition3)
-  nonlearnerData = loadData(nonlearnerFile, referenceFile, condition1, condition2, condition3)
+  learnerData = loadData("../../Data/MedEd/R/ERP Data/learner.csv",
+                         "../../Data/MedEd/R/ERP Data/time.csv")
+  nonlearnerData = loadData("../../Data/MedEd/R/ERP Data/nonlearner.csv",
+                            "../../Data/MedEd/R/ERP Data/time.csv")
 }
 
 # Plot Data
 {
-  learnerPlot = plotERP(learnerData, lineColours, lineTypes, xLabels, yLabels, yRange)
-  nonlearnerPlot = plotERP(nonlearnerData,
-                           lineColours,
-                           lineTypes,
-                           xLabels,
-                           yLabels,
-                           yRange)
-  print(learnerPlot)
-  print(nonlearnerPlot)
+  learnerPlot = plotERP(learnerData, "L")
+  nonlearnerPlot = plotERP(nonlearnerData, "NL")
+}
+
+# Combine Plots
+{
+  summaryPlot = plot_grid(
+    learnerPlot,
+    nonlearnerPlot,
+    nrow = 1,
+    ncol = 2
+  )
 }
 
 # Save Plot - Here, we can save the plot as an image. This will save the current plot in your R plot tab.
 # Output name was determined at the top of the script
 {
   ggsave(
-    filename = learnerSave,
-    width = 6.54,
-    height = 4.36,
-    dpi = 600
-  )
-  ggsave(
-    filename = nonlearnerSave,
-    width = 6.54,
+    filename = "../../Data/MedEd/Plots/plotERP.jpeg",
+    plot = summaryPlot,
+    width = 13.08,
     height = 4.36,
     dpi = 600
   )

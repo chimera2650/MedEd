@@ -37,7 +37,7 @@
     output = cbind(dataFile, sigFile)
     return(output)
   }
-  plotWAV <- function(dataFile, index) {
+  plotWAV <- function(dataFile, channel, index) {
     if (index == "stimulus") {
       xLimits = c(0, 2000)
     } else if (index == "response") {
@@ -54,10 +54,10 @@
         limits = c(-0.55, 0.55),
         breaks = c(-0.5,-0.25, 0, 0.25, 0.5),
         guide = guide_colourbar(
-          title = NULL,
+          title = "Power (dB)",
           position = "right",
           direction = "vertical",
-          label.position = "left",
+          label.position = "right",
           barheight = unit(0.8, "npc")
         )
       ) +
@@ -68,13 +68,37 @@
            z = "Power (dB)") +
       theme_bw() +
       theme(
-        plot.margin = unit(c(.5, .5, .5, .5), "cm"),
+        plot.margin = unit(c(1, 1, 1, 1), "cm"),
+        axis.line.x = element_line(color = "black", size = 0.5),
+        axis.line.y = element_line(color = "black", size = 0.5),
+        axis.text = element_text(color = "black",
+                                 size = 14),
+        axis.text.x = element_text(
+          angle = 45,
+          vjust = 1,
+          hjust = 1
+        ),
+        axis.title = element_text(
+          color = "black",
+          size = 16,
+          face = "bold"
+        ),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         panel.border = element_blank(),
         legend.position = "none"
       )
+    
+    if (index == "stimulus") {
+      output = last_plot() +
+        theme(axis.title.x = element_blank())
+    }
+    
+    if (channel == "Pz") {
+      output = last_plot() +
+        theme(axis.title.y = element_blank())
+    }
     
     output = last_plot() +
       stat_contour(
@@ -92,52 +116,44 @@
   }
 }
 
-# Set Variables
-{
-  # First, change your working directory to the folder with your data
-  # Data must be laid out as Time, Condition1, Condition2
-  # Filenames
-  stimulusFzName = "../../Data/MedEd/R/WAV Data/stimulusFz.csv"
-  stimulusSigFzName = "../../Data/MedEd/R/WAV Data/stimulusSigFz.csv"
-  stimulusPzName = "../../Data/MedEd/R/WAV Data/stimulusPz.csv"
-  stimulusSigPzName = "../../Data/MedEd/R/WAV Data/stimulusSigPz.csv"
-  responseFzName = "../../Data/MedEd/R/WAV Data/responseFz.csv"
-  responseSigFzName = "../../Data/MedEd/R/WAV Data/responseSigFz.csv"
-  responsePzName = "../../Data/MedEd/R/WAV Data/responsePz.csv"
-  responseSigPzName = "../../Data/MedEd/R/WAV Data/responseSigPz.csv"
-  stimulusSave = "../../Data/MedEd/Plots/stimulusWAV.jpeg"
-  responseSave = "../../Data/MedEd/Plots/responseWAV.jpeg"
-  color = rev(brewer.pal(8, "RdBu"))
-}
-
 # Load Data
 {
   frequency = seq(1, 30, 0.5)
   stimulusTime = seq(0, 1996, 4)
   responseTime = seq(-1996, 0, 4)
-  stimulusFzFile = loadWAV(stimulusFzName, stimulusSigFzName, frequency, stimulusTime)
-  stimulusPzFile = loadWAV(stimulusPzName, stimulusSigPzName, frequency, stimulusTime)
-  responseFzFile = loadWAV(responseFzName, responseSigFzName, frequency, responseTime)
-  responsePzFile = loadWAV(responsePzName, responseSigPzName, frequency, responseTime)
-  
-  rm(
-    stimulusFzName,
-    stimulusSigFzName,
-    stimulusPzName,
-    stimulusSigPzName,
-    responseFzName,
-    responseSigFzName,
-    responsePzName,
-    responseSigPzName
+  color = rev(brewer.pal(8, "RdBu"))
+  stimulusFzFile = loadWAV(
+    "../../Data/MedEd/R/WAV Data/stimulusFz.csv",
+    "../../Data/MedEd/R/WAV Data/stimulusSigFz.csv",
+    frequency,
+    stimulusTime
+  )
+  stimulusPzFile = loadWAV(
+    "../../Data/MedEd/R/WAV Data/stimulusPz.csv",
+    "../../Data/MedEd/R/WAV Data/stimulusSigPz.csv",
+    frequency,
+    stimulusTime
+  )
+  responseFzFile = loadWAV(
+    "../../Data/MedEd/R/WAV Data/responseFz.csv",
+    "../../Data/MedEd/R/WAV Data/responseSigFz.csv",
+    frequency,
+    responseTime
+  )
+  responsePzFile = loadWAV(
+    "../../Data/MedEd/R/WAV Data/responsePz.csv",
+    "../../Data/MedEd/R/WAV Data/responseSigPz.csv",
+    frequency,
+    responseTime
   )
 }
 
 # Generate plots
 {
-  stimulusFzPlot = plotWAV(stimulusFzFile, "stimulus")
-  stimulusPzPlot = plotWAV(stimulusPzFile, "stimulus")
-  responseFzPlot = plotWAV(responseFzFile, "response")
-  responsePzPlot = plotWAV(responsePzFile, "response")
+  stimulusFzPlot = plotWAV(stimulusFzFile, "Fz", "stimulus")
+  stimulusPzPlot = plotWAV(stimulusPzFile, "Pz", "stimulus")
+  responseFzPlot = plotWAV(responseFzFile, "Fz", "response")
+  responsePzPlot = plotWAV(responsePzFile, "Pz", "response")
 }
 
 # Combine plots
@@ -147,14 +163,16 @@
     stimulusPzPlot,
     nrow = 1,
     ncol = 2,
-    labels = c("Fz", "Pz")
+    labels = c("Fz", "Pz"),
+    label_size = 18
   )
   responsePlot = plot_grid(
     responseFzPlot,
     responsePzPlot,
     nrow = 1,
     ncol = 2,
-    labels = c("Fz", "Pz")
+    labels = c("Fz", "Pz"),
+    label_size = 18
   )
   wavPlot = plot_grid(stimulusPlot,
                       responsePlot,
@@ -163,27 +181,34 @@
     draw_line(
       x = c(0, 1),
       y = c(0.5, 0.5),
-      size = 2,
+      size = 1,
       colour = "black",
       linetype = 2
     ) +
     draw_line(
       x = c(0.505, 0.505),
       y = c(0, 1),
-      size = 2,
+      size = 1,
       colour = "black",
       linetype = 2
     )
-  plotLegend = get_legend(stimulusFzPlot +
-                            theme(
-                              legend.position = "right",
-                              legend.text = element_text(size = 24)
-                            ))
+  plotLegend = get_legend(
+    stimulusFzPlot +
+      theme(
+        legend.position = "right",
+        legend.text = element_text(size = 14),
+        legend.title = element_text(
+          face = "bold",
+          size = 16,
+          hjust = 0.5
+        )
+      )
+  )
   plotSum = plot_grid(
     wavPlot,
     plotLegend,
     ncol = 2,
-    rel_widths = c(1, 0.08),
+    rel_widths = c(1, 0.1),
     rel_heights = c(1, 1)
   )
 }
@@ -192,18 +217,10 @@
 # Output name was determined at the top of the script
 {
   ggsave(
-    filename = stimulusSave,
-    plot = stimulusPlot,
+    filename = "../../Data/MedEd/Plots/plotWAV.jpeg",
+    plot = plotSum,
     width = 13.08,
-    height = 4.36,
-    dpi = 600
-  )
-  
-  ggsave(
-    filename = responseSave,
-    plot = responsePlot,
-    width = 13.08,
-    height = 4.36,
+    height = 8.72,
     dpi = 600
   )
 }
