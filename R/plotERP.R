@@ -12,9 +12,12 @@
 {
   loadData <- function(dataPath1, dataPath2) {
       # Load Data
-      dataFile1 = t(read.csv(dataPath1, header = FALSE))
-      dataFile2 = t(read.csv(dataPath2, header = FALSE))
-      dataFile = cbind(dataFile2, dataFile1)
+      dataFile1 = t(read.csv(dataPath1,
+                             header = FALSE))
+      dataFile2 = t(read.csv(dataPath2,
+                             header = FALSE))
+      dataFile = cbind(dataFile2,
+                       dataFile1)
       # Change column names - This is important because it will be what appears in the legend
       colnames(dataFile) = c("Time", "Win", "Loss", "Difference")
       # The melt function transforms the columns in the measured variable from your data frame. Look over the new
@@ -22,32 +25,39 @@
       output = as.data.frame(dataFile[, c("Time", "Win", "Loss", "Difference")])
       output = melt(output,
                     id = "Time",
-                    measure = c("Win", "Loss", "Difference"))
+                    measure = c("Win",
+                                "Loss",
+                                "Difference"))
       return(output)
     }
   plotERP <- function(dataFile, index) {
       # Creates your variable, designating the x and y column from your data frame, and the levels of your factor
       output = ggplot(dataFile,
-                      aes(
-                        x = Time,
-                        y = value,
-                        colour = variable,
-                        linetype =  variable
-                      )) +
+                      aes(x = Time,
+                          y = value,
+                          colour = variable,
+                          linetype =  variable)) +
         # Determines the type of plot, size refers to the width of the lines
-        geom_freqpoly(stat = "identity", size = 1) +
+        geom_freqpoly(stat = "identity",
+                      size = 1) +
         # This adds a verticle dotted line at x = 0, this can be useful with ERP data, but you may want to remove this
         # with other data
-        geom_vline(xintercept = 0, linetype = "dotted") +
+        geom_vline(xintercept = 0,
+                   linetype = "dotted") +
         # This adds a horizontal dotted line at y = 0, this can be useful with ERP data, but you may want to remove this
         # with other data
-        geom_hline(yintercept = 0, linetype = "dotted") +
+        geom_hline(yintercept = 0,
+                   linetype = "dotted") +
         
         # Waveform Colours and Type
         # Colours of your lines. This variable is defined above
-        scale_color_manual(values = c("#505050", "#909090", "#000000")) +
+        scale_color_manual(values = c("#505050",
+                                      "#909090",
+                                      "#000000")) +
         # The line type. Here, they are both solid but other options include dashed, dotted, and so forth
-        scale_linetype_manual(values = c("solid", "solid", "twodash")) +
+        scale_linetype_manual(values = c("solid",
+                                         "solid",
+                                         "twodash")) +
         
         # Axis Scales
         # This is a way to control the x axis labels. It ranges from min to max and puts a label every 5 datapoints
@@ -65,59 +75,64 @@
         # X axis label
         xlab("Time (ms)") +
         # Y axis label
-        ylab(expression("Amplitude"~"("*mu*"V)")) +
+        ylab(expression(bold("Amplitude"~"("*mu*"V)"))) +
         
         #Legend
         # ggplot has several themes. You can look up different one's to see what it has to offer
         theme_bw() +
         # Position of a legend
-        theme(
-          legend.position = c(0.9, 0.9),
-          # Text size within the legend
-          legend.text = element_text(size = 16),
-          # Remove borders around legend
-          legend.key = element_blank(),
-          # Removed title of legend
-          legend.title = element_blank()
-        ) +
+        theme(legend.position = c(0.85, 0.85),
+              # Text size within the legend
+              legend.text = element_text(size = 10),
+              # Remove borders around legend
+              legend.key = element_rect(color = NA,
+                                        fill = NA),
+              legend.key.height = unit(0, "cm"),
+              legend.margin = margin(r = 0,
+                                     unit = "pt"),
+              # Removed title of legend
+              legend.title = element_blank()) +
         
         # Background and border
         # Adds white space around your plot
-        theme(
-          plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"),
-          # This adds a x axis line
-          axis.line.x = element_line(color = "black", size = 0.5),
-          # This adds a y axis line
-          axis.line.y = element_line(color = "black", size = 0.5),
-          axis.text = element_text(color = "black",
-                                   size = 14),
-          axis.title = element_text(
-            color = "black",
-            size = 16,
-            face = "bold"
-          ),
-          # Removes grid
-          panel.grid.major = element_blank(),
-          # Removes more grid
-          panel.grid.minor = element_blank(),
-          # Removes grey background
-          panel.background = element_blank(),
-          #Removes lines around the plot
-          panel.border = element_blank()
-        )
+        theme(plot.margin = unit(c(0.3, 0.3, 0.3, 0.3),
+                                 "cm"),
+              # This adds a x axis line
+              axis.line.x = element_line(color = "black",
+                                         size = 0.5),
+              # This adds a y axis line
+              axis.line.y = element_line(color = "black",
+                                         size = 0.5),
+              axis.text = element_text(color = "black",
+                                       size = 10),
+              axis.title = element_text(color = "black",
+                                        size = 12,
+                                        face = "bold"),
+              # Removes grid
+              panel.grid.major = element_blank(),
+              # Removes more grid
+              panel.grid.minor = element_blank(),
+              # Removes grey background
+              panel.background = element_blank(),
+              #Removes lines around the plot
+              panel.border = element_blank())
       
       if (index == "NL") {
         output = last_plot() +
           theme(axis.title.y = element_blank(),
-                axis.line.x = element_line(color = "black", size = 0.5),
-                axis.line.y = element_line(color = "black", size = 0.5)
+                axis.line.x = element_line(color = "black",
+                                           size = 0.5),
+                axis.line.y = element_line(color = "black",
+                                           size = 0.5)
                 )
       } else {
         output = last_plot() +
           theme(legend.position = "none",
                 axis.title.y = element_text(face = "bold"),
-                axis.line.x = element_line(color = "black", size = 0.5),
-                axis.line.y = element_line(color = "black", size = 0.5))
+                axis.line.x = element_line(color = "black",
+                                           size = 0.5),
+                axis.line.y = element_line(color = "black",
+                                           size = 0.5))
       }
       
       return(output)
@@ -140,22 +155,18 @@
 
 # Combine Plots
 {
-  summaryPlot = plot_grid(
-    learnerPlot,
-    nonlearnerPlot,
-    nrow = 1,
-    ncol = 2
-  )
+  summaryPlot = plot_grid(learnerPlot,
+                          nonlearnerPlot,
+                          nrow = 1,
+                          ncol = 2)
 }
 
 # Save Plot - Here, we can save the plot as an image. This will save the current plot in your R plot tab.
 # Output name was determined at the top of the script
 {
-  ggsave(
-    filename = "../../Data/MedEd/Plots/plotERP.jpeg",
-    plot = summaryPlot,
-    width = 13.08,
-    height = 4.36,
-    dpi = 600
-  )
+  ggsave(filename = "../../Data/MedEd/Plots/plotERP.jpeg",
+         plot = summaryPlot,
+         width = 6.54,
+         height = 2.36,
+         dpi = 600)
 }

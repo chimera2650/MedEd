@@ -19,9 +19,10 @@
     # name columns as desired
     colnames(tempData) = c("avg", "stdev", "count", "error", "ci")
     # create condition names for plotting
-    tempData["con"] = c("Feedback", "No Conflict", "High Conflict")
+    tempData["con"] = c("Training", "No Conflict", "High Conflict")
     # select columns to save for plotting
     tempData = tempData[c("con", "avg", "ci")]
+    tempData$con <- factor(tempData$con, levels = tempData$con)
     # define variable to be returned
     return(tempData)
   }
@@ -52,7 +53,7 @@
       theme_bw() +
       theme(
         # give plot a margin; useful for saving plots later
-        plot.margin = unit(c(.5, .5, .5, .5), "cm"),
+        plot.margin = unit(c(.25, .25, .25, .25), "cm"),
         # remove legend
         legend.position = "none",
         # define parameters for x- and y-axis lines
@@ -61,10 +62,17 @@
         # remove x-axis title
         axis.title.x = element_blank(),
         # define parameters for y-axis title
-        axis.title.y = element_text(size = 12,
+        axis.title.y = element_text(size = 10,
                                     face = "bold"),
         # define parameters for x-axis text
-        axis.text.x = element_text(size = 12,
+        axis.text.x = element_text(
+          size = 8,
+          face = "bold",
+          angle = 30,
+          hjust = 1,
+          vjust = 1
+        ),
+        axis.text.y = element_text(size = 8,
                                    face = "bold"),
         # remove gridlines and plot border
         panel.grid.major = element_blank(),
@@ -105,8 +113,8 @@
   ggsave(
     filename = "../../Data/MedEd/Plots/behavioural.png",
     plot = summaryPlot,
-    width = 13.08,
-    height = 4.36,
+    width = 6.54,
+    height = 2.65,
     dpi = 600
   )
 }
