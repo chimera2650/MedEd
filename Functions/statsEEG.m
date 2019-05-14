@@ -1,6 +1,7 @@
-function stats = statsEEG(dataFile,windowFile,channelReference,channelName)
+function [stats,statsData] = statsEEG(dataFile,windowFile,channelReference,channelName)
+dataFile(:,:,2,:) = [];
 channelCount = size(dataFile,1);
-conditionCount = size(dataFile,3) - 1;
+conditionCount = size(dataFile,3);
 subjectCount = size(dataFile,4);
 windowCount = size(windowFile,2);
 frequencyReference = linspace(1,30,59);
@@ -28,6 +29,7 @@ for windowCounter = 1:windowCount
     end
     
     [h,p] = ttest(subjectData(1,:),subjectData(2,:));
+    statsData(windowCounter,:,:) = subjectData;
     stats(:,windowCounter) = p;
 end
 
