@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1558033573309.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "3|1|6|0|\n9|1|20|0|\n23|1|58|0|\n61|1|72|0|\n75|1|87|0|\n",
+    "hash" : "3090381047",
+    "id" : "A5D7D0F0",
+    "lastKnownWriteTime" : 1559155195,
+    "last_content_update" : 1559155195810,
+    "path" : "~/Github/MedEd/R/anovaFFT.R",
+    "project_path" : "anovaFFT.R",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
