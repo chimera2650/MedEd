@@ -266,6 +266,12 @@
        posthocConditionBand,
        posthocChannelConditionBand)
   }
+  
+  # Export
+  {
+    write.csv(anovaStimulus[["ANOVA"]],
+              "../../Data/MedEd/R/FFT Data/Export/anovaStimulus.csv")
+  }
 }
 
 # Response
@@ -312,5 +318,11 @@
        posthocBand,
        posthocChannelBand,
        posthocConditionBand)
+  }
+  
+  # Export
+  {
+    write.csv(anovaResponse[["ANOVA"]],
+              "../../Data/MedEd/R/FFT Data/Export/anovaResponse.csv")
   }
 }
