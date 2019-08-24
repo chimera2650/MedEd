@@ -64,14 +64,14 @@ clearvars erpDirectory erpName exportLearner exportNonlearner exportTime summary
 %% Export FFT data
 cd(masterDirectory);
 load(fftName);
-exportStimulusFz = eegExport(summary.stimulus.raw(:,1:59,:,30),'Fz',channelReference,'FFT');
+exportStimulusFz = eegExport(summary.stimulus.raw(:,1:59,:,:),'Fz',channelReference,'FFT');
 cd(fftDirectory);
 csvwrite('stimulusFz.csv',exportStimulusFz);
-exportStimulusPz = eegExport(summary.stimulus.raw(:,1:59,:,30),'Pz',channelReference,'FFT');
+exportStimulusPz = eegExport(summary.stimulus.raw(:,1:59,:,:),'Pz',channelReference,'FFT');
 csvwrite('stimulusPz.csv',exportStimulusPz);
-exportResponseFz = eegExport(summary.response.raw(:,1:59,:,30),'Fz',channelReference,'FFT');
+exportResponseFz = eegExport(summary.response.raw(:,1:59,:,:),'Fz',channelReference,'FFT');
 csvwrite('responseFz.csv',exportResponseFz);
-exportResponsePz = eegExport(summary.response.raw(:,1:59,:,30),'Pz',channelReference,'FFT');
+exportResponsePz = eegExport(summary.response.raw(:,1:59,:,:),'Pz',channelReference,'FFT');
 csvwrite('responsePz.csv',exportResponsePz);
 exportFrequency = summary.stimulus.frequency;
 csvwrite('frequency.csv',exportFrequency);
